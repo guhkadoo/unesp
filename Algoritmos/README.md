@@ -19,7 +19,8 @@ Esta opção permite que o usuário indique se deseja inserir um novo compromiss
 Em relação aos compromissos da agenda:  
 * Os compromissos da agenda devem ser armazenados em uma lista encadeada e ordenada pela data/horário;  
 * O usuário pode ter mais de um compromisso para uma mesma data/horário;
-* Cada compromisso compreende uma data (dia, mês e ano), um horário (hora, minutos) e um texto que descreve este compromisso (de no máximo 80 caracteres);  
+* Cada compromisso compreende uma data (dia, mês e ano), um horário (hora, minutos) e um texto que descreve este compromisso (de no máximo 80 caracteres);
+
 __2) Remove compromissos da agenda de uma determinada data__  
 Esta opção permite que o usuário remova compromissos da agenda, uma vez que estes já tenham sido realizados. Esta opção permite que o usuário apague da agenda todos os compromissos de uma determinada data. A ideia é após terminado o dia, o usuário remove todos os compromissos daquele dia de uma vez só. O usuário apenas informa uma data (dia, mês e ano) e o sistema apaga todos os compromissos referentes aquele dia.  
 __3) Remove um determinado compromisso da agenda__  
@@ -35,6 +36,6 @@ Esta opção permite que o usuário altere o compromisso de uma determinada data
 __8) Salva em disco os compromissos da agenda__  
 Esta opção permite que o usuário salve em arquivos do tipo texto (arquivo “agenda.txt”) todos os dados contidos na agenda de compromissos.  
 __9) Lê do disco os compromissos previamente salvos em disco__  
-Esta opção permite que o usuário recupere os dados (compromissos) que foram previamente salvos em arquivo em disco (arquivo “agenda.txt”).
+Esta opção permite que o usuário recupere os dados (compromissos) que foram previamente salvos em arquivo em disco (arquivo “agenda.txt”).  
 __10) Termina a execução do programa.__  
 Termina a execução do programa.
