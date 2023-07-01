@@ -17,7 +17,7 @@ Faça um programa para gerenciar uma agenda de compromissos usando uma estrutura
 __1) Insere um compromisso na agenda__  
 Esta opção permite que o usuário indique se deseja inserir um novo compromisso na agenda Esta opção permite que o usuário indique se deseja inserir um novo compromisso na agenda.  
 Em relação aos compromissos da agenda:  
-* <li> Os compromissos da agenda devem ser armazenados em uma lista encadeada e ordenada pela data/horário;  
+* Os compromissos da agenda devem ser armazenados em uma lista encadeada e ordenada pela data/horário;  
 * O usuário pode ter mais de um compromisso para uma mesma data/horário;
 * Cada compromisso compreende uma data (dia, mês e ano), um horário (hora, minutos) e um texto que descreve este compromisso (de no máximo 80 caracteres);  
 __2) Remove compromissos da agenda de uma determinada data__  
