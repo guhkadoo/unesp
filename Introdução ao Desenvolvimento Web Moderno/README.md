@@ -7,10 +7,13 @@ https://www.frontendmentor.io/challenges/results-summary-component-CE_K6s0maV
 
 #### Tarefa 3 - Criando animações  
 ##### CSS Animation:  
-a) Crie uma animação em que um elemento de texto balança de um lado para o outro. A animação deve durar 2 segundos e a velocidade deve ser suave e fluida. Use a propriedade "animation-timing-function" para definir o tempo da animação. Salve como animate-a.html e animate-a.css.  
-b) Crie uma animação em que uma imagem gira continuamente em 360 graus. A animação deve durar 3 segundos e a velocidade deve ser consistente ao longo da animação. Use a propriedade "animation-iteration-count" para definir que a animação deve ser infinita. Salve como animate-b.html e animate-b.css.  
+a) Crie uma animação em que um elemento de texto balança de um lado para o outro. A animação deve durar 2 segundos e a velocidade deve ser suave e fluida. Use a propriedade "animation-timing-function" para definir o tempo da animação. Salve como animate-a.html e animate-a.css.
+
+b) Crie uma animação em que uma imagem gira continuamente em 360 graus. A animação deve durar 3 segundos e a velocidade deve ser consistente ao longo da animação. Use a propriedade "animation-iteration-count" para definir que a animação deve ser infinita. Salve como animate-b.html e animate-b.css.
+
 ##### CSS Transform:  
-a) Crie um elemento de imagem que aumenta gradualmente de tamanho quando o usuário passa o mouse sobre ele. A animação deve durar 1 segundo e a escala deve aumentar suavemente de 1x para 1.5x.  Salve como transform-a.html e transform-a.css.  
+a) Crie um elemento de imagem que aumenta gradualmente de tamanho quando o usuário passa o mouse sobre ele. A animação deve durar 1 segundo e a escala deve aumentar suavemente de 1x para 1.5x.  Salve como transform-a.html e transform-a.css.
+
 b) Crie um elemento de imagem que se move para cima e para baixo em um movimento de onda. A animação deve durar 3 segundos e a velocidade deve ser suave e fluida. Use a propriedade "animation-timing-function" para criar um efeito de "elasticidade". Salve como transform-b.html e transform-b.css.
 
 #### Tarefa 4 - Usando javascript  
