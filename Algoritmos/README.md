@@ -17,11 +17,13 @@ Faça um programa para gerenciar uma agenda de compromissos usando uma estrutura
 __1) Insere um compromisso na agenda__  
 Esta opção permite que o usuário indique se deseja inserir um novo compromisso na agenda Esta opção permite que o usuário indique se deseja inserir um novo compromisso na agenda.  
 Em relação aos compromissos da agenda:  
+<html>
 <ul>
     <li> Os compromissos da agenda devem ser armazenados em uma lista encadeada e ordenada pela data/horário;  
     <li> O usuário pode ter mais de um compromisso para uma mesma data/horário;
     <li> Cada compromisso compreende uma data (dia, mês e ano), um horário (hora, minutos) e um texto que descreve este compromisso (de no máximo 80 caracteres);
 </ul>
+</html>  
 __2) Remove compromissos da agenda de uma determinada data__  
 Esta opção permite que o usuário remova compromissos da agenda, uma vez que estes já tenham sido realizados. Esta opção permite que o usuário apague da agenda todos os compromissos de uma determinada data. A ideia é após terminado o dia, o usuário remove todos os compromissos daquele dia de uma vez só. O usuário apenas informa uma data (dia, mês e ano) e o sistema apaga todos os compromissos referentes aquele dia.  
 __3) Remove um determinado compromisso da agenda__  
