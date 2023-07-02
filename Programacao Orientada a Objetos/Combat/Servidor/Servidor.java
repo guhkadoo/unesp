@@ -150,9 +150,6 @@ public class Servidor{
                     if(distTiroP2 >= 50*50){
                         contou2 = false;
                     }
-                    System.out.println("p1 : " + pontos1 + " p2 : " + pontos2);
-                   
-                    
                 }
             } catch(IOException e) {
                 System.out.println("IOException quando o servidor recebe as informacoes.");
