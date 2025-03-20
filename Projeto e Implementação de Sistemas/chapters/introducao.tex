@@ -1,223 +1,43 @@
 \chapter{Introdução}
 \label{c.introducao}
 
-asdasdas Para iniciar a produção em .tex é necessário instalar os pacotes básicos da linguagem e seus compiladores. O MiKTeX é um pacote básico para o Windows (miktex.org/download) e o MacTeX um pacote básico para o Mac (tug.org/mactex) que contém o mínimo necessário de TeX/LaTeX para rodar. Ele já vem com os compiladores nativos da linguagem e uma IDE (TeXworks, para edição do texto) que possui o compilador integrado.
+%O tema deste trabalho é a exploração de algoritmos clássicos de compressão de dados, abordando seus aspectos teóricos, implementação prática e análise de desempenho. A compressão de dados é uma técnica fundamental na ciência da computação, utilizada para reduzir o tamanho dos arquivos, otimizando o uso de recursos e acelerando a transmissão de dados, o que se torna crucial na época em que vivemos.
 
-Normalmente é utilizado o modo pdfLaTeX + MakeIndex + BibTeX para compilar um arquivo .tex. Existem outros formatos de compiladores, mas essa opção é capaz de gerar um .pdf automático após a compilação e ainda por cima adicionar as funcionalidades do BibTeX (recursos para criação e montagem automática de fontes bibliográficas).
+%A área começou a se desenvolver na década de 1950, com os primeiros métodos que visavam otimizar a utilização do espaço de armazenamento, como o método de Huffman, um algoritmo baseado em uma técnica de codificação de prefixo variável, na qual símbolos mais frequentes recebem códigos de comprimento menor, enquanto símbolos menos frequentes recebem códigos mais longos. Esse algoritmo é utilizado principalmente em compressão sem perdas e é fundamental para a criação de arquivos compactados em formatos como ZIP e GZIP. Sua simplicidade e eficácia o tornaram um dos pilares da compressão de dados.
 
-Além disso, também é necessária a instalação do pacote abnTeX2. Esse tutorial \url{https://github.com/abntex/abntex2/wiki/Instalacao} provém o passo a passo de como instalar cada componente do TeX, em qualquer sistema operacional (Linux, Mac OS e Windows). Caso esteja utilizando o MiKTeX, ele é capaz de efetuar o download do pacote automaticamente, apenas instale-o, abra o projeto.tex e compile-o, ele irá requisitar a autorização para baixar automaticamente os pacotes que faltam para efetuar a compilação.
+%Nos anos seguintes, com a crescente necessidade de transmitir grandes volumes de dados, surgiram novos algoritmos como o LZ77 (Lempel-Ziv 77), introduzido por Abraham Lempel e Jacob Ziv em 1977. O LZ77 utiliza uma técnica de compressão baseada em dicionários, onde sequências de dados repetidas são substituídas por referências a uma posição anterior. Essa abordagem é a base de muitos algoritmos subsequentes, como o LZW (Lempel-Ziv-Welch), que aprimora o LZ77 ao criar um dicionário dinâmico de strings à medida que os dados são comprimidos. O LZW é famoso por sua utilização no formato de compressão GIF e também em arquivos TIFF. 
 
-Com tudo em mãos e o compilador funcionando, é hora de abrir o modelo (projeto.tex) e começar a escrever o texto. É possível perceber no código a estrutura do arquivo e os campos possíveis de edição. Ao escrever o texto, ele é escrito normalmente, sendo que existem diversos comandos para estilizá-lo, criar tabelas, figuras, dentre outros. A seguir abordaremos os principais comandos e funções que podem ser utilizadas em um projeto básico de TCC. Para outras funções e pacotes, procure no Google, a comunidade é ativa e provavelmente já deve ter feito o que é de sua necessidade.
+%Além desses, o GZIP é outro algoritmo amplamente utilizado, especialmente para compressão de arquivos em sistemas Unix e na web. O GZIP combina a codificação de Huffman com o algoritmo LZ77, permitindo uma compressão eficiente e rápida, sem perda de dados. Sua popularidade se deve à combinação de boa taxa de compressão e a capacidade de ser descomprimido facilmente, o que o torna uma escolha recorrente em aplicações como transferência de arquivos e armazenamento de dados.
 
-O arquivo projeto.tex contém os pacotes e comandos básicos que definem a estrutura desse texto já no formato requisitado pela ABNT. Dentro dele é possível ver que estamos importando outros dois arquivos .tex (introducao e conclusao), ou seja, esses arquivos estão sendo basicamente concatenados com o comando ``input''. A divisão não é necessária, mas pode ser que auxilie na escrita do texto  ao deixar as coisas mais separadas e organizadas, não sendo um único arquivo cheio de linhas e linhas de código.
+%O método de Huffman, LZ77, LZW e GZIP formam a espinha dorsal dos métodos de compressão de dados tradicionais e continuam a ser utilizados em várias áreas 
 
-\section{Modificadores de Texto}
-\label{s.modificador}
+%Atualmente, a área de compressão de dados continua a ser um campo ativo de pesquisa, com diversos algoritmos sendo estudados e aprimorados. Entre os mais recentes e em destaque, estão os métodos baseados em compressão adaptativa, que ajustam seus parâmetros de acordo com os dados a serem comprimidos, oferecendo uma maior eficiência dependendo do tipo de conteúdo. Um exemplo disso é o Brotli, um algoritmo de compressão sem perdas desenvolvido pela Google que é amplamente utilizado para comprimir arquivos em navegadores web, devido à alta eficiência e baixa latência. Brotli utiliza um modelo de compressão baseado em uma combinação de codificação de Huffman e transformações de fluxo de dados, permitindo taxas de compressão superiores às oferecidas por outros algoritmos tradicionais, como o GZIP.
 
-Os modificadores de texto mais simples utilizados são o negrito (``textbf'') \textbf{texto em negrito} e o itálico (``emph'') \emph{texto em itálico}.
+%Além disto, os algoritmos de compressão em tempo real estão ganhando importância devido ao aumento de dados gerados em tempo real, como os usados em streaming de vídeo e comunicações móveis. Algoritmos como o Zstandard (ou Zstd), desenvolvido pelo Facebook, são exemplos notáveis, pois oferecem uma excelente combinação entre alta taxa de compressão e velocidade, podendo ser usadas tanto para comprimir em tempo real quanto para grandes volumes de dados. O Zstandard é considerado uma evolução do LZ4, sendo mais eficiente em compressão e descompressão. 
 
-\section{Seções}
-\label{s.citacoes}
+%Em áreas como a compressão de imagens e áudio, técnicas baseadas em aprendizado de máquina e redes neurais também têm ganhado atenção. Por exemplo, no campo da compressão de imagens, os Modelos Generativos Adversariais (GANs) têm sido exploradas para desenvolver algoritmos que geram representações comprimidas de alta qualidade, mantendo detalhes visuais. Já na compressão de áudio, algoritmos baseados em redes neurais, como o WaveNet, estão sendo experimentados para melhorar a qualidade da compressão sem perdas e com perdas.
 
-Seções podem ser criadas a partir do comando ``section'' e hierarquizadas abaixo do capítulo principal. É possível referenciá-las, por exemplo, Seção~\ref{s.citacoes} corresponde a seção atual em que estamos. Já se quisermos referenciar alguma outra coisa, é só utilizarmos o comando ``ref'' presente no código desse texto, por exemplo, Capítulo~\ref{c.introducao}.
+%Outro campo promissor é a compressão de vídeo, que é extremamente importante para plataformas de streaming, como Netflix e YouTube. Algoritmos como o HEVC (\emph{High Efficiency Video Coding}), que é uma evolução do H.264, estão sendo aprimorados continuamente para garantir uma compressão mais eficiente, sem perda significativa de qualidade. Além disso, o desenvolvimento de novos codecs como o VVC (\emph{Versatile Video Coding}) está sendo acelerado, com a promessa de compressão ainda mais eficiente para vídeos de alta definição e 4K.
 
-\subsection{Subseções}
-\label{ss.subsecao}
-
-Subseções também podem ser criadas com o comando ``subsection'' e referenciadas~\ref{ss.subsecao}.
-
-\subsubsection{Sub-subseções}
-\label{sss.subsubsecao}
-
-Também há mais um nível que pode ser criado com o comando ``subsubsection''.
-
-\section{Alíneas}
-\label{s.alineas}
-
-\begin{alineas}
-	
-	\item As alineas devem ser criadas desse modo, com o comando begin\{alineas\}. Isso é necessário para que estejam no formato definido pelo pacote abnTeX2 e, consequentemente, no formato definido pela ABNT.
-	
-	\item Cada item da alínea pode ser invocado com um comando item.
-	
-	\item O fim de cada alínea é determinado por end\{alineas\}.
-	
-\end{alineas}
-
-\section{Tabelas}
-\label{s.tabelas}
-
-As tabelas também podem ser referenciadas como se fossem seções ou figuras, por exemplo, esta é a Tabela~\ref{t.transacao-mercado}.
-
-\begin{table}[htb]
-	\centering
-	\caption{Exemplo de transações de mercado.}
-	\begin{tabular}{c|c}
-		\hline
-		\textbf{\small TID} & \textbf{\small Conjunto de Itens}              \\\hline \hline
-		{\small 1}          & {\small \{Pão, Leite\}}                       \\\hline
-		{\small 2}          & {\small \{Pão, Fralda, Cerveja, Ovos\}}       \\\hline
-		{\small 3}          & {\small \{Leite, Fralda, Cerveja, Coca-Cola\}} \\\hline
-		{\small 4}          & {\small \{Pão, Leite, Fralda, Cerveja\}}      \\\hline
-		{\small 5}          & {\small \{Pão, Leite, Fralda, Coca-Cola\}}    \\\hline
-	\end{tabular}
-	\label{t.transacao-mercado}
-\end{table}
-
-Quando uma tabela é criada com begin\{table\}, ela é automaticamente adicionada à Lista de Tabelas.
-
-\section{Quadros}
-
-Este modelo vem com o ambiente \texttt{quadro} e impressão de Lista de quadros 
-configurados por padrão. Verifique um exemplo de utilização:
-
-\begin{quadro}[htb]
-	\label{quadro-exemplo}
-	\caption{Exemplo de quadro.}
-	\begin{tabular}{|c|c|c|c|}
-		\hline
-		\textbf{Pessoa} & \textbf{Idade} & \textbf{Peso} & \textbf{Altura} \\ \hline
-		Marcos          & 26             & 68            & 178             \\ \hline
-		Ivone           & 22             & 57            & 162             \\ \hline
-		...             & ...            & ...           & ...             \\ \hline
-		Sueli           & 40             & 65            & 153             \\ \hline
-	\end{tabular}
-	\fonte{Elaborado pelo autor.}
-\end{quadro}
-
-Este parágrafo apresenta como referenciar o quadro no texto, requisito
-obrigatório da ABNT. 
-Primeira opção, utilizando \texttt{autoref}: Ver o \autoref{quadro-exemplo}. 
-Segunda opção, utilizando  \texttt{ref}: Ver o Quadro \ref{quadro-exemplo}.
+%A análise de desempenho, incluindo sua eficiência em termos de tempo de execução e taxa de compressão, também é um tópico relevante. Com o aumento exponencial da quantidade de dados gerados e transmitidos na sociedade moderna, os algoritmos se tornaram ainda mais essenciais. A eficiência na compressão não só reduz custos de armazenamento e acelera a transmissão, mas também tem impacto direto em áreas como streaming de vídeos, comunicação móvel, redes de computadores e sistemas de armazenamento em nuvem. A compreensão dos diferentes métodos e a avaliação de sua aplicabilidade em diferentes cenários são fundamentais para o desenvolvimento de soluções mais eficazes e eficientes.
 
 
+O tema deste trabalho é a exploração dos algoritmos clássicos de compressão de dados, abordando seus aspectos teóricos, implementação prática e análise de desempenho. A compressão de dados é uma técnica essencial na ciência da computação, utilizada para reduzir o tamanho dos arquivos, otimizando o uso de recursos e acelerando a transmissão de dados, o que se torna crucial na era digital em que vivemos.
 
-\section{Algoritmos}
-\label{s.algoritmos}
+O desenvolvimento dessa área teve início na década de 1950, com os primeiros métodos que visavam otimizar a utilização do espaço de armazenamento. Entre esses métodos, destaca-se o algoritmo de Huffman, que utiliza uma técnica de codificação de prefixo variável. Nesse algoritmo, símbolos mais frequentes recebem códigos de comprimento menor, enquanto símbolos menos frequentes recebem códigos mais longos. O método de Huffman é amplamente empregado em compressão sem perdas e se tornou fundamental para a criação de arquivos compactados em formatos como ZIP e GZIP. Sua simplicidade, aliada à sua eficácia, fez com que se consolidasse como um dos pilares da compressão de dados.
 
-O pacote nicealgo incluído nos arquivos desse projeto é responsável por disponibilizar comandos extras, não inerentes ao básico TeX, para a criação de algoritmos. Um exemplo do Algoritmo~\ref{a.algoritmo} é escrito a seguir. Eles também pode ser referenciados como se fossem tabelas ou figuras.
+Nos anos seguintes, com o aumento da demanda por transmissão de grandes volumes de dados, novos algoritmos surgiram. Um exemplo significativo é o LZ77 (Lempel-Ziv 77), introduzido por Abraham Lempel e Jacob Ziv em 1977. O LZ77 aplica uma técnica de compressão baseada em dicionários, onde sequências de dados repetidas são substituídas por referências a posições anteriores. Essa abordagem inspirou a criação de outros algoritmos, como o LZW (Lempel-Ziv-Welch), que aprimora o LZ77 ao criar dinamicamente um dicionário de strings enquanto os dados são comprimidos. O LZW é particularmente famoso pela sua aplicação no formato de compressão GIF, bem como em arquivos TIFF.
 
+Além desses, o GZIP se destaca como outro algoritmo amplamente utilizado, especialmente em sistemas Unix e na web. O GZIP combina a codificação de Huffman com o algoritmo LZ77, permitindo uma compressão eficiente e rápida, sem perda de dados. Sua popularidade decorre da combinação de alta taxa de compressão e facilidade de descompressão, sendo uma escolha recorrente em aplicações como transferência de arquivos e armazenamento de dados.
 
-\par
-\needspace{20\baselineskip}
+Os métodos de Huffman, LZ77, LZW e GZIP formam a espinha dorsal dos algoritmos clássicos de compressão de dados e continuam sendo amplamente utilizados em diversas áreas, apesar do surgimento de novas abordagens.
 
-\begin{nicealgo}{a.algoritmo}
-	\naTITLE{Algoritmo AIS}
-	\naPREAMBLE
-	\naINPUT{Conjunto Frequente L = 0 e Grupo de Fronteira F = 0.}
-	\naBODY
-	\naBEGIN{\textbf{Enquanto} $F \neq 0$, \textbf{faça}}
-	\na{\textbf{Seja} conjunto candidato $C = 0$;}
-	\naBEGIN{\textbf{Para cada} tuplas $t$ da base de dados, \textbf{faça}}
-	\naBEGIN{\textbf{Para cada} conjuntos de itens $f$ em $F$, \textbf{faça}}
-	\naBEGIN{\textbf{Se} $t$ contém $f$, \textbf{então}}
-	\naEND{\textbf{Seja} $C_f =$ conjuntos de itens candidatos extensões de $f$ e contidos em $t$;}
-	\naBEGIN{\textbf{Para cada} conjunto de itens $c_f$ em $C_f$, \textbf{faça}}
-	\naBEGIN{\textbf{Se} $c_f \in C$, \textbf{então}}
-	\naEND{$c_f$.contagem $= c_f$.contagem$ + 1$;}
-	\naBEGIN{\textbf{Se não}}
-	\na{$c_f$.contagem $= 0$;}
-	\naEND{$C = C + c_f$;}
-	\naEND{}
-	\naEND{}
-	\naEND{}
-	\na{\textbf{Seja} F = 0;}
-	\naBEGIN{\textbf{Para cada} conjunto de itens $c$ em $C$, \textbf{faça}}
-	\naBEGIN{\textbf{Se} $contagem(c)/tamanho\_db > minsupport$, \textbf{então}}
-	\naEND{$L = L + c$;}
-	\naBEGIN{\textbf{Se} $c$ deve ser usado como a próxima fronteira, \textbf{então}}
-	\naEND{$F = F + c$;}
-	\naEND{}
-	\naEND{}
-\end{nicealgo}
+Atualmente, a compressão de dados continua a ser um campo dinâmico e em constante evolução, com diversos algoritmos sendo constantemente estudados e aprimorados. Entre os mais recentes, destacam-se os métodos baseados em compressão adaptativa, que ajustam seus parâmetros conforme as características dos dados a serem comprimidos, oferecendo maior eficiência dependendo do conteúdo. Um exemplo é o Brotli, um algoritmo de compressão sem perdas desenvolvido pela Google, amplamente utilizado para comprimir arquivos em navegadores web. O Brotli combina codificação de Huffman e transformações de fluxo de dados, permitindo taxas de compressão superiores às oferecidas por algoritmos tradicionais como o GZIP.
 
+Além disso, algoritmos de compressão em tempo real têm ganhado relevância devido ao crescente volume de dados gerados em tempo real, como no streaming de vídeo e nas comunicações móveis. O Zstandard (ou Zstd), desenvolvido pelo Facebook, é um exemplo notável. Ele oferece uma excelente combinação entre alta taxa de compressão e velocidade, podendo ser utilizado tanto em compressões em tempo real quanto em grandes volumes de dados. O Zstandard é considerado uma evolução do LZ4, sendo mais eficiente tanto na compressão quanto na descompressão.
 
-\section{Códigos}
-\label{s.codigos}
+Em áreas como compressão de imagens e áudio, técnicas baseadas em aprendizado de máquina e redes neurais também têm atraído atenção. No campo da compressão de imagens, os Modelos Generativos Adversariais (GANs) estão sendo explorados para desenvolver algoritmos que geram representações comprimidas de alta qualidade, mantendo os detalhes visuais. Na compressão de áudio, algoritmos baseados em redes neurais, como o WaveNet, estão sendo experimentados para aprimorar a qualidade da compressão, tanto com perdas quanto sem perdas.
 
-Códigos podem ser criados a partir do comando begin\{lstlisting\} e end\{lstlisting\}. É possível passar parâmetros para essa função, como por exemplo, a linguage do código e a legenda dele. Por exemplo: \char`\\begin\{lstlisting\}[language=Python, caption=Exemplo de código em Python]
+Outro campo de grande importância é a compressão de vídeo, especialmente para plataformas de streaming como Netflix e YouTube. Algoritmos como o HEVC (High Efficiency Video Coding), uma evolução do H.264, continuam a ser aprimorados para garantir uma compressão mais eficiente, sem perda significativa de qualidade. Além disso, o desenvolvimento de novos codecs como o VVC (Versatile Video Coding) está em andamento, com a promessa de oferecer compressão ainda mais eficiente para vídeos de alta definição e 4K.
 
-\begin{lstlisting}[language=Python, caption=Exemplo de código em Python.]
-import numpy as np
- 
-def incmatrix(genl1,genl2):
-    m = len(genl1)
-    n = len(genl2)
-    M = None #to become the incidence matrix
-    VT = np.zeros((n*m,1), int)  #dummy variable
- 
-    #compute the bitwise xor matrix
-    M1 = bitxormatrix(genl1)
-    M2 = np.triu(bitxormatrix(genl2),1) 
- 
-    for i in range(m-1):
-        for j in range(i+1, m):
-            [r,c] = np.where(M2 == M1[i,j])
-            for k in range(len(r)):
-                VT[(i)*n + r[k]] = 1;
-                VT[(i)*n + c[k]] = 1;
-                VT[(j)*n + r[k]] = 1;
-                VT[(j)*n + c[k]] = 1;
- 
-                if M is None:
-                    M = np.copy(VT)
-                else:
-                    M = np.concatenate((M, VT), 1)
- 
-                VT = np.zeros((n*m,1), int)
- 
-    return M
-\end{lstlisting}
-
-\section{Figuras}
-\label{s.figuras}
-
-Este parágrafo apresenta como referenciar figura no texto, requisito obrigatório da ABNT, por exemplo a Figura~\ref{f.disposicao-mercado}. Atente-se ao código para perceber um possível redimensionamento com a função scale e o caminho de onde a figura deve ser retirada. Quando uma figura é criada com begin\{figure\}, ela é automaticamente adicionada à Lista de Ilustrações.
-
-\begin{figure}[htbp]
-	\caption{\small Exemplo do ambiente TeXworks.}
-	\centering
-	\includegraphics[scale=0.50]{figs/tex-exemplo.png}
-	\label{f.disposicao-mercado}
-	\legend{\small Fonte: Elaborada pelo autor.}
-\end{figure}
-
-\section{Equações}
-\label{s.equacoes}
-
-O LaTeX também é muito famoso pela forma em que consegue tratar funções e símbolos matemáticos. A partir da utilização de dois cifrões (\$codigo matemático\$) é possível identificar ao compilador que a escrita a seguir são símbolos e códigos originários do pacote matemático do LaTeX, por exemplo $\phi = 1 + x$.
-
-Também podemos definir equações utilizando os comandos begin\{equation\} e end\{equation\}. Por exemplo:
-
-\begin{equation}
-	\label{e.energy-rbm}
-	E(\textbf{v},\textbf{h})=-\sum_{i=1}^ma_iv_i-\sum_{j=1}^nb_jh_j-\sum_{i=1}^m\sum_{j=1}^nv_ih_jw_{ij},
-\end{equation}
-
-\begin{equation}
-	\label{e.probability-configuration}
-	P(\textbf{v},\textbf{h})=\frac{e^{-E(\textbf{v},\textbf{h})}}{\displaystyle\sum_{\textbf{v},\textbf{h}}e^{-E(\textbf{v},\textbf{h})}},
-\end{equation}
-
-\begin{eqnarray}
-	\label{eq:par}
-	\hat{\phi}^j & = & \left\{ \begin{array}{ll} \hat{\phi}^j\pm \varphi_j \varrho  & \mbox{{ com probabilidade PAR}} \\
-	\hat{\phi}^j & \mbox{{com probabilidade (1-PAR).}}
-	\end{array}\right.
-\end{eqnarray}
-
-Existem diversos sites no Google que contém códigos de símbolos e funções matemáticas de todos os tipos. Exemplo:\\
-\begin{center}
-	\tiny estudijas.lu.lv/pluginfile.php/14809/mod\_page/content/16/instrukcijas/matematika\_moodle/LaTeX\_Symbols.pdf.
-\end{center}
-
-\section{Como citar as referências}
-\label{ss.referencias}
-
-Aqui está um exemplo de como podemos referenciar as bibliografias utilizadas no trabalho. Elas são guardadas na forma de metadados (tags) no arquivo .bib a qual é importada no projeto principal (projeto.tex).
-
-E podemos citá-las de acordo com os identificadores atribuídos para cada referência, por exemplo,~\cite{stonebraker93},~\cite{rocha09} e~\cite{keras}.
-
-Após citar um item de referência bibliográfica com o comando ``cite'', ela será automaticamente padronizada e incluída na página de Referências de seu arquivo. Atualmente os maiores sites portadores de artigos, periódicos, dentre outros (IEEE, Springer, etc) já conseguem exportar a publicação desejado no formato BibTeX, sendo facilmente adicionado ao arquivo .bib de seu trabalho.
-
-Muitas vezes não é possível exportar publicações diretamente para o formato BibTeX, como, por exemplo, na citação de sites. Para mais informações sobre como criar manualmente arquivos BibTeX: \url{https://github.com/abntex/limarka/wiki/Adicionando-referências}
+A análise de desempenho, que inclui a eficiência em termos de tempo de execução e taxa de compressão, também desempenha um papel crucial. Com o aumento exponencial da quantidade de dados gerados e transmitidos na sociedade moderna, os algoritmos de compressão tornaram-se ainda mais essenciais. A eficiência na compressão não só reduz os custos de armazenamento e acelera a transmissão de dados, mas também impacta diretamente áreas como streaming de vídeos, comunicação móvel, redes de computadores e sistemas de armazenamento em nuvem. Compreender os diferentes métodos e avaliar sua aplicabilidade em cenários diversos é fundamental para o desenvolvimento de soluções mais eficazes e eficientes.
