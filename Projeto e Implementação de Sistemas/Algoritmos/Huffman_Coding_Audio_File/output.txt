@@ -1,0 +1,482 @@
+H (72) has 1 duplicates
+J (74) has 1 duplicates
+L (76) has 6 duplicates
+M (77) has 3 duplicates
+N (78) has 1 duplicates
+O (79) has 1 duplicates
+P (80) has 1 duplicates
+R (82) has 6 duplicates
+S (83) has 6 duplicates
+T (84) has 5 duplicates
+U (85) has 6 duplicates
+V (86) has 6 duplicates
+W (87) has 8 duplicates
+X (88) has 5 duplicates
+Y (89) has 14 duplicates
+Z (90) has 12 duplicates
+[ (91) has 19 duplicates
+\ (92) has 13 duplicates
+] (93) has 9 duplicates
+^ (94) has 12 duplicates
+_ (95) has 16 duplicates
+` (96) has 22 duplicates
+a (97) has 20 duplicates
+b (98) has 20 duplicates
+c (99) has 19 duplicates
+d (100) has 11 duplicates
+e (101) has 40 duplicates
+f (102) has 31 duplicates
+g (103) has 42 duplicates
+h (104) has 45 duplicates
+i (105) has 59 duplicates
+j (106) has 76 duplicates
+k (107) has 77 duplicates
+l (108) has 91 duplicates
+m (109) has 86 duplicates
+n (110) has 130 duplicates
+o (111) has 143 duplicates
+p (112) has 131 duplicates
+q (113) has 185 duplicates
+r (114) has 189 duplicates
+s (115) has 215 duplicates
+t (116) has 235 duplicates
+u (117) has 247 duplicates
+v (118) has 362 duplicates
+w (119) has 382 duplicates
+x (120) has 431 duplicates
+y (121) has 482 duplicates
+z (122) has 631 duplicates
+{ (123) has 781 duplicates
+| (124) has 946 duplicates
+} (125) has 1348 duplicates
+~ (126) has 2019 duplicates
+ (127) has 4287 duplicates
+€ (128) has 17628 duplicates
+ (129) has 4364 duplicates
+‚ (130) has 2411 duplicates
+ƒ (131) has 1676 duplicates
+„ (132) has 1321 duplicates
+… (133) has 950 duplicates
+† (134) has 796 duplicates
+‡ (135) has 684 duplicates
+ˆ (136) has 519 duplicates
+‰ (137) has 418 duplicates
+Š (138) has 317 duplicates
+‹ (139) has 280 duplicates
+Œ (140) has 248 duplicates
+ (141) has 220 duplicates
+ (142) has 167 duplicates
+ (143) has 161 duplicates
+ (144) has 140 duplicates
+‘ (145) has 120 duplicates
+’ (146) has 97 duplicates
+“ (147) has 80 duplicates
+” (148) has 69 duplicates
+• (149) has 43 duplicates
+– (150) has 38 duplicates
+— (151) has 35 duplicates
+˜ (152) has 32 duplicates
+™ (153) has 31 duplicates
+š (154) has 21 duplicates
+› (155) has 16 duplicates
+œ (156) has 14 duplicates
+ (157) has 12 duplicates
+ (158) has 18 duplicates
+Ÿ (159) has 16 duplicates
+  (160) has 8 duplicates
+¡ (161) has 8 duplicates
+¢ (162) has 7 duplicates
+£ (163) has 5 duplicates
+¤ (164) has 8 duplicates
+¥ (165) has 2 duplicates
+¦ (166) has 8 duplicates
+§ (167) has 4 duplicates
+¨ (168) has 4 duplicates
+© (169) has 4 duplicates
+ª (170) has 3 duplicates
+« (171) has 2 duplicates
+¬ (172) has 4 duplicates
+­ (173) has 5 duplicates
+® (174) has 5 duplicates
+¯ (175) has 4 duplicates
+° (176) has 2 duplicates
+± (177) has 1 duplicates
+² (178) has 2 duplicates
+³ (179) has 1 duplicates
+µ (181) has 1 duplicates
+¶ (182) has 3 duplicates
+¸ (184) has 1 duplicates
+¹ (185) has 1 duplicates
+» (187) has 2 duplicates
+½ (189) has 2 duplicates
+¿ (191) has 1 duplicates
+Á (193) has 1 duplicates
+Â (194) has 1 duplicates
+Ã (195) has 2 duplicates
+Ê (202) has 1 duplicates
+Ë (203) has 2 duplicates
+Ï (207) has 1 duplicates
+Ğ (208) has 3 duplicates
+ğ (240) has 1 duplicates
+Sorted list of size 120:
+byte: 72    duplicates: 1
+byte: 240    duplicates: 1
+byte: 207    duplicates: 1
+byte: 202    duplicates: 1
+byte: 194    duplicates: 1
+byte: 193    duplicates: 1
+byte: 191    duplicates: 1
+byte: 185    duplicates: 1
+byte: 184    duplicates: 1
+byte: 181    duplicates: 1
+byte: 179    duplicates: 1
+byte: 177    duplicates: 1
+byte: 80    duplicates: 1
+byte: 79    duplicates: 1
+byte: 78    duplicates: 1
+byte: 74    duplicates: 1
+byte: 203    duplicates: 2
+byte: 195    duplicates: 2
+byte: 189    duplicates: 2
+byte: 187    duplicates: 2
+byte: 178    duplicates: 2
+byte: 176    duplicates: 2
+byte: 171    duplicates: 2
+byte: 165    duplicates: 2
+byte: 208    duplicates: 3
+byte: 182    duplicates: 3
+byte: 170    duplicates: 3
+byte: 77    duplicates: 3
+byte: 175    duplicates: 4
+byte: 172    duplicates: 4
+byte: 169    duplicates: 4
+byte: 168    duplicates: 4
+byte: 167    duplicates: 4
+byte: 174    duplicates: 5
+byte: 173    duplicates: 5
+byte: 163    duplicates: 5
+byte: 88    duplicates: 5
+byte: 84    duplicates: 5
+byte: 86    duplicates: 6
+byte: 85    duplicates: 6
+byte: 83    duplicates: 6
+byte: 82    duplicates: 6
+byte: 76    duplicates: 6
+byte: 162    duplicates: 7
+byte: 166    duplicates: 8
+byte: 164    duplicates: 8
+byte: 161    duplicates: 8
+byte: 160    duplicates: 8
+byte: 87    duplicates: 8
+byte: 93    duplicates: 9
+byte: 100    duplicates: 11
+byte: 157    duplicates: 12
+byte: 94    duplicates: 12
+byte: 90    duplicates: 12
+byte: 92    duplicates: 13
+byte: 156    duplicates: 14
+byte: 89    duplicates: 14
+byte: 159    duplicates: 16
+byte: 155    duplicates: 16
+byte: 95    duplicates: 16
+byte: 158    duplicates: 18
+byte: 99    duplicates: 19
+byte: 91    duplicates: 19
+byte: 98    duplicates: 20
+byte: 97    duplicates: 20
+byte: 154    duplicates: 21
+byte: 96    duplicates: 22
+byte: 153    duplicates: 31
+byte: 102    duplicates: 31
+byte: 152    duplicates: 32
+byte: 151    duplicates: 35
+byte: 150    duplicates: 38
+byte: 101    duplicates: 40
+byte: 103    duplicates: 42
+byte: 149    duplicates: 43
+byte: 104    duplicates: 45
+byte: 105    duplicates: 59
+byte: 148    duplicates: 69
+byte: 106    duplicates: 76
+byte: 107    duplicates: 77
+byte: 147    duplicates: 80
+byte: 109    duplicates: 86
+byte: 108    duplicates: 91
+byte: 146    duplicates: 97
+byte: 145    duplicates: 120
+byte: 110    duplicates: 130
+byte: 112    duplicates: 131
+byte: 144    duplicates: 140
+byte: 111    duplicates: 143
+byte: 143    duplicates: 161
+byte: 142    duplicates: 167
+byte: 113    duplicates: 185
+byte: 114    duplicates: 189
+byte: 115    duplicates: 215
+byte: 141    duplicates: 220
+byte: 116    duplicates: 235
+byte: 117    duplicates: 247
+byte: 140    duplicates: 248
+byte: 139    duplicates: 280
+byte: 138    duplicates: 317
+byte: 118    duplicates: 362
+byte: 119    duplicates: 382
+byte: 137    duplicates: 418
+byte: 120    duplicates: 431
+byte: 121    duplicates: 482
+byte: 136    duplicates: 519
+byte: 122    duplicates: 631
+byte: 135    duplicates: 684
+byte: 123    duplicates: 781
+byte: 134    duplicates: 796
+byte: 124    duplicates: 946
+byte: 133    duplicates: 950
+byte: 132    duplicates: 1321
+byte: 125    duplicates: 1348
+byte: 131    duplicates: 1676
+byte: 126    duplicates: 2019
+byte: 130    duplicates: 2411
+byte: 127    duplicates: 4287
+byte: 129    duplicates: 4364
+byte: 128    duplicates: 17628
+
+character: €    duplicates: 17628    height_tree: 2
+character: z    duplicates: 631    height_tree: 7
+character:     duplicates: 161    height_tree: 9
+character: “    duplicates: 80    height_tree: 10
+character: a    duplicates: 20    height_tree: 12
+character: ­    duplicates: 5    height_tree: 14
+character: £    duplicates: 5    height_tree: 14
+character: d    duplicates: 11    height_tree: 13
+character: g    duplicates: 42    height_tree: 11
+character:     duplicates: 167    height_tree: 9
+character: š    duplicates: 21    height_tree: 12
+character: `    duplicates: 22    height_tree: 12
+character: •    duplicates: 43    height_tree: 11
+character: m    duplicates: 86    height_tree: 10
+character: „    duplicates: 1321    height_tree: 6
+character: }    duplicates: 1348    height_tree: 6
+character: ‡    duplicates: 684    height_tree: 7
+character: v    duplicates: 362    height_tree: 8
+character: l    duplicates: 91    height_tree: 10
+character: h    duplicates: 45    height_tree: 11
+character: ^    duplicates: 12    height_tree: 13
+character: Z    duplicates: 12    height_tree: 13
+character: ª    duplicates: 3    height_tree: 15
+character: M    duplicates: 3    height_tree: 15
+character: Ğ    duplicates: 3    height_tree: 15
+character: ¶    duplicates: 3    height_tree: 15
+character:     duplicates: 12    height_tree: 13
+character: q    duplicates: 185    height_tree: 9
+character: w    duplicates: 382    height_tree: 8
+character: r    duplicates: 189    height_tree: 9
+character: ’    duplicates: 97    height_tree: 10
+character: S    duplicates: 6    height_tree: 14
+character: R    duplicates: 6    height_tree: 14
+character: V    duplicates: 6    height_tree: 14
+character: U    duplicates: 6    height_tree: 14
+character: L    duplicates: 6    height_tree: 14
+character: ¢    duplicates: 7    height_tree: 14
+character: \    duplicates: 13    height_tree: 13
+character: œ    duplicates: 14    height_tree: 13
+character: Y    duplicates: 14    height_tree: 13
+character: ™    duplicates: 31    height_tree: 12
+character: {    duplicates: 781    height_tree: 7
+character: †    duplicates: 796    height_tree: 7
+character: ‰    duplicates: 418    height_tree: 8
+character: x    duplicates: 431    height_tree: 8
+character: ƒ    duplicates: 1676    height_tree: 6
+character: s    duplicates: 215    height_tree: 9
+character:     duplicates: 220    height_tree: 9
+character: t    duplicates: 235    height_tree: 9
+character: ‘    duplicates: 120    height_tree: 10
+character: i    duplicates: 59    height_tree: 11
+character: f    duplicates: 31    height_tree: 12
+character: ›    duplicates: 16    height_tree: 13
+character: _    duplicates: 16    height_tree: 13
+character: |    duplicates: 946    height_tree: 7
+character: …    duplicates: 950    height_tree: 7
+character: y    duplicates: 482    height_tree: 8
+character: u    duplicates: 247    height_tree: 9
+character: Œ    duplicates: 248    height_tree: 9
+character: ~    duplicates: 2019    height_tree: 6
+character:     duplicates: 4287    height_tree: 5
+character:     duplicates: 4364    height_tree: 5
+character: ˆ    duplicates: 519    height_tree: 8
+character: ¡    duplicates: 8    height_tree: 14
+character:      duplicates: 8    height_tree: 14
+character: ¦    duplicates: 8    height_tree: 14
+character: ¤    duplicates: 8    height_tree: 14
+character: ˜    duplicates: 32    height_tree: 12
+character: ©    duplicates: 4    height_tree: 15
+character: ¨    duplicates: 4    height_tree: 15
+character: ¯    duplicates: 4    height_tree: 15
+character: ¬    duplicates: 4    height_tree: 15
+character: Ÿ    duplicates: 16    height_tree: 13
+character: ½    duplicates: 2    height_tree: 16
+character: »    duplicates: 2    height_tree: 16
+character: Ë    duplicates: 2    height_tree: 16
+character: Ã    duplicates: 2    height_tree: 16
+character: «    duplicates: 2    height_tree: 16
+character: ¥    duplicates: 2    height_tree: 16
+character: ²    duplicates: 2    height_tree: 16
+character: °    duplicates: 2    height_tree: 16
+character: ³    duplicates: 1    height_tree: 17
+character: ±    duplicates: 1    height_tree: 17
+character: ¸    duplicates: 1    height_tree: 17
+character: µ    duplicates: 1    height_tree: 17
+character: P    duplicates: 1    height_tree: 17
+character: O    duplicates: 1    height_tree: 17
+character: N    duplicates: 1    height_tree: 17
+character: J    duplicates: 1    height_tree: 17
+character: Ï    duplicates: 1    height_tree: 17
+character: Ê    duplicates: 1    height_tree: 17
+character: H    duplicates: 1    height_tree: 17
+character: ğ    duplicates: 1    height_tree: 17
+character: ¿    duplicates: 1    height_tree: 17
+character: ¹    duplicates: 1    height_tree: 17
+character: Â    duplicates: 1    height_tree: 17
+character: Á    duplicates: 1    height_tree: 17
+character: n    duplicates: 130    height_tree: 10
+character: p    duplicates: 131    height_tree: 10
+character: ”    duplicates: 69    height_tree: 11
+character: W    duplicates: 8    height_tree: 14
+character: §    duplicates: 4    height_tree: 15
+character: ®    duplicates: 5    height_tree: 15
+character:     duplicates: 18    height_tree: 13
+character: —    duplicates: 35    height_tree: 12
+character: ‹    duplicates: 280    height_tree: 9
+character:     duplicates: 140    height_tree: 10
+character: o    duplicates: 143    height_tree: 10
+character: ]    duplicates: 9    height_tree: 14
+character: X    duplicates: 5    height_tree: 15
+character: T    duplicates: 5    height_tree: 15
+character: c    duplicates: 19    height_tree: 13
+character: –    duplicates: 38    height_tree: 12
+character: j    duplicates: 76    height_tree: 11
+character: k    duplicates: 77    height_tree: 11
+character: [    duplicates: 19    height_tree: 13
+character: b    duplicates: 20    height_tree: 13
+character: e    duplicates: 40    height_tree: 12
+character: Š    duplicates: 317    height_tree: 9
+character: ‚    duplicates: 2411    height_tree: 6
+H/72: 1111001001111010
+J/74: 1111001001110111
+L/76: 1010001110100
+M/77: 10011110111001
+N/78: 1111001001110110
+O/79: 1111001001110101
+P/80: 1111001001110100
+R/82: 1010001110001
+S/83: 1010001110000
+T/84: 11110110000011
+U/85: 1010001110011
+V/86: 1010001110010
+W/87: 1111001111000
+X/88: 11110110000010
+Y/89: 101000111101
+Z/90: 100111101101
+[/91: 111101101100
+\/92: 101000111011
+]/93: 1111011000000
+^/94: 100111101100
+_/95: 101110111111
+`/96: 10000111001
+a/97: 10000101100
+b/98: 111101101101
+c/99: 111101100001
+d/100: 100001011011
+e/101: 11110110111
+f/102: 10111011110
+g/103: 1000010111
+h/104: 1001111010
+i/105: 1011101110
+j/106: 1111011001
+k/107: 1111011010
+l/108: 100111100
+m/109: 100001111
+n/110: 111100101
+o/111: 111101011
+p/112: 111100110
+q/113: 10011111
+r/114: 10100010
+s/115: 10111000
+t/116: 10111010
+u/117: 11000110
+v/118: 1001110
+w/119: 1010000
+x/120: 1010111
+y/121: 1100010
+z/122: 100000
+{/123: 101001
+|/124: 101111
+}/125: 10010
+~/126: 11001
+/127: 1101
+€/128: 0
+/129: 1110
+‚/130: 11111
+ƒ/131: 10110
+„/132: 10001
+…/133: 110000
+†/134: 101010
+‡/135: 100110
+ˆ/136: 1111000
+‰/137: 1010110
+Š/138: 11110111
+‹/139: 11110100
+Œ/140: 11000111
+/141: 10111001
+/142: 10000110
+/143: 10000100
+/144: 111101010
+‘/145: 101110110
+’/146: 101000110
+“/147: 100001010
+”/148: 1111001110
+•/149: 1000011101
+–/150: 11110110001
+—/151: 11110011111
+˜/152: 11110010001
+™/153: 10100011111
+š/154: 10000111000
+›/155: 101110111110
+œ/156: 101000111100
+/157: 100111101111
+/158: 111100111101
+Ÿ/159: 111100100101
+ /160: 1111001000001
+¡/161: 1111001000000
+¢/162: 1010001110101
+£/163: 1000010110101
+¤/164: 1111001000011
+¥/165: 111100100110101
+¦/166: 1111001000010
+§/167: 11110011110010
+¨/168: 11110010010001
+©/169: 11110010010000
+ª/170: 10011110111000
+«/171: 111100100110100
+¬/172: 11110010010011
+­/173: 1000010110100
+®/174: 11110011110011
+¯/175: 11110010010010
+°/176: 111100100110111
+±/177: 1111001001110001
+²/178: 111100100110110
+³/179: 1111001001110000
+µ/181: 1111001001110011
+¶/182: 10011110111011
+¸/184: 1111001001110010
+¹/185: 1111001001111101
+»/187: 111100100110001
+½/189: 111100100110000
+¿/191: 1111001001111100
+Á/193: 1111001001111111
+Â/194: 1111001001111110
+Ã/195: 111100100110011
+Ê/202: 1111001001111001
+Ë/203: 111100100110010
+Ï/207: 1111001001111000
+Ğ/208: 10011110111010
+ğ/240: 1111001001111011
