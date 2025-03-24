@@ -1,2 +1,56 @@
-\chapter{Método de Pesquisa}
-\label{c.metodo}
+\chapter{Metodologia}
+\label{c.metodologia}
+
+Este capítulo apresenta o delineamento metodológico adotado para a realização da pesquisa. O estudo tem caráter \textbf{exploratório e descritivo}, pois busca compreender e comparar o desempenho de algoritmos clássicos de compressão de dados em diferentes tipos de arquivos. Além disso, trata-se de uma pesquisa \textbf{experimental e bibliográfica}, pois envolve tanto a revisão da literatura sobre os algoritmos estudados quanto a implementação prática e execução de testes para coleta de dados.
+
+\section{Delineamento da Pesquisa}
+
+A pesquisa será conduzida em duas etapas principais:
+
+\begin{itemize}
+    \item \textbf{Revisão bibliográfica}: levantamento de referências acadêmicas sobre os algoritmos Huffman, LZ77, LZW e GZIP, incluindo seus princípios teóricos, implementação e aplicações.
+    \item \textbf{Análise experimental}: implementação dos algoritmos e realização de testes comparativos, medindo a taxa de compressão e o tempo de execução em diferentes tipos de arquivos (texto, áudio e imagem).
+\end{itemize}
+
+\section{Coleta de Dados}
+
+Os dados serão coletados por meio da execução dos algoritmos em um ambiente controlado, utilizando conjuntos de arquivos representativos dos três principais tipos de dados abordados: 
+
+\begin{itemize}
+    \item \textbf{Texto}: arquivos de livros e artigos científicos em formato \texttt{.txt}.
+    \item \textbf{Imagem}: arquivos \texttt{.png}, que utilizam compressão sem perdas.
+    \item \textbf{Áudio}: pequenos arquivos de áudio sem perdas, como \texttt{.wav}.
+\end{itemize}
+
+Cada algoritmo será executado sobre os mesmos conjuntos de dados e os seguintes parâmetros serão registrados:
+
+\begin{itemize}
+    \item Taxa de compressão (\% de redução do tamanho do arquivo);
+    \item Tempo de execução (medido em milissegundos);
+\end{itemize}
+
+\section{Análise dos Dados}
+
+Os resultados serão tabulados e analisados estatisticamente para identificar padrões e diferenças entre os algoritmos. A análise será feita considerando:
+
+\begin{itemize}
+    \item Comparação direta entre a taxa de compressão e tempo de execução;
+    \item Eficiência relativa dos algoritmos para cada tipo de dado;
+    \item Gráficos de desempenho para facilitar a interpretação dos resultados.
+\end{itemize}
+
+\section{Ferramentas e Ambiente de Teste}
+
+Os experimentos serão conduzidos em um ambiente computacional padronizado para garantir reprodutibilidade. As ferramentas utilizadas incluem:
+
+\begin{itemize}
+    \item Linguagem de programação: C ou C++, para implementação e execução dos algoritmos;
+    \item Bibliotecas: \texttt{pandas} e \texttt{matplotlib} para análise e visualização dos dados;
+    \item Sistema operacional: Windows 11 Pro com Debian WSL;
+    \item Hardware: Processador	AMD Ryzen 3 PRO 8300GE w/ Radeon 740M Graphics, 3501 Mhz, 4 Núcleo(s), 8 Processador(es) Lógico(s), 16GB RAM.
+\end{itemize}
+
+Para gerar os gráficos coletaremos os dados como CSV e depois utilizaremos através das bibliotecas de análise e visualização de dados mencionados.
+
+Com esse delineamento metodológico, espera-se obter uma avaliação quantitativa e qualitativa dos algoritmos estudados, possibilitando uma conclusão fundamentada sobre suas aplicações ideais.
+
