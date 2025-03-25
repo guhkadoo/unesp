@@ -1,4 +1,5 @@
 #include "compression.h"
+#include "../wav/wav.h"
 #include <stdio.h>
 #include <stdint.h> 
 #include <stdlib.h>
@@ -7,19 +8,21 @@
 //we're counting the duplicates of a string using an array which countains all the ascii (A to Z upper or lowercase).
 
 // ----- PART 1 - COUNT THE DUPLICATES -----
-void count_duplicates(uint8_t *str, uint32_t duplicates[])
+static uint32_t duplicates[SIZE]; 
+
+void count_duplicates(uint8_t *data, uint32_t data_size)
 {
     memset(duplicates, 0, SIZE*sizeof(uint32_t));
-    for(register size_t i=0; str[i]!='\0'; i++) {
-        duplicates[str[i]]++;
+    for(register size_t i=0; i<data_size; i++) {
+        duplicates[data[i]]++;
     }
 }
 
-void print_duplicates(uint32_t duplicates[])
+void print_duplicates()
 {
     for(register size_t i=0; i<SIZE; i++) {
         if(duplicates[i] != 0) {
-            printf("%c (%d) has %u duplicates\n", i, i, duplicates[i]);
+            printf("%c (%d) has %llu duplicates\n", i, i, duplicates[i]);
         }
     }
 }
@@ -50,7 +53,7 @@ void insert_sorted(List *list, struct Node *node)
     list->size++;
 }
 
-void fill_list(List *list, uint32_t duplicates[])
+void fill_list(List *list)
 {
     struct Node *new_node;
     for(register size_t i=0; i<SIZE; i++) {
@@ -59,7 +62,7 @@ void fill_list(List *list, uint32_t duplicates[])
             if(new_node != NULL) {
                 new_node->byte = (uint8_t)i;
                 new_node->duplicates = duplicates[i];
-                new_node->left = new_node->right = NULL;
+                new_node->next = new_node->left = new_node->right = NULL;
 
                 insert_sorted(list, new_node);
             } else {
@@ -175,17 +178,27 @@ void print_dictionary(char **dictionary)
 // ----- PART 4 - END -----
 
 // ----- PART 5 - ENCODING -----
-char *encode(char **dictionary, unsigned char *text)
+
+static inline char *strcat_endpointer(char *dest, char *src)
+{
+    while(*dest) dest++;
+    while(*dest++ = *src++);
+    return --dest;
+}
+
+char *encode(char **dictionary, uint8_t *data, uint32_t data_size)
 {
     int size=0;
     register size_t i;
-    for(i=0; text[i]!='\0'; i++) {
-        size += strlen(dictionary[text[i]]);
+    for(i=0; i<data_size; i++) {
+        size += strlen(dictionary[data[i]]);
     }
 
-    char *code = (char *)calloc(size+1, sizeof(char));
-    for(i=0; text[i]!='\0'; i++) {
-        strcat(code, dictionary[text[i]]);
+    char *code = (char *)malloc(size+1);
+    if(!code) EXIT_WITH_ERROR("Error while allocating memory for char *code");
+    char *ptr = code;
+    for(i=0; i<data_size; i++) {
+        ptr = strcat_endpointer(ptr, dictionary[data[i]]); 
     }
 
     return code;
@@ -219,14 +232,22 @@ char *decode(char *code, struct Node *tree)
 // ----- PART 6 - END -----
 
 // ----- PART 7 - COMPRESSING AND DECOMPRESSING -----
-void compress(char *str)
+void compress(wav *audio_file, char *code)
 {
     FILE *file = fopen("archive.GK", "wb");
-    char byte = 0;
+    uint8_t byte = 0;
     if(file != NULL) {
+        // Add WAV header
+        // RIFF Chunk Descriptor
+        fwrite(&audio_file->RIFF_chunk_descriptor, sizeof(audio_file->RIFF_chunk_descriptor), 1, file);
+        // fmt Subchunk
+        fwrite(&audio_file->fmt_subchunk, sizeof(audio_file->fmt_subchunk), 1, file);
+        // data Subchunk
+        fwrite(&audio_file->data_subchunk, sizeof(audio_file->data_subchunk), 1, file);
+
         int j=7;
-        for(int i=0; str[i] != '\0'; i++) {
-            if(str[i] == '1')
+        for(int i=0; code[i] != '\0'; i++) {
+            if(code[i] == '1')
                 byte |= (1U << j); 
             j--;
             if(j < 0) {
@@ -254,45 +275,61 @@ static int is_bit_1(char byte, int i)
 {
     return byte &= (1U << i);
 }
-
-void decompress(struct Node *tree)
-{
+void decompress(struct Node *tree) {
     FILE *file = fopen("archive.GK", "rb");
-    char byte;
-    struct Node *aux = tree;
+    FILE *out = fopen("decompressed.wav", "wb");
 
-    if(file != NULL) {
-        fseek(file, -1, SEEK_END);
-        long last_byte_to_read_pos = ftell(file);
-        fread(&byte, sizeof(char), 1, file);
-        char quantity = byte;
-        fseek(file, 0, SEEK_SET);
-        long pos;
-        int condition=0;
-
-        while(fread(&byte, sizeof(char), 1, file)) {
-            pos = ftell(file);
-            if(pos == last_byte_to_read_pos + 1) {
-                break;
-            }
-            for(int i=7; i>=condition; i--) {
-                if(pos == last_byte_to_read_pos)
-                    condition = 7-quantity+1;
-
-                if(is_bit_1(byte, i)) {
-                    aux = aux->right;
-                } else {
-                    aux = aux->left;
-                }
-                if(aux->right == NULL && aux->left == NULL) {
-                    printf("%c", aux->byte);
-                    aux = tree;
-                }
-            } 
-        } 
-        fclose(file);
-    } else {
-        EXIT_WITH_ERROR("Error while opening/creating archive in void decompress(char *str)");
+    if (file == NULL || out == NULL) {
+        EXIT_WITH_ERROR("Error opening files in decompress");
     }
+
+    wav audio_file;
+
+    // Read and write the WAV header
+    fread(&audio_file.RIFF_chunk_descriptor, sizeof(audio_file.RIFF_chunk_descriptor), 1, file);
+    fread(&audio_file.fmt_subchunk, sizeof(audio_file.fmt_subchunk), 1, file);
+    fread(&audio_file.data_subchunk, sizeof(audio_file.data_subchunk), 1, file);
+    fwrite(&audio_file.RIFF_chunk_descriptor, sizeof(audio_file.RIFF_chunk_descriptor), 1, out);
+    fwrite(&audio_file.fmt_subchunk, sizeof(audio_file.fmt_subchunk), 1, out);
+    fwrite(&audio_file.data_subchunk, sizeof(audio_file.data_subchunk), 1, out);
+
+    // Get the last byte position
+    fseek(file, -1, SEEK_END);
+    long last_byte_to_read_pos = ftell(file);
+    char quantity;
+    fread(&quantity, sizeof(char), 1, file);
+    fseek(file, sizeof(audio_file.RIFF_chunk_descriptor) + 
+                sizeof(audio_file.fmt_subchunk) + 
+                sizeof(audio_file.data_subchunk), SEEK_SET);
+
+    // Decompression process
+    struct Node *aux = tree;
+    char byte;
+    long pos;
+    int condition = 0;
+
+    while (fread(&byte, sizeof(char), 1, file)) {
+        pos = ftell(file);
+        if (pos == last_byte_to_read_pos + 1) {
+            break;
+        }
+        for (int i = 7; i >= condition; i--) {
+            if (pos == last_byte_to_read_pos) {
+                condition = 7 - quantity + 1;
+            }
+
+            // Traverse Huffman Tree
+            aux = is_bit_1(byte, i) ? aux->right : aux->left;
+
+            // When reaching a leaf node, write decoded byte
+            if (aux->right == NULL && aux->left == NULL) {
+                fwrite(&aux->byte, sizeof(char), 1, out);
+                aux = tree;
+            }
+        }
+    }
+
+    fclose(file);
+    fclose(out);
 }
 // ----- PART 7 - END -----
