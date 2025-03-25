@@ -2,6 +2,7 @@
 #define COMPRESSION_H
 
 #include <stdint.h>
+#include "../wav/wav.h"
 
 #define SIZE 256
 #define EXIT_WITH_ERROR(msg) (fprintf(stderr, "%s\n", msg), exit(1))
@@ -18,8 +19,8 @@
     ((byte) & 0x01 ? '1' : '0')
 
 // ----- PART 1 - COUNT THE DUPLICATES -----
-void count_duplicates(uint8_t *str, uint32_t duplicates[]);
-void print_duplicates(uint32_t duplicates[]);
+void count_duplicates(uint8_t *data, uint32_t data_size);
+void print_duplicates();
 // ----- PART 1 - END -----
 
 // ----- PART 2 - SORTED QUEUE ----- 
@@ -36,7 +37,7 @@ typedef struct {
 
 void initialize_list(List *list);
 void insert_sorted(List *list, struct Node *node);
-void fill_list(List *list, uint32_t duplicates[]);
+void fill_list(List *list);
 void print_list(List list);
 // ----- PART 2 - END -----
 
@@ -54,7 +55,7 @@ void print_dictionary(char **dictionary);
 // ----- PART 4 - END -----
 
 // ----- PART 5 - ENCODING -----
-char *encode(char **dictionary, unsigned char *text);
+char *encode(char **dictionary, uint8_t *data, uint32_t data_size);
 // ----- PART 5 - END -----
 
 // ----- PART 6 - DECODING -----
@@ -62,7 +63,7 @@ char *decode(char *code, struct Node *tree);
 // ----- PART 6 - END -----
 
 // ----- PART 7 - COMPRESSING AND DECOMPRESSING -----
-void compress(char *str);
+void compress(wav *audio_file, char *code);
 void decompress(struct Node *tree);
 // ----- PART 7 - END -----
 
