@@ -32,7 +32,7 @@ int main(int argc, char *argv[])
 
 // ----- PART 3 - HUFFMAN_TREE -----
     struct Node *huffman_tree = create_huffman_tree(&list);
-    //print_huffman(huffman_tree, 1);
+    print_huffman(huffman_tree, 1);
 
 // ----- PART 4 - DICTIONARY -----
     int columns = height_huffman(huffman_tree);
