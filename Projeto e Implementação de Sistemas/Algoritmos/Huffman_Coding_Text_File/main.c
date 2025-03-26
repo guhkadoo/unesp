@@ -7,6 +7,8 @@ unsigned char *read_text();
 
 int main(int argc, char *argv[])
 {
+    if(argc != 2)
+        EXIT_WITH_ERROR("Coloque apenas um argumento.\n");
 // data structures:
     unsigned int duplicates[SIZE];
     List list;
@@ -15,7 +17,7 @@ int main(int argc, char *argv[])
 
 
     //int size = file_size();
-    unsigned char *str = read_text();
+    unsigned char *str = read_text(argv[1]);
     /* 
     unsigned char str[500];
     printf("Write a string to compress: ");
@@ -57,9 +59,9 @@ int main(int argc, char *argv[])
     decompress(huffman_tree);
 }
 
-unsigned char *read_text()
+unsigned char *read_text(char *file_name)
 {
-    FILE *file = fopen("archive.txt", "rb");
+    FILE *file = fopen(file_name, "rb");
     unsigned char *str;
     if(file != NULL) {
         fseek(file, 0, SEEK_END);

@@ -8,15 +8,17 @@ unsigned char *read_text();
 
 int main(int argc, char *argv[])
 {
+    if(argc != 2)
+        EXIT_WITH_ERROR("Digite apenas um argumento!");
 // data structures:
     wav audio_file;
     List list;
     initialize_list(&list);
     char **dictionary;
 
-    if(read_wav("../wav/file_example4.wav", &audio_file) == -1)
+    if(read_wav(argv[1], &audio_file) == -1)
         EXIT_WITH_ERROR("Error while reading .wav file");
-    //print_wav(&audio_file);
+    print_wav(&audio_file);
 
 // ----- PART 1 - COUNT THE DUPLICATES -----
     count_duplicates(audio_file.data, audio_file.data_subchunk.size);
