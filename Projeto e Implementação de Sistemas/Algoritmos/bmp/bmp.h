@@ -3,18 +3,19 @@
 
 #include <stdint.h>
 #include <stdlib.h>
+#include <stdint.h>
 
 #define EXIT_WITH_ERROR(msg) (fprintf(stderr, "%s\n", msg), exit(1))
 
 #pragma pack(push,1) 
 typedef struct {
-    struct {
+    struct header {
         char signature[2];
         uint32_t file_size;
         uint32_t reserved; //unused
         uint32_t data_offset;
     } header;
-    struct {
+    struct info_header {
         uint32_t size; //should be 40
         uint32_t width;
         uint32_t height;
@@ -32,6 +33,11 @@ typedef struct {
 } bmp;
 #pragma pack(pop)
 
+typedef struct header header;
+typedef struct info_header info_header;
+
 int read_bmp(const char* filename, bmp* file_data);
 void print_bmp(bmp* file_data);
+uint32_t get_bmp_data_size(bmp* bmp_file);
+
 #endif //BMP_H
