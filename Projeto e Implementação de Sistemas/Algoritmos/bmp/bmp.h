@@ -2,6 +2,7 @@
 #define BMP_H
 
 #include <stdint.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
 
@@ -38,6 +39,8 @@ typedef struct info_header info_header;
 
 int read_bmp(const char* filename, bmp* file_data);
 void print_bmp(bmp* file_data);
+uint32_t get_color_table_size(bmp* bmp_file);
 uint32_t get_bmp_data_size(bmp* bmp_file);
+int has_color_table(bmp* bmp_file);
 
 #endif //BMP_H

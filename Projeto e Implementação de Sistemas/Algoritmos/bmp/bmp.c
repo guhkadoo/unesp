@@ -3,9 +3,10 @@
 #include <stdlib.h>
 #include <stdint.h>
 
-static size_t get_color_table_size(bmp* bmp_file)
+uint32_t get_color_table_size(bmp* bmp_file)
 {
-    return 4 * (1 << bmp_file->info_header.bits_per_pixel); 
+    info_header* ih = &(bmp_file->info_header);
+    return 4 * (1 << ih->bits_per_pixel); 
 }
 
 uint32_t get_bmp_data_size(bmp* bmp_file)
@@ -13,6 +14,14 @@ uint32_t get_bmp_data_size(bmp* bmp_file)
     info_header* ih = &(bmp_file->info_header);
     header* h = &(bmp_file->header);
     return ih->width * ih->height * ih->bits_per_pixel / 8; 
+}
+
+int has_color_table(bmp* bmp_file)
+{
+    info_header* ih = &(bmp_file->info_header);
+    if(ih->bits_per_pixel > 8)
+        return 0;
+    return 1;
 }
 
 int read_bmp(const char* filename, bmp* file_data)
@@ -37,13 +46,12 @@ int read_bmp(const char* filename, bmp* file_data)
         fclose(file);
         return -1;
     }
-    if(ih->bits_per_pixel > 8)
+    if(!has_color_table(file_data))
     {
         file_data->color_table = NULL;
     } else {
         size_t color_table_size = (size_t)get_color_table_size(file_data); 
         file_data->color_table = (uint8_t*)malloc(color_table_size);
-        printf("color_table_size: %d\n", color_table_size);
 
         if(fread(file_data->color_table, color_table_size, 1, file) != 1)
         {
@@ -96,7 +104,7 @@ void print_bmp(bmp* file_data)
             ih->x_pixels_per_m, ih->y_pixels_per_m,
             ih->colors_used, ih->important_colors);
 
-    if(ih->bits_per_pixel <= 8)
+    if(has_color_table(file_data))
     {
         size_t color_table_size = (size_t)get_color_table_size(file_data);
         printf( "\nBMP COLOR TABLE:\n");
