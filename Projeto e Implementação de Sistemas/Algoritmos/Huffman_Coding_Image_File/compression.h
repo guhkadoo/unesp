@@ -2,7 +2,8 @@
 #define COMPRESSION_H
 
 #include <stdint.h>
-#include "../wav/wav.h"
+#include <stdio.h>
+#include "../bmp/bmp.h"
 
 #define SIZE 256
 #define EXIT_WITH_ERROR(msg) (fprintf(stderr, "%s\n", msg), exit(1))
@@ -63,7 +64,7 @@ char *decode(char *code, struct Node *tree);
 // ----- PART 6 - END -----
 
 // ----- PART 7 - COMPRESSING AND DECOMPRESSING -----
-void compress(wav *audio_file, char *code);
+void compress(bmp *image_file, char *code);
 void decompress(struct Node *tree);
 // ----- PART 7 - END -----
 

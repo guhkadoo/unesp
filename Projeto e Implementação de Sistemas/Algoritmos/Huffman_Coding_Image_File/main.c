@@ -37,19 +37,19 @@ int main(int argc, char *argv[])
     int columns = height_huffman(huffman_tree);
     dictionary = dictionary_allocation(columns); 
     fill_dictionary(dictionary, huffman_tree, "", columns);
-    print_dictionary(dictionary);
+    //print_dictionary(dictionary);
 
 // ----- PART 5 - ENCODING -----
-    printf("\033[31m");
-    for(register size_t i=0; i<data_size; i++)
-        printf(B, BYTE_TO_BINARY(*(image_file.data+i)));
+    //printf("\033[31m");
+    //for(register size_t i=0; i<data_size; i++)
+    //    printf(B, BYTE_TO_BINARY(*(image_file.data+i)));
 
     char *code = encode(dictionary, image_file.data, data_size);
-    printf("\n\033[32m%s\n", code);
+    //printf("\n\033[32m%s\n", code);
 
 // ----- PART 6 - DECODING -----
-    char *decode_str = decode(code, huffman_tree);
-        printf("\n\033[0m%x\n", decode_str);
+    //char *decode_str = decode(code, huffman_tree);
+    //    printf("\n\033[0m%x\n", decode_str);
 
 // ----- PART 7 - COMPRESSING AND DECOMPRESSING -----
     compress(&image_file, code);

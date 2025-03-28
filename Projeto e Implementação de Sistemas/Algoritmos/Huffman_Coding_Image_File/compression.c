@@ -1,5 +1,5 @@
 #include "compression.h"
-#include "../wav/wav.h"
+#include "../bmp/bmp.h"
 #include <stdio.h>
 #include <stdint.h> 
 #include <stdlib.h>
@@ -232,18 +232,27 @@ char *decode(char *code, struct Node *tree)
 // ----- PART 6 - END -----
 
 // ----- PART 7 - COMPRESSING AND DECOMPRESSING -----
+static void write_header(FILE* file, bmp* image_file)
+{
+    header* h = &(image_file->header); 
+    info_header* ih = &(image_file->info_header);
+    fwrite(h, sizeof(*h), 1, file);
+    fwrite(ih, sizeof(*ih), 1, file);
+    if(has_color_table(image_file))
+    {
+        fwrite(image_file->color_table, get_color_table_size(image_file), 1, file);
+    }
+}
+
 void compress(bmp *image_file, char *code)
 {
+    header* h = &(image_file->header);  
+    info_header* ih = &(image_file->info_header);
     FILE *file = fopen("archive.GK", "wb");
     uint8_t byte = 0;
     if(file != NULL) {
-        // Add WAV header
-        // RIFF Chunk Descriptor
-        fwrite(&image_file-header>, sizeof(), 1, file);
-        // fmt Subchunk
-        fwrite(&audio_file->fmt_subchunk, sizeof(audio_file->fmt_subchunk), 1, file);
-        // data Subchunk
-        fwrite(&audio_file->data_subchunk, sizeof(audio_file->data_subchunk), 1, file);
+        // Add BMP header
+        write_header(file, image_file);
 
         int j=7;
         for(int i=0; code[i] != '\0'; i++) {
@@ -275,32 +284,49 @@ static int is_bit_1(char byte, int i)
 {
     return byte &= (1U << i);
 }
+
+static void read_header(FILE* file, bmp* image_file)
+{
+    header* h = &(image_file->header);
+    info_header* ih = &(image_file->info_header);
+    fread(h, sizeof(*h), 1, file);
+    fread(ih, sizeof(*ih), 1, file);
+    if(has_color_table(image_file))
+    {
+        size_t color_table_size = (size_t)get_color_table_size(image_file);
+        image_file->color_table = (uint8_t*)malloc(color_table_size);
+        fread(image_file->color_table, color_table_size, 1, file);
+    }
+    size_t bmp_data_size = (size_t)get_bmp_data_size(image_file);
+    image_file->data = (uint8_t*)malloc(bmp_data_size);
+}
+
+
 void decompress(struct Node *tree) {
     FILE *file = fopen("archive.GK", "rb");
-    FILE *out = fopen("decompressed.wav", "wb");
+    FILE *out = fopen("decompressed.bmp", "wb");
 
     if (file == NULL || out == NULL) {
         EXIT_WITH_ERROR("Error opening files in decompress");
     }
 
-    wav audio_file;
+    bmp image_file;
+    header* h = &(image_file.header);
+    info_header* ih = &(image_file.info_header);
 
-    // Read and write the WAV header
-    fread(&audio_file.RIFF_chunk_descriptor, sizeof(audio_file.RIFF_chunk_descriptor), 1, file);
-    fread(&audio_file.fmt_subchunk, sizeof(audio_file.fmt_subchunk), 1, file);
-    fread(&audio_file.data_subchunk, sizeof(audio_file.data_subchunk), 1, file);
-    fwrite(&audio_file.RIFF_chunk_descriptor, sizeof(audio_file.RIFF_chunk_descriptor), 1, out);
-    fwrite(&audio_file.fmt_subchunk, sizeof(audio_file.fmt_subchunk), 1, out);
-    fwrite(&audio_file.data_subchunk, sizeof(audio_file.data_subchunk), 1, out);
+    // Read and write the BMP header
+    read_header(file, &image_file);
+    write_header(out, &image_file);
 
     // Get the last byte position
     fseek(file, -1, SEEK_END);
     long last_byte_to_read_pos = ftell(file);
     char quantity;
     fread(&quantity, sizeof(char), 1, file);
-    fseek(file, sizeof(audio_file.RIFF_chunk_descriptor) + 
-                sizeof(audio_file.fmt_subchunk) + 
-                sizeof(audio_file.data_subchunk), SEEK_SET);
+    size_t seek_pos = sizeof(*h) + sizeof(*ih);
+    if(has_color_table(&image_file))
+        seek_pos += get_color_table_size(&image_file); 
+    fseek(file, seek_pos, SEEK_SET);
 
     // Decompression process
     struct Node *aux = tree;
@@ -308,6 +334,7 @@ void decompress(struct Node *tree) {
     long pos;
     int condition = 0;
 
+    printf("\n\n");
     while (fread(&byte, sizeof(char), 1, file)) {
         pos = ftell(file);
         if (pos == last_byte_to_read_pos + 1) {
@@ -324,6 +351,7 @@ void decompress(struct Node *tree) {
             // When reaching a leaf node, write decoded byte
             if (aux->right == NULL && aux->left == NULL) {
                 fwrite(&aux->byte, sizeof(char), 1, out);
+                printf("%x ", aux->byte);
                 aux = tree;
             }
         }
@@ -331,5 +359,6 @@ void decompress(struct Node *tree) {
 
     fclose(file);
     fclose(out);
+    print_bmp(&image_file);
 }
 // ----- PART 7 - END -----
