@@ -17,7 +17,7 @@ typedef struct {
         uint32_t data_offset;
     } header;
     struct info_header {
-        uint32_t size; //should be 40
+        uint32_t size; //should be 40 or 0x28
         uint32_t width;
         uint32_t height;
         uint16_t planes;
@@ -31,6 +31,7 @@ typedef struct {
     } info_header;
     uint8_t *color_table;
     uint8_t *data;
+    size_t data_size;
 } bmp;
 #pragma pack(pop)
 
@@ -40,7 +41,6 @@ typedef struct info_header info_header;
 int read_bmp(const char* filename, bmp* file_data);
 void print_bmp(bmp* file_data);
 uint32_t get_color_table_size(bmp* bmp_file);
-uint32_t get_bmp_data_size(bmp* bmp_file);
 int has_color_table(bmp* bmp_file);
 
 #endif //BMP_H
