@@ -297,8 +297,7 @@ static void read_header(FILE* file, bmp* image_file)
         image_file->color_table = (uint8_t*)malloc(color_table_size);
         fread(image_file->color_table, color_table_size, 1, file);
     }
-    size_t bmp_data_size = (size_t)get_bmp_data_size(image_file);
-    image_file->data = (uint8_t*)malloc(bmp_data_size);
+    image_file->data = (uint8_t*)malloc(image_file->data_size);
 }
 
 
@@ -351,7 +350,6 @@ void decompress(struct Node *tree) {
             // When reaching a leaf node, write decoded byte
             if (aux->right == NULL && aux->left == NULL) {
                 fwrite(&aux->byte, sizeof(char), 1, out);
-                printf("%x ", aux->byte);
                 aux = tree;
             }
         }
@@ -359,6 +357,5 @@ void decompress(struct Node *tree) {
 
     fclose(file);
     fclose(out);
-    print_bmp(&image_file);
 }
 // ----- PART 7 - END -----

@@ -21,8 +21,7 @@ int main(int argc, char *argv[])
     print_bmp(&image_file);
 
 // ----- PART 1 - COUNT THE DUPLICATES -----
-    uint32_t data_size = get_bmp_data_size(&image_file);
-    count_duplicates(image_file.data, data_size);
+    count_duplicates(image_file.data, image_file.data_size);
     //print_duplicates();
 
 // ----- PART 2 - SORTED QUEUE -----
@@ -44,7 +43,7 @@ int main(int argc, char *argv[])
     //for(register size_t i=0; i<data_size; i++)
     //    printf(B, BYTE_TO_BINARY(*(image_file.data+i)));
 
-    char *code = encode(dictionary, image_file.data, data_size);
+    char *code = encode(dictionary, image_file.data, image_file.data_size);
     //printf("\n\033[32m%s\n", code);
 
 // ----- PART 6 - DECODING -----
