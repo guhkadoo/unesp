@@ -255,6 +255,7 @@ static int is_bit_1(char byte, int i)
 void decompress(struct Node *tree)
 {
     FILE *file = fopen("archive.GK", "rb");
+    FILE *out = fopen("decompressed.txt", "wb");
     char byte;
     struct Node *aux = tree;
 
@@ -282,14 +283,37 @@ void decompress(struct Node *tree)
                     aux = aux->left;
                 }
                 if(aux->right == NULL && aux->left == NULL) {
+                    fwrite(&aux->character, 1, 1, out);
                     printf("%c", aux->character);
                     aux = tree;
                 }
             } 
         } 
         fclose(file);
+        fclose(out);
     } else {
         EXIT_WITH_ERROR("Error while opening/creating archive in void decompress(char *str)");
     }
 }
 // ----- PART 7 - END -----
+
+unsigned char *read_text(char *file_name)
+{
+    FILE *file = fopen(file_name, "rb");
+    unsigned char *str;
+    if(file != NULL) {
+        fseek(file, 0, SEEK_END);
+        size_t file_size = ftell(file);
+        rewind(file);
+
+        str = (unsigned char *)calloc(file_size, sizeof(unsigned char));
+        size_t read_count = fread(str, sizeof(char), file_size, file);
+        str[read_count] = '\0';
+
+        fclose(file);
+    } else {
+        EXIT_WITH_ERROR("Error while executing read_text");
+    }
+
+    return str;
+}

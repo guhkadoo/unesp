@@ -3,8 +3,6 @@
 #include <stdlib.h>
 #include <stddef.h>
 
-unsigned char *read_text();
-
 int main(int argc, char *argv[])
 {
     if(argc != 2)
@@ -57,25 +55,4 @@ int main(int argc, char *argv[])
 // ----- PART 7 - COMPRESSING AND DECOMPRESSING -----
     compress(code);
     decompress(huffman_tree);
-}
-
-unsigned char *read_text(char *file_name)
-{
-    FILE *file = fopen(file_name, "rb");
-    unsigned char *str;
-    if(file != NULL) {
-        fseek(file, 0, SEEK_END);
-        size_t file_size = ftell(file);
-        rewind(file);
-
-        str = (unsigned char *)calloc(file_size, sizeof(unsigned char));
-        size_t read_count = fread(str, sizeof(char), file_size, file);
-        str[read_count] = '\0';
-
-        fclose(file);
-    } else {
-        EXIT_WITH_ERROR("Error while executing read_text");
-    }
-
-    return str;
 }

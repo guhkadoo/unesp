@@ -63,5 +63,6 @@ char *decode(char *code, struct Node *tree);
 void compress(char *str);
 void decompress(struct Node *tree);
 // ----- PART 7 - END -----
+unsigned char *read_text(char *file_name);
 
 #endif //COMPRESSION_H
