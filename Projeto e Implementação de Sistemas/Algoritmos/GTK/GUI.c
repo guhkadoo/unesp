@@ -1,6 +1,4 @@
 #include <gtk/gtk.h>
-#include "../wav/wav.h"
-#include "../bmp/bmp.h"
 #include "../Huffman_Coding_Text_File/compression.h"
 #include <stdio.h>
 #include <stdlib.h>
