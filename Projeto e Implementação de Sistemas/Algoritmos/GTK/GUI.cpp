@@ -1,6 +1,9 @@
 #include <gtk/gtk.h>
-#include "../Huffman_Coding_Text_File/compression.h"
+#include "../Huffman_Coding_Text_File/huffman_txt.hpp"
+#include "../Huffman_Coding_Audio_File/huffman_wav.hpp"
+#include "../Huffman_Coding_Image_File/huffman_bmp.hpp"
 #include <cstdio>
+#include <string>
 #include <cstdlib>
 #include <cstring>
 
@@ -11,12 +14,13 @@ static GtkWidget* compressed_size_label;
 static GtkWidget* algorithm_combo;
 static GtkWidget* file_chooser_button;
 static GtkWidget* progress_bar;
-struct Node* huffman_tree;
+HuffmanTXT archive_txt;
+HuffmanBMP archive_bmp;
+HuffmanWAV archive_wav;
+
 
 void on_compress_button_clicked(GtkButton* button, gpointer user_data);
 void on_decompress_button_clicked(GtkButton* button, gpointer user_data);
-static struct Node* huffman_compress_txt(); 
-static void huffman_decompress_txt(); 
 
 int main(int argc, char* argv[])
 {
@@ -77,14 +81,19 @@ void on_compress_button_clicked(GtkButton* button, gpointer user_data)
     const gchar* file_path = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(file_chooser_button));
     const gchar* extension = strrchr(file_path, '.');
     printf("%d\n%s\n%s\n", selected_algorithm, file_path, extension);
+    std::string path(file_path); 
 
     if(selected_algorithm == HUFFMAN)
     {
-        if(!strcmp(".txt", extension))
-        {
-            huffman_tree = huffman_compress_txt(file_path);
+        if(!strcmp(".txt", extension)) {
+            archive_txt.set_filepath(path);
+            archive_txt.compress();
         } else if(!strcmp(".wav", extension)) {
+            archive_wav.set_filepath(path);
+            archive_wav.compress();
         } else if(!strcmp(".bmp", extension)) {
+            archive_bmp.set_filepath(path);
+            archive_bmp.compress();
         } else {
             EXIT_WITH_ERROR("error while opening file\n");
         }
@@ -100,35 +109,13 @@ void on_decompress_button_clicked(GtkButton* button, gpointer user_data)
     {
         if(!strcmp(".txt", extension))
         {
-            huffman_decompress_txt();
+            archive_txt.decompress();
         } else if(!strcmp(".wav", extension)) {
+            archive_wav.decompress();
         } else if(!strcmp(".bmp", extension)) {
+            archive_bmp.decompress();
         } else {
             EXIT_WITH_ERROR("error while opening file\n");
         }
     }
-}
-
-static struct Node* huffman_compress_txt(const gchar* filename)
-{
-    unsigned int duplicates[SIZE];
-    List list;
-    initialize_list(&list);
-    char **dictionary;
-    unsigned char *str = read_text(filename);
-    count_duplicates(str, duplicates);
-    fill_list(&list, duplicates);
-    struct Node *huffman_tree = create_huffman_tree(&list);
-    int columns = height_huffman(huffman_tree);
-    dictionary = dictionary_allocation(columns); 
-    fill_dictionary(dictionary, huffman_tree, "", columns);
-    char *code = encode(dictionary, str);
-    compress(code);
-
-    return huffman_tree;
-}
-
-static void huffman_decompress_txt()
-{
-    decompress(huffman_tree);
 }
