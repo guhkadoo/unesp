@@ -1,8 +1,8 @@
 #include <gtk/gtk.h>
 #include "../Huffman_Coding_Text_File/compression.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 
 #define HUFFMAN 0
 
