@@ -23,8 +23,13 @@
 
 class Huffman {
 public:
+    Huffman() : filepath("") {};
     Huffman(std::string fp) : filepath(fp) {};
+    void set_filepath(std::string str);
+    void decompress(void (*write_header)(FILE*, void*) = nullptr, void* filetype = nullptr, size_t pos = 0);
+    virtual void compress() = 0;
 
+protected:
     static const size_t SIZE = 256;
     std::array<uint32_t, SIZE> duplicates = {};
     std::string filepath;
@@ -78,13 +83,10 @@ public:
 
     char *decode(char *code, struct Node *tree);
     void print_duplicates();
-    void decompress(void (*write_header)(FILE*, void*) = nullptr, void* filetype = nullptr, size_t pos = 0);
     void count_duplicates(uint8_t* data, size_t size);
     
     void internal_compress(char* code, void (*write_header)(FILE*, void*) = nullptr, void* filetype = nullptr);
     char* encode(uint8_t* data, size_t data_size);
-    virtual void compress() = 0;
-protected:
     List list;
 };
 

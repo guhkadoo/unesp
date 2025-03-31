@@ -7,6 +7,11 @@
 
 //we're counting the duplicates of a string using an array which countains all the ascii (A to Z upper or lowercase).
 
+void Huffman::set_filepath(std::string str)
+{
+    filepath = str; 
+}
+
 void Huffman::count_duplicates(uint8_t* data, size_t size)
 {
     for(size_t i=0; i<size; i++) {
