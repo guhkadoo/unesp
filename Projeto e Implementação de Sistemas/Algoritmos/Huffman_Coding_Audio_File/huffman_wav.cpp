@@ -25,5 +25,7 @@ void HuffmanWAV::compress()
 
 void HuffmanWAV::decompress()
 {
-    Huffman::decompress(write_wav_header, &wav_file);
+    size_t pos = sizeof(wav_file.riff_chunk_descriptor) + sizeof(wav_file.fmt_subchunk) +
+        sizeof(wav_file.data_subchunk); 
+    Huffman::decompress(write_wav_header, &wav_file, pos);
 }
