@@ -78,7 +78,7 @@ public:
 
     char *decode(char *code, struct Node *tree);
     void print_duplicates();
-    void decompress(void (*write_header)(FILE*, void*) = nullptr, void* filetype = nullptr);
+    void decompress(void (*write_header)(FILE*, void*) = nullptr, void* filetype = nullptr, size_t pos = 0);
     void count_duplicates(uint8_t* data, size_t size);
     
     void internal_compress(char* code, void (*write_header)(FILE*, void*) = nullptr, void* filetype = nullptr);

@@ -260,7 +260,7 @@ void Huffman::internal_compress(char* code, void (*write_header)(FILE*, void*), 
     if(file != NULL) {
         if(write_header && filetype)
         {
-            printf("entrou aqui\n");
+            printf("1. entrou aqui\n");
             write_header(file, filetype);
         }
         int j=7;
@@ -294,7 +294,7 @@ static int is_bit_1(char byte, int i)
     return byte &= (1U << i);
 }
 
-void Huffman::decompress(void (*write_header)(FILE*, void*), void* filetype) 
+void Huffman::decompress(void (*write_header)(FILE*, void*), void* filetype, size_t pos) 
 {
     std::string filename = get_filename(filepath);
     filename.append("_decompressed");
@@ -309,13 +309,16 @@ void Huffman::decompress(void (*write_header)(FILE*, void*), void* filetype)
 
     if(file != NULL) {
         if(filetype && write_header)
+        {
+            printf("2. entrou aqui\n");
             write_header(out, filetype);
+        }
 
         fseek(file, -1, SEEK_END);
         long last_byte_to_read_pos = ftell(file);
         fread(&byte, sizeof(char), 1, file);
         char quantity = byte;
-        fseek(file, 0, SEEK_SET);
+        fseek(file, pos, SEEK_SET);
         long pos;
         int condition=0;
 
