@@ -23,7 +23,7 @@
 % ------------------------------------------------------------------------
 % ------------------------------------------------------------------------
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{lib/abntex2}[<CURRENT_DATE> v<VERSION> abnTeX2]
+\ProvidesClass{abntex2}[<CURRENT_DATE> v<VERSION> abnTeX2]
 \RequirePackage{ifthen}
 %
 % Captura as options article e twocolumn
@@ -160,7 +160,7 @@
   %% ajusta nomes padroes do babel
   \renewcommand{\bibname}{Refer\^encias}
   \renewcommand{\indexname}{\'Indice}
-  \renewcommand{\listfigurename}{Lista de figuras}
+  \renewcommand{\listfigurename}{Lista de ilustra\c{c}\~{o}es}
   \renewcommand{\listtablename}{Lista de tabelas}
   %% ajusta nomes usados com a macro \autoref
   \renewcommand{\pageautorefname}{p\'agina}
@@ -325,7 +325,6 @@
   \counterwithout{figure}{chapter}
   \counterwithout{table}{chapter}
 }
-
 % ---
 
 % ---
@@ -619,11 +618,12 @@
      \tocprintchapter
      \setboolean{abntex@innonumchapter}{false}
      \chapnumfont%
-     \space\thechapter\space%
+     \space\thechapter%
      \ifthenelse{\boolean{abntex@apendiceousecao}}{%
        \tocinnonumchapter
        \ABNTEXcaptiondelim%
-     }{} % else
+     }{}%
+     \space%
   }
   \renewcommand{\afterchapternum}{}
   
@@ -696,7 +696,8 @@
 \newcommand{\imprimirtitulo}{\thetitle}
 
 % Comandos de dados - titulo do documento
-\newcommand{\tituloestrangeiro}[1]{\providecommand{\theforeigntitle}{#1}}
+\providecommand{\theforeigntitle}[1]{}
+\newcommand{\tituloestrangeiro}[1]{\renewcommand{\theforeigntitle}{#1}}
 \newcommand{\imprimirtituloestrangeiro}{\theforeigntitle}
 
 
@@ -990,7 +991,7 @@
 % Ambiente para alineas e e subalineas (incisos)
 % ABNT NBR 6024/2012 - 4.2 e 4.3
 \newlist{alineas}{enumerate}{2}
-\setlist[alineas,1]{label={\alph*)},topsep=0pt,itemsep=0pt,leftmargin=\parindent+\labelwidth-\labelsep}%
+\setlist[alineas,1]{label={\alph*)},topsep=0pt,itemsep=0pt,left=\parindent}%
 \setlist[alineas,2]{label={--},topsep=0pt,itemsep=0pt,leftmargin=*}
 \newlist{subalineas}{enumerate}{1}
 \setlist[subalineas,1]{label={--},topsep=0pt,itemsep=0pt,leftmargin=*}%
