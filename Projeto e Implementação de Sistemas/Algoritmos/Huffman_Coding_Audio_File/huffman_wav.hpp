@@ -13,6 +13,7 @@ public:
     void compress() override;  
     void decompress();
     HuffmanWAV(std::string fp) : Huffman(fp) {};
+    HuffmanWAV() : Huffman() {};
 }; 
 
 #endif //HUFFMAN_WAV_HPP

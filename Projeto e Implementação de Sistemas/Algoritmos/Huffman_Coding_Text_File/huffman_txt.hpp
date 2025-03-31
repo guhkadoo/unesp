@@ -13,6 +13,7 @@ public:
     void compress();
     unsigned char* read_text();
     HuffmanTXT(std::string fp) : Huffman(fp) {};
+    HuffmanTXT() : Huffman() {};
 }; 
 
 #endif //HUFFMAN_TXT_HPP

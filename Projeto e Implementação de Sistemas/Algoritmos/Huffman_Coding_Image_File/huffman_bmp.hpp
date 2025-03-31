@@ -14,6 +14,7 @@ public:
     void compress() override;
     void decompress();
     HuffmanBMP(std::string fp) : Huffman(fp) {};
+    HuffmanBMP(): Huffman() {};
 };
 
 
