@@ -46,7 +46,17 @@
 \usepackage{silence}
 %Disable all warnings issued by latex starting with "You have..."
 \WarningFilter{latex}{You have requested package}
-\usepackage[alf, abnt-etal-list=0 ]{lib/abntex2cite}	% Citações padrão ABNT
+%\usepackage[alf, abnt-etal-text=emph]{lib/abntex2cite}	% Citações padrão ABNT
+
+\RequirePackage[
+   alf,
+   abnt-repeated-title-omit = yes,
+   abnt-emphasize = bf,
+   abnt-etal-list=0,
+   abnt-etal-text=emph,
+   abnt-etal-cite=2,
+ ]{abntex2cite}
+
 \usepackage[br]{lib/nicealgo}       % Pacote para criação de algoritmos
 \usepackage{lib/customizacoes}      % Pacote de customizações do abntex2
 
