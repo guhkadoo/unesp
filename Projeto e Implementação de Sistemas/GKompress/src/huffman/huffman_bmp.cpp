@@ -17,6 +17,26 @@ static void write_bmp_header(FILE* file, void* image_file)
     }
 }
 
+static void read_bmp_header(FILE* file, void* image_file)
+{
+    bmp* bmp_ptr = static_cast<bmp*>(image_file); 
+    fread(&bmp_ptr->header, sizeof(bmp_ptr->header), 1, file);
+    fread(&bmp_ptr->info_header, sizeof(bmp_ptr->info_header), 1, file);
+    if(bmp_ptr->has_color_table())
+    {
+        fwrite(bmp_ptr->color_table, bmp_ptr->get_color_table_size(), 1, file);
+    }
+}
+
+static size_t get_pos(void* image_file)
+{
+    bmp* bmp_ptr = static_cast<bmp*>(image_file);
+    size_t seek_pos = sizeof(bmp_ptr->header) + sizeof(bmp_ptr->info_header);
+        if(bmp_ptr->has_color_table())
+            seek_pos += bmp_ptr->get_color_table_size();
+    return seek_pos;
+}
+
 void HuffmanBMP::compress()
 {
     bmp_file.read(filepath.c_str());
@@ -31,8 +51,6 @@ void HuffmanBMP::compress()
 }
 
 void HuffmanBMP::decompress() {
-    size_t pos = sizeof(bmp_file.header) + sizeof(bmp_file.info_header);
-    if(bmp_file.has_color_table())
-        pos += bmp_file.get_color_table_size();
-    Huffman::decompress(write_bmp_header, &bmp_file, pos);
+    bmp decompressed_bmp;
+    Huffman::decompress(write_bmp_header, read_bmp_header, get_pos, &decompressed_bmp);
 }

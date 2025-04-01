@@ -10,6 +10,21 @@ static void write_wav_header(FILE* file, void* audio_file)
     fwrite(&wav_ptr->data_subchunk, sizeof(wav_ptr->data_subchunk), 1, file);
 }
 
+static void read_wav_header(FILE* file, void* audio_file)
+{
+    wav* wav_ptr= static_cast<wav*>(audio_file); 
+    fread(&wav_ptr->riff_chunk_descriptor, sizeof(wav_ptr->riff_chunk_descriptor), 1, file);
+    fread(&wav_ptr->fmt_subchunk, sizeof(wav_ptr->fmt_subchunk), 1, file);
+    fread(&wav_ptr->data_subchunk, sizeof(wav_ptr->data_subchunk), 1, file);
+}
+
+static size_t get_pos(void* wav_file)
+{
+    wav* wav_ptr= static_cast<wav*>(wav_file); 
+    size_t pos = sizeof(wav_ptr->riff_chunk_descriptor) + sizeof(wav_ptr->fmt_subchunk) + sizeof(wav_ptr->data_subchunk); 
+    return pos;
+}
+
 void HuffmanWAV::compress() 
 {
     wav_file.read(filepath);
@@ -25,7 +40,6 @@ void HuffmanWAV::compress()
 
 void HuffmanWAV::decompress()
 {
-    size_t pos = sizeof(wav_file.riff_chunk_descriptor) + sizeof(wav_file.fmt_subchunk) +
-        sizeof(wav_file.data_subchunk); 
-    Huffman::decompress(write_wav_header, &wav_file, pos);
+    wav decompressed_wav;
+    Huffman::decompress(write_wav_header, read_wav_header, get_pos, &decompressed_wav);
 }

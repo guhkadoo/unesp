@@ -264,7 +264,7 @@ static std::string get_extension(std::string filepath)
     return filename_w_ext.substr(dot);
 }
 
-void Huffman::internal_compress(char* code, void (*write_header)(FILE*, void*), void* filetype)
+static std::string get_decompressed_filepath(std::string filepath)
 {
     char cwd[1024];
     if(getcwd(cwd, sizeof(cwd)) == NULL)
@@ -272,20 +272,40 @@ void Huffman::internal_compress(char* code, void (*write_header)(FILE*, void*), 
     std::string filename = cwd;
     filename.append("/data/output/");
     std::string aux_str = get_filename(filepath);
-    aux_str.append("huffman1");
+    aux_str.append("_huffman1decompressed");
+    aux_str.append(get_extension(filepath));
+    filename.append(aux_str);
+    
+    return filename;
+}
+
+static std::string get_compressed_filepath(std::string filepath)
+{
+    char cwd[1024];
+    if(getcwd(cwd, sizeof(cwd)) == NULL)
+        EXIT_WITH_ERROR("getcwd() error");
+    std::string filename = cwd;
+    filename.append("/data/output/");
+
+    std::string aux_str = get_filename(filepath);
+    aux_str.append("_huffman1");
     std::string format = get_extension(filepath);
     format += ".GZ";
     aux_str.append(format);
-    filename.append(aux_str);
 
-    FILE *file = fopen(filename.c_str(), "wb");
+    filename.append(aux_str);
+    return filename;
+}
+
+void Huffman::internal_compress(char* code, void (*write_header)(FILE*, void*), void* filetype)
+{
+    std::string compressed_filepath = get_compressed_filepath(filepath);
+
+    FILE *file = fopen(compressed_filepath.c_str(), "wb");
     char byte = 0;
     if(file != NULL) {
         if(write_header && filetype)
-        {
-            printf("1. entrou aqui\n");
             write_header(file, filetype);
-        }
         int j=7;
         for(size_t i=0; code[i] != '\0'; i++) {
             if(code[i] == '1')
@@ -317,34 +337,23 @@ static int is_bit_1(char byte, int i)
     return byte &= (1U << i);
 }
 
-void Huffman::decompress(void (*write_header)(FILE*, void*), void* filetype, size_t pos) 
+void Huffman::decompress(void (*write_header)(FILE*, void*), void (*read_header)(FILE*, void*), size_t (*get_pos)(void*), void* filetype)
 {
-    char cwd[1024];
-    if(getcwd(cwd, sizeof(cwd)) == NULL)
-        EXIT_WITH_ERROR("getcwd() error");
-    std::string filename = cwd;
-    filename.append("/data/output/");
-    std::string aux_str = get_filename(filepath);
-    aux_str.append("_huffman1decompressed");
-    aux_str.append(get_extension(filepath));
-    filename.append(aux_str);
-
-    std::string filename_compressed = cwd;
-    filename_compressed.append("/data/output/");
-    std::string aux_str2 = get_filename(filepath);
-    
-    aux_str2.append(".GK");
-    filename_compressed.append(aux_str2);
-    FILE *file = fopen(filename_compressed.c_str(), "rb");
-    FILE *out = fopen(filename.c_str(), "wb");
+    std::string decompressed_filepath = get_decompressed_filepath(filepath);
+    std::string compressed_filepath = get_compressed_filepath(filepath);
+    FILE *file = fopen(compressed_filepath.c_str(), "rb");
+    FILE *out = fopen(decompressed_filepath.c_str(), "wb");
     char byte;
+    printf("compressed: %s\ndecompressed: %s\n", compressed_filepath.c_str(), decompressed_filepath.c_str());
     Node *aux = tree.root;
-    printf("%s\n", filename.c_str());
 
     if(file != NULL) {
+        if(filetype && read_header)
+        {
+            read_header(file, filetype);
+        }
         if(filetype && write_header)
         {
-            printf("2. entrou aqui\n");
             write_header(out, filetype);
         }
 
@@ -352,8 +361,12 @@ void Huffman::decompress(void (*write_header)(FILE*, void*), void* filetype, siz
         long last_byte_to_read_pos = ftell(file);
         fread(&byte, sizeof(char), 1, file);
         char quantity = byte;
+        size_t pos = 0; //LONG LONG LONG LONG
+        if(filetype && get_pos)
+        {
+            pos = get_pos(filetype);
+        }
         fseek(file, pos, SEEK_SET);
-        long pos;
         int condition=0;
 
         while(fread(&byte, sizeof(char), 1, file)) {
@@ -372,7 +385,6 @@ void Huffman::decompress(void (*write_header)(FILE*, void*), void* filetype, siz
                 }
                 if(aux->right == nullptr && aux->left == nullptr) {
                     fwrite(&aux->byte, 1, 1, out);
-                    //printf("%c", aux->byte);
                     aux = tree.root;
                 }
             } 
