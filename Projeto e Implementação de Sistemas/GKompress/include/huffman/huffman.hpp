@@ -27,7 +27,7 @@ public:
     Huffman(std::string fp) : filepath(fp) {};
     void set_filepath(std::string str);
     std::string get_filepath();
-    void decompress(void (*write_header)(FILE*, void*) = nullptr, void* filetype = nullptr, size_t pos = 0);
+    void decompress(void (*write_header)(FILE*, void*) = nullptr, void (*read_header)(FILE*, void*) = nullptr, size_t (*get_pos)(void*) = nullptr, void* filetype = nullptr);
     virtual void compress() = 0;
 
 protected:
