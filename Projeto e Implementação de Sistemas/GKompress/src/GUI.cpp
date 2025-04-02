@@ -24,8 +24,8 @@ HuffmanBMP archive_bmp;
 HuffmanWAV archive_wav;
 
 
-void on_compress_button_clicked(GtkButton* button, gpointer user_data);
-void on_decompress_button_clicked(GtkButton* button, gpointer user_data);
+int on_compress_button_clicked(GtkButton* button, gpointer user_data);
+int on_decompress_button_clicked(GtkButton* button, gpointer user_data);
 void on_compress_decompress_button_clicked(GtkButton* button, gpointer user_data);
 void on_algorithm_selected(GtkComboBox* combo, gpointer user_data);
 void toggle_compress_decompress_button(GtkButton* button, gpointer user_data);
@@ -84,6 +84,7 @@ void GUI::init(int argc, char* argv[])
     g_signal_connect(GTK_BUTTON(decompress_button), "clicked", G_CALLBACK(on_decompress_button_clicked), NULL);
     gtk_grid_attach(GTK_GRID(grid), decompress_button, 0, 5, 1, 1);
 
+    gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
     gtk_widget_show_all(window);
     
     gtk_main();
@@ -94,12 +95,26 @@ static int read_selected_algorithm_and_file_path(int* selected_algorithm, const 
     *selected_algorithm = gtk_combo_box_get_active(GTK_COMBO_BOX(algorithm_combo)); 
     if(*selected_algorithm == -1)
     {
-        printf("Select a compression algorithm.\n");
+        GtkWidget* dialog = gtk_message_dialog_new(NULL,
+                                                    GTK_DIALOG_MODAL,
+                                                    GTK_MESSAGE_ERROR,
+                                                    GTK_BUTTONS_OK,
+                                                    "Select a compression algorithm.");
+        gtk_window_set_position(GTK_WINDOW(dialog), GTK_WIN_POS_CENTER);
+        gtk_dialog_run(GTK_DIALOG(dialog));
+        gtk_widget_destroy(dialog);
         return -1;
     }
     *file_path = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(file_chooser_button));
     if(*file_path == nullptr) {
-        printf("Select an archive.\n");
+        GtkWidget* dialog = gtk_message_dialog_new(NULL,
+                                                    GTK_DIALOG_MODAL,
+                                                    GTK_MESSAGE_ERROR,
+                                                    GTK_BUTTONS_OK,
+                                                    "Select a file.");
+        gtk_window_set_position(GTK_WINDOW(dialog), GTK_WIN_POS_CENTER);
+        gtk_dialog_run(GTK_DIALOG(dialog));
+        gtk_widget_destroy(dialog);
         return -1;
     }
     return 0;
@@ -125,22 +140,27 @@ void on_compress_decompress_button_clicked(GtkButton* button, gpointer user_data
 {
     if(is_compressed)
     {
-        on_decompress_button_clicked(button, NULL);
-        is_compressed = false;
-        gtk_button_set_label(GTK_BUTTON(button), "Compress");
+        if(on_decompress_button_clicked(button, NULL) != -1)
+        {
+            on_decompress_button_clicked(button, NULL);
+            is_compressed = false;
+            gtk_button_set_label(GTK_BUTTON(button), "Compress");
+        }
     } else {
-        on_compress_button_clicked(button, NULL);
-        is_compressed = true;
-        gtk_button_set_label(GTK_BUTTON(button), "Decompress");
+        if(on_compress_button_clicked(button, NULL) != -1)
+        {
+            is_compressed = true;
+            gtk_button_set_label(GTK_BUTTON(button), "Decompress");
+        }
     }
 }
 
-void on_compress_button_clicked(GtkButton* button, gpointer user_data)
+int on_compress_button_clicked(GtkButton* button, gpointer user_data)
 {
     int selected_algorithm; 
     const gchar* file_path; 
     if(read_selected_algorithm_and_file_path(&selected_algorithm, &file_path) == -1)
-        return;
+        return -1;
     const gchar* extension = strrchr(file_path, '.');
     printf("%d\n%s\n%s\n", selected_algorithm, file_path, extension);
     std::string path(file_path); 
@@ -160,14 +180,15 @@ void on_compress_button_clicked(GtkButton* button, gpointer user_data)
             EXIT_WITH_ERROR("error while opening file\n");
         }
     }
+    return 0;
 }
 
-void on_decompress_button_clicked(GtkButton* button, gpointer user_data)
+int on_decompress_button_clicked(GtkButton* button, gpointer user_data)
 {
     int selected_algorithm;
     const gchar* file_path;
     if(read_selected_algorithm_and_file_path(&selected_algorithm, &file_path) == -1)
-        return;
+        return -1;
     const gchar* extension = strrchr(file_path, '.');
     if(selected_algorithm == HUFFMAN_TREE_ON_MEMORY)
     {
@@ -183,4 +204,5 @@ void on_decompress_button_clicked(GtkButton* button, gpointer user_data)
             EXIT_WITH_ERROR("error while opening file\n");
         }
     } 
+    return 0;
 }
