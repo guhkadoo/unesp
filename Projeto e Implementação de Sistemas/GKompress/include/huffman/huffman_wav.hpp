@@ -11,7 +11,7 @@ private:
     wav wav_file;
 public:
     void compress() override;  
-    void decompress();
+    int decompress();
     HuffmanWAV(std::string fp) : Huffman(fp) {};
     HuffmanWAV() : Huffman() {};
 }; 

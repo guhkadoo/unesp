@@ -142,7 +142,6 @@ void on_compress_decompress_button_clicked(GtkButton* button, gpointer user_data
     {
         if(on_decompress_button_clicked(button, NULL) != -1)
         {
-            on_decompress_button_clicked(button, NULL);
             is_compressed = false;
             gtk_button_set_label(GTK_BUTTON(button), "Compress");
         }
@@ -168,13 +167,46 @@ int on_compress_button_clicked(GtkButton* button, gpointer user_data)
     if(selected_algorithm == HUFFMAN_TREE_ON_MEMORY)
     {
         if(!strcmp(".txt", extension)) {
-            archive_txt.set_filepath(path);
+            if(archive_txt.set_filepath(path) == -1)
+            {
+                GtkWidget* dialog = gtk_message_dialog_new(NULL,
+                                                            GTK_DIALOG_MODAL,
+                                                            GTK_MESSAGE_ERROR,
+                                                            GTK_BUTTONS_OK,
+                                                            "File not found.");
+                gtk_window_set_position(GTK_WINDOW(dialog), GTK_WIN_POS_CENTER);
+                gtk_dialog_run(GTK_DIALOG(dialog));
+                gtk_widget_destroy(dialog);
+                return -1;
+            }
             archive_txt.compress();
         } else if(!strcmp(".wav", extension)) {
-            archive_wav.set_filepath(path);
+            if(archive_wav.set_filepath(path) == -1)
+            {
+                GtkWidget* dialog = gtk_message_dialog_new(NULL,
+                                                            GTK_DIALOG_MODAL,
+                                                            GTK_MESSAGE_ERROR,
+                                                            GTK_BUTTONS_OK,
+                                                            "File not found.");
+                gtk_window_set_position(GTK_WINDOW(dialog), GTK_WIN_POS_CENTER);
+                gtk_dialog_run(GTK_DIALOG(dialog));
+                gtk_widget_destroy(dialog);
+                return -1;
+            }
             archive_wav.compress();
         } else if(!strcmp(".bmp", extension)) {
-            archive_bmp.set_filepath(path);
+            if(archive_bmp.set_filepath(path) == -1)
+            {
+                GtkWidget* dialog = gtk_message_dialog_new(NULL,
+                                                            GTK_DIALOG_MODAL,
+                                                            GTK_MESSAGE_ERROR,
+                                                            GTK_BUTTONS_OK,
+                                                            "File not found.");
+                gtk_window_set_position(GTK_WINDOW(dialog), GTK_WIN_POS_CENTER);
+                gtk_dialog_run(GTK_DIALOG(dialog));
+                gtk_widget_destroy(dialog);
+                return -1;
+            }
             archive_bmp.compress();
         } else {
             EXIT_WITH_ERROR("error while opening file\n");
@@ -192,14 +224,56 @@ int on_decompress_button_clicked(GtkButton* button, gpointer user_data)
     const gchar* extension = strrchr(file_path, '.');
     if(selected_algorithm == HUFFMAN_TREE_ON_MEMORY)
     {
-        auto fun_not_compressed = []() -> void { printf("Compress the file first.\n"); };
+        auto fun_not_compressed = []() -> int { printf("Compress the file first.\n"); return 0; };
         if(!strcmp(".txt", extension)) 
         {
-            archive_txt.get_filepath() == "" ? fun_not_compressed() : archive_txt.decompress();
+            int found_compressed_file = archive_txt.get_filepath() == "" ? fun_not_compressed() : archive_txt.decompress();
+            if(found_compressed_file == -1)
+            {
+                GtkWidget* dialog = gtk_message_dialog_new(NULL,
+                                                            GTK_DIALOG_MODAL,
+                                                            GTK_MESSAGE_ERROR,
+                                                            GTK_BUTTONS_OK,
+                                                            "File not found.");
+                gtk_window_set_position(GTK_WINDOW(dialog), GTK_WIN_POS_CENTER);
+                gtk_dialog_run(GTK_DIALOG(dialog));
+                gtk_widget_destroy(dialog);
+                is_compressed = false;
+                gtk_button_set_label(GTK_BUTTON(button), "Compress");
+                return -1;
+            }
         } else if(!strcmp(".wav", extension)) {
-            archive_wav.get_filepath() == "" ? fun_not_compressed() : archive_wav.decompress();
+            int found_compressed_file = archive_wav.get_filepath() == "" ? fun_not_compressed() : archive_wav.decompress();
+            if(found_compressed_file == -1)
+            {
+                GtkWidget* dialog = gtk_message_dialog_new(NULL,
+                                                            GTK_DIALOG_MODAL,
+                                                            GTK_MESSAGE_ERROR,
+                                                            GTK_BUTTONS_OK,
+                                                            "File not found.");
+                gtk_window_set_position(GTK_WINDOW(dialog), GTK_WIN_POS_CENTER);
+                gtk_dialog_run(GTK_DIALOG(dialog));
+                gtk_widget_destroy(dialog);
+                is_compressed = false;
+                gtk_button_set_label(GTK_BUTTON(button), "Compress");
+                return -1;
+            }
         } else if(!strcmp(".bmp", extension)) {
-            archive_bmp.get_filepath() == "" ? fun_not_compressed() : archive_bmp.decompress();
+            int found_compressed_file = archive_bmp.get_filepath() == "" ? fun_not_compressed() : archive_bmp.decompress();
+            if(found_compressed_file == -1)
+            {
+                GtkWidget* dialog = gtk_message_dialog_new(NULL,
+                                                            GTK_DIALOG_MODAL,
+                                                            GTK_MESSAGE_ERROR,
+                                                            GTK_BUTTONS_OK,
+                                                            "File not found.");
+                gtk_window_set_position(GTK_WINDOW(dialog), GTK_WIN_POS_CENTER);
+                gtk_dialog_run(GTK_DIALOG(dialog));
+                gtk_widget_destroy(dialog);
+                is_compressed = false;
+                gtk_button_set_label(GTK_BUTTON(button), "Compress");
+                return -1;
+            }
         } else {
             EXIT_WITH_ERROR("error while opening file\n");
         }

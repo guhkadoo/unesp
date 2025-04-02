@@ -42,7 +42,7 @@ void HuffmanTXT::compress()
 unsigned char* HuffmanTXT::read_text()
 {
     FILE *file = fopen(filepath.c_str(), "rb");
-    unsigned char *str;
+    unsigned char *str = NULL;
     if(file != NULL) {
         fseek(file, 0, SEEK_END);
         size_t file_size = ftell(file);

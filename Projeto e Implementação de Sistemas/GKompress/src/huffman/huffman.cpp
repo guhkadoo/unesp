@@ -10,9 +10,17 @@
 
 //we're counting the duplicates of a string using an array which countains all the ascii (A to Z upper or lowercase).
 
-void Huffman::set_filepath(std::string str)
+int Huffman::set_filepath(std::string str)
 {
     filepath = str; 
+    FILE *file = fopen(filepath.c_str(), "r");
+    if(file)
+    {
+        fclose(file);
+        return 0;
+    }
+    else
+        return -1;
 }
 
 std::string Huffman::get_filepath()
@@ -34,6 +42,18 @@ void Huffman::print_duplicates()
             printf("%c (%x) has %u duplicates\n", i, i, duplicates[i]);
         }
     }
+}
+
+void Huffman::List::clear()
+{
+    Node* remove; 
+    while(front != nullptr)
+    {
+        remove = front;
+        front = front->next;
+        delete remove;
+    }
+    front = nullptr;
 }
 
 void Huffman::List::insert_sorted(Node* node)
@@ -122,17 +142,17 @@ void Huffman::HuffmanTree::print_with_argument(Node* root)
 }
 
 
-void Huffman::HuffmanTree::delete_tree(Node* node)
+void Huffman::HuffmanTree::clear(Node* node)
 {
     if(node == nullptr) return;
-    delete_tree(node->left);
-    delete_tree(node->right);
+    clear(node->left);
+    clear(node->right);
     delete node;
 }
 
 Huffman::HuffmanTree::~HuffmanTree()
 {
-    delete_tree(root);
+    clear(root);
 }
 
 int Huffman::HuffmanTree::height()
@@ -290,7 +310,7 @@ static std::string get_compressed_filepath(std::string filepath)
     std::string aux_str = get_filename(filepath);
     aux_str.append("_huffman1");
     std::string format = get_extension(filepath);
-    format += ".GZ";
+    format += ".GK";
     aux_str.append(format);
 
     filename.append(aux_str);
@@ -337,12 +357,17 @@ static int is_bit_1(char byte, int i)
     return byte &= (1U << i);
 }
 
-void Huffman::decompress(void (*write_header)(FILE*, void*), void (*read_header)(FILE*, void*), size_t (*get_pos)(void*), void* filetype)
+int Huffman::decompress(void (*write_header)(FILE*, void*), void (*read_header)(FILE*, void*), size_t (*get_pos)(void*), void* filetype)
 {
     std::string decompressed_filepath = get_decompressed_filepath(filepath);
     std::string compressed_filepath = get_compressed_filepath(filepath);
     FILE *file = fopen(compressed_filepath.c_str(), "rb");
     FILE *out = fopen(decompressed_filepath.c_str(), "wb");
+    if(!file) // if we cant open the compressed file (deleted)
+    {
+        fclose(out);
+        return -1;
+    }
     char byte;
     printf("compressed: %s\ndecompressed: %s\n", compressed_filepath.c_str(), decompressed_filepath.c_str());
     Node *aux = tree.root;
@@ -361,7 +386,7 @@ void Huffman::decompress(void (*write_header)(FILE*, void*), void (*read_header)
         long last_byte_to_read_pos = ftell(file);
         fread(&byte, sizeof(char), 1, file);
         char quantity = byte;
-        size_t pos = 0; //LONG LONG LONG LONG
+        size_t pos = 0; //LONG
         if(filetype && get_pos)
         {
             pos = get_pos(filetype);
@@ -391,7 +416,13 @@ void Huffman::decompress(void (*write_header)(FILE*, void*), void (*read_header)
         } 
         fclose(file);
         fclose(out);
+
+        duplicates.fill(0); // we fill the duplicates with 0 for the next iteration
+        tree.clear(tree.root); // we clear the tree for the next iteration
+        list.front = nullptr; // we set the front of the list to nullptr for the next iteration 
+        list.size = 0; // we set list size to 0 for the next iteration
     } else {
         EXIT_WITH_ERROR("Error while opening/creating archive in void decompress(char *str)");
     }
+    return 0;
 }

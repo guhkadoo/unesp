@@ -38,8 +38,8 @@ void HuffmanWAV::compress()
     internal_compress(code, write_wav_header, &wav_file);
 }
 
-void HuffmanWAV::decompress()
+int HuffmanWAV::decompress()
 {
     wav decompressed_wav;
-    Huffman::decompress(write_wav_header, read_wav_header, get_pos, &decompressed_wav);
+    return Huffman::decompress(write_wav_header, read_wav_header, get_pos, &decompressed_wav);
 }

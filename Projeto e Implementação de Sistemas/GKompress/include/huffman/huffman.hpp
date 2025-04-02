@@ -25,9 +25,9 @@ class Huffman {
 public:
     Huffman() : filepath("") {};
     Huffman(std::string fp) : filepath(fp) {};
-    void set_filepath(std::string str);
+    int set_filepath(std::string str);
     std::string get_filepath();
-    void decompress(void (*write_header)(FILE*, void*) = nullptr, void (*read_header)(FILE*, void*) = nullptr, size_t (*get_pos)(void*) = nullptr, void* filetype = nullptr);
+    int decompress(void (*write_header)(FILE*, void*) = nullptr, void (*read_header)(FILE*, void*) = nullptr, size_t (*get_pos)(void*) = nullptr, void* filetype = nullptr);
     virtual void compress() = 0;
 
 protected:
@@ -47,7 +47,7 @@ protected:
     };
     class List {
     public:
-        Node* front;
+        Node* front = nullptr;
         uint32_t size;
 
         List() : front(nullptr), size(0) {}
@@ -55,6 +55,7 @@ protected:
         Node* remove_front();
         void fill(std::array<uint32_t, Huffman::SIZE>& duplicates);
         void print();
+        void clear();
         // We don't need a destructor for the list, because the 
         // destructor of the tree already frees the memory of the list.
     }; 
@@ -63,11 +64,12 @@ protected:
         void print_with_argument(Node* root);
         int height_with_argument(Node* root); 
     public:
-        Node* root;
+        Node* root = nullptr;
         void build(List& list);
         void delete_tree(Node* node);
         void print();
         int height();
+        void clear(Node*);
         ~HuffmanTree();
     };
     class Dictionary {

@@ -50,7 +50,7 @@ void HuffmanBMP::compress()
     internal_compress(code, write_bmp_header, &bmp_file);
 }
 
-void HuffmanBMP::decompress() {
+int HuffmanBMP::decompress() {
     bmp decompressed_bmp;
-    Huffman::decompress(write_bmp_header, read_bmp_header, get_pos, &decompressed_bmp);
+    return Huffman::decompress(write_bmp_header, read_bmp_header, get_pos, &decompressed_bmp);
 }

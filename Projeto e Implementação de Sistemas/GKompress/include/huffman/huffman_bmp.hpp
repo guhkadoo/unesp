@@ -12,7 +12,7 @@ private:
     bmp bmp_file;
 public:
     void compress() override;
-    void decompress();
+    int decompress();
     HuffmanBMP(std::string fp) : Huffman(fp) {};
     HuffmanBMP(): Huffman() {};
 };
