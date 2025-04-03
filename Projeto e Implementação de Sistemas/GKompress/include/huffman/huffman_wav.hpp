@@ -10,8 +10,8 @@ class HuffmanWAV : public Huffman {
 private:
     wav wav_file;
 public:
-    void compress() override;  
-    int decompress();
+    void compress(int option) override;  
+    int decompress(int option);
     HuffmanWAV(std::string fp) : Huffman(fp) {};
     HuffmanWAV() : Huffman() {};
 }; 

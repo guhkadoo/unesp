@@ -11,8 +11,8 @@ class HuffmanBMP : public Huffman {
 private:
     bmp bmp_file;
 public:
-    void compress() override;
-    int decompress();
+    void compress(int option) override;
+    int decompress(int option);
     HuffmanBMP(std::string fp) : Huffman(fp) {};
     HuffmanBMP(): Huffman() {};
 };

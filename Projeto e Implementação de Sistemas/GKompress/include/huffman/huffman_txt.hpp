@@ -10,7 +10,7 @@ class HuffmanTXT : public Huffman {
 public:
     void count_duplicates(uint8_t* data); 
     char* encode(uint8_t* data);
-    void compress();
+    void compress(int option) override;
     unsigned char* read_text();
     HuffmanTXT(std::string fp) : Huffman(fp) {};
     HuffmanTXT() : Huffman() {};

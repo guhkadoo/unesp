@@ -27,8 +27,8 @@ public:
     Huffman(std::string fp) : filepath(fp) {};
     int set_filepath(std::string str);
     std::string get_filepath();
-    int decompress(void (*write_header)(FILE*, void*) = nullptr, void (*read_header)(FILE*, void*) = nullptr, size_t (*get_pos)(void*) = nullptr, void* filetype = nullptr);
-    virtual void compress() = 0;
+    int decompress(int option, void (*write_header)(FILE*, void*) = nullptr, void (*read_header)(FILE*, void*) = nullptr, size_t (*get_pos)(void*) = nullptr, void* filetype = nullptr);
+    virtual void compress(int option) = 0;
 
 protected:
     static const size_t SIZE = 256;
@@ -43,6 +43,7 @@ protected:
         Node* right;
         Node* next;
 
+        int is_leaf();
         Node(uint8_t b, uint32_t dup) : byte(b), duplicates(dup), left(nullptr), right(nullptr), next(nullptr) {}
     };
     class List {
@@ -70,6 +71,9 @@ protected:
         void print();
         int height();
         void clear(Node*);
+        void write(FILE* file, Node* node, int option);
+        Node* read(FILE* file, int option);
+
         ~HuffmanTree();
     };
     class Dictionary {
@@ -84,11 +88,12 @@ protected:
     HuffmanTree tree;
     Dictionary dictionary;
 
+    void clean_for_next_iteration();
     char *decode(char *code, struct Node *tree);
     void print_duplicates();
     void count_duplicates(uint8_t* data, size_t size);
     
-    void internal_compress(char* code, void (*write_header)(FILE*, void*) = nullptr, void* filetype = nullptr);
+    void internal_compress(int option, char* code, void (*write_header)(FILE*, void*) = nullptr, void* filetype = nullptr);
     char* encode(uint8_t* data, size_t data_size);
     List list;
 };
