@@ -37,7 +37,7 @@ static size_t get_pos(void* image_file)
     return seek_pos;
 }
 
-void HuffmanBMP::compress()
+void HuffmanBMP::compress(int option)
 {
     bmp_file.read(filepath.c_str());
     count_duplicates(bmp_file.data, bmp_file.data_size);
@@ -47,10 +47,10 @@ void HuffmanBMP::compress()
     dictionary.build(max_columns_of_dictionary);
     dictionary.fill(tree.root, "", max_columns_of_dictionary);
     char* code = encode(bmp_file.data, bmp_file.data_size);
-    internal_compress(code, write_bmp_header, &bmp_file);
+    internal_compress(option, code, write_bmp_header, &bmp_file);
 }
 
-int HuffmanBMP::decompress() {
+int HuffmanBMP::decompress(int option) {
     bmp decompressed_bmp;
-    return Huffman::decompress(write_bmp_header, read_bmp_header, get_pos, &decompressed_bmp);
+    return Huffman::decompress(option, write_bmp_header, read_bmp_header, get_pos, &decompressed_bmp);
 }

@@ -26,7 +26,7 @@ char* HuffmanTXT::encode(uint8_t* data)
     return code;
 }
 
-void HuffmanTXT::compress()
+void HuffmanTXT::compress(int option)
 {
     uint8_t* data = read_text();
     count_duplicates(data);
@@ -36,7 +36,7 @@ void HuffmanTXT::compress()
     dictionary.build(max_columns_of_dictionary);
     dictionary.fill(tree.root, "", max_columns_of_dictionary);
     char* code = encode(data);
-    internal_compress(code);
+    internal_compress(option, code);
 }
 
 unsigned char* HuffmanTXT::read_text()

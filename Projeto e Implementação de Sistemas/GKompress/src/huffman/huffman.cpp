@@ -284,7 +284,7 @@ static std::string get_extension(std::string filepath)
     return filename_w_ext.substr(dot);
 }
 
-static std::string get_decompressed_filepath(std::string filepath)
+static std::string get_decompressed_filepath(std::string filepath, int option)
 {
     char cwd[1024];
     if(getcwd(cwd, sizeof(cwd)) == NULL)
@@ -292,14 +292,16 @@ static std::string get_decompressed_filepath(std::string filepath)
     std::string filename = cwd;
     filename.append("/data/output/");
     std::string aux_str = get_filename(filepath);
-    aux_str.append("_huffman1decompressed");
+    aux_str += "_huffman";
+    aux_str += option + '0';
+    aux_str += "decompressed";
     aux_str.append(get_extension(filepath));
     filename.append(aux_str);
     
     return filename;
 }
 
-static std::string get_compressed_filepath(std::string filepath)
+static std::string get_compressed_filepath(std::string filepath, int option)
 {
     char cwd[1024];
     if(getcwd(cwd, sizeof(cwd)) == NULL)
@@ -308,7 +310,8 @@ static std::string get_compressed_filepath(std::string filepath)
     filename.append("/data/output/");
 
     std::string aux_str = get_filename(filepath);
-    aux_str.append("_huffman1");
+    aux_str += "_huffman";
+    aux_str += option + '0';
     std::string format = get_extension(filepath);
     format += ".GK";
     aux_str.append(format);
@@ -317,13 +320,68 @@ static std::string get_compressed_filepath(std::string filepath)
     return filename;
 }
 
-void Huffman::internal_compress(char* code, void (*write_header)(FILE*, void*), void* filetype)
+int Huffman::Node::is_leaf()
 {
-    std::string compressed_filepath = get_compressed_filepath(filepath);
+    if(left == nullptr && right == nullptr)
+        return 1;
+    return 0;
+}
+
+void Huffman::HuffmanTree::write(FILE* file, Node* node, int option)
+{
+    if(option == 1) // tree on compressed file
+    {
+        char marker;
+        if(node->is_leaf())
+        {
+            marker = '1';
+            fwrite(&marker, sizeof(char), 1, file);
+            fwrite(&node->byte, sizeof(char), 1, file);
+        } else {
+            marker = '0';
+            fwrite(&marker, sizeof(char), 1, file);
+            write(file, node->left, option);
+            write(file, node->right, option);
+        }
+    } else if(option == 2) { // adaptive coding
+
+    }
+}
+
+Huffman::Node* Huffman::HuffmanTree::read(FILE* file, int option)
+{
+    if(option == 1) // tree on compressed file  
+    {
+        char marker;
+        fread(&marker, sizeof(char), 1, file);
+        
+        if(marker == '1') // leaf
+        {
+            uint8_t byte;
+            fread(&byte, sizeof(char), 1, file);
+            return new Node(byte, 0); // duplicates 0 bcz they dont interest us
+        }
+        Node* node = new Node('\0', 0);
+        node->left = read(file, option);
+        node->right = read(file, option);
+        return node;
+    } else if (option == 2) { //adaptive coding
+
+    }
+}
+
+void Huffman::internal_compress(int option, char* code, void (*write_header)(FILE*, void*), void* filetype)
+{
+    std::string compressed_filepath = get_compressed_filepath(filepath, option);
 
     FILE *file = fopen(compressed_filepath.c_str(), "wb");
     char byte = 0;
     if(file != NULL) {
+        // WRITE TREE
+        if(option == 1 || option == 2) // tree on compressed file / adaptive coding
+            tree.write(file, tree.root, option);
+        // END WRITE TREE
+
         if(write_header && filetype)
             write_header(file, filetype);
         int j=7;
@@ -346,6 +404,8 @@ void Huffman::internal_compress(char* code, void (*write_header)(FILE*, void*), 
             byte = 7; 
             fwrite(&byte, sizeof(char), 1, file);
         }
+        if(option != 0)
+            clean_for_next_iteration();
         fclose(file);
     } else {
         EXIT_WITH_ERROR("Error while opening/creating archive in void compress(char *str)");
@@ -357,22 +417,67 @@ static int is_bit_1(char byte, int i)
     return byte &= (1U << i);
 }
 
-int Huffman::decompress(void (*write_header)(FILE*, void*), void (*read_header)(FILE*, void*), size_t (*get_pos)(void*), void* filetype)
+void Huffman::clean_for_next_iteration()
 {
-    std::string decompressed_filepath = get_decompressed_filepath(filepath);
-    std::string compressed_filepath = get_compressed_filepath(filepath);
+    duplicates.fill(0); // we fill the duplicates with 0 for the next iteration
+    tree.clear(tree.root); // we clear the tree for the next iteration
+    list.front = nullptr; // we set the front of the list to nullptr for the next iteration 
+    list.size = 0; // we set list size to 0 for the next iteration
+}
+
+
+static std::string decompressed_filepath_from_compressed(std::string compressed_path)
+{
+    size_t pos = compressed_path.find(".txt.GK");
+    if (pos != std::string::npos) {
+        return compressed_path.substr(0, pos) + "decompressed.txt";
+    }
+
+    pos = compressed_path.find(".wav.GK");
+    if (pos != std::string::npos) {
+        return compressed_path.substr(0, pos) + "decompressed.wav";
+    }
+
+    pos = compressed_path.find(".bmp.GK");
+    if (pos != std::string::npos) {
+        return compressed_path.substr(0, pos) + "decompressed.bmp";
+    }
+
+    return compressed_path; // If no known pattern is found, return the original path
+}
+
+int Huffman::decompress(int option, void (*write_header)(FILE*, void*), void (*read_header)(FILE*, void*), size_t (*get_pos)(void*), void* filetype)
+{
+    std::string decompressed_filepath = get_decompressed_filepath(filepath, option);
+    std::string compressed_filepath = get_compressed_filepath(filepath, option);
+    if(option != 0)
+    {
+        compressed_filepath = filepath;
+        decompressed_filepath = decompressed_filepath_from_compressed(compressed_filepath); 
+    }
     FILE *file = fopen(compressed_filepath.c_str(), "rb");
-    FILE *out = fopen(decompressed_filepath.c_str(), "wb");
     if(!file) // if we cant open the compressed file (deleted)
     {
-        fclose(out);
+        clean_for_next_iteration();
         return -1;
     }
+    FILE *out = fopen(decompressed_filepath.c_str(), "wb");
     char byte;
-    printf("compressed: %s\ndecompressed: %s\n", compressed_filepath.c_str(), decompressed_filepath.c_str());
-    Node *aux = tree.root;
+    Node* aux;
 
     if(file != NULL) {
+        if(option == 0) // Tree already on memory
+            aux = tree.root;
+        // READ TREE
+        size_t tree_size = 0;
+        if(option == 1 || option == 2) // Tree on decompressed file / adaptive coding
+        {
+            size_t start_pos = ftell(file);
+            aux = tree.root = tree.read(file, option); 
+            size_t end_pos = ftell(file);
+            tree_size = end_pos - start_pos;
+        }
+        // END READ TREE
         if(filetype && read_header)
         {
             read_header(file, filetype);
@@ -391,6 +496,7 @@ int Huffman::decompress(void (*write_header)(FILE*, void*), void (*read_header)(
         {
             pos = get_pos(filetype);
         }
+        pos += tree_size;
         fseek(file, pos, SEEK_SET);
         int condition=0;
 
@@ -416,11 +522,7 @@ int Huffman::decompress(void (*write_header)(FILE*, void*), void (*read_header)(
         } 
         fclose(file);
         fclose(out);
-
-        duplicates.fill(0); // we fill the duplicates with 0 for the next iteration
-        tree.clear(tree.root); // we clear the tree for the next iteration
-        list.front = nullptr; // we set the front of the list to nullptr for the next iteration 
-        list.size = 0; // we set list size to 0 for the next iteration
+        clean_for_next_iteration();
     } else {
         EXIT_WITH_ERROR("Error while opening/creating archive in void decompress(char *str)");
     }

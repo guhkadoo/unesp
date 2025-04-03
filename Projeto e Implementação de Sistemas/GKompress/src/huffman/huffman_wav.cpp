@@ -25,7 +25,7 @@ static size_t get_pos(void* wav_file)
     return pos;
 }
 
-void HuffmanWAV::compress() 
+void HuffmanWAV::compress(int option) 
 {
     wav_file.read(filepath);
     count_duplicates(wav_file.data, wav_file.data_subchunk.size);
@@ -35,11 +35,11 @@ void HuffmanWAV::compress()
     dictionary.build(max_columns_of_dictionary);
     dictionary.fill(tree.root, "", max_columns_of_dictionary);
     char* code = encode(wav_file.data, wav_file.data_subchunk.size);
-    internal_compress(code, write_wav_header, &wav_file);
+    internal_compress(option, code, write_wav_header, &wav_file);
 }
 
-int HuffmanWAV::decompress()
+int HuffmanWAV::decompress(int option)
 {
     wav decompressed_wav;
-    return Huffman::decompress(write_wav_header, read_wav_header, get_pos, &decompressed_wav);
+    return Huffman::decompress(option, write_wav_header, read_wav_header, get_pos, &decompressed_wav);
 }
