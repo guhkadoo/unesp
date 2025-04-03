@@ -9,6 +9,11 @@
 #include <cstring>
 
 #define HUFFMAN_TREE_ON_MEMORY 0
+#define HUFFMAN_TREE_ON_DECOMPRESSED_FILE 1
+#define HUFFMAN_TREE_ADAPTIVE_CODING 2
+#define LZ77 3
+#define LWZ 4
+#define GZIP 5
 
 static bool is_compressed = false;
 static GtkWidget* uncompressed_size_label;
@@ -19,6 +24,8 @@ static GtkWidget* progress_bar;
 static GtkWidget* compress_button; // Other options
 static GtkWidget* decompress_button; // Other options
 static GtkWidget* compress_decompress_button; // HUFFMAN_TREE_ON_MEMORY
+static int selected_algorithm = -1;
+const gchar* file_path = nullptr; 
 HuffmanTXT archive_txt;
 HuffmanBMP archive_bmp;
 HuffmanWAV archive_wav;
@@ -26,6 +33,7 @@ HuffmanWAV archive_wav;
 
 int on_compress_button_clicked(GtkButton* button, gpointer user_data);
 int on_decompress_button_clicked(GtkButton* button, gpointer user_data);
+void on_file_selected(GtkFileChooserButton* button, gpointer user_data);
 void on_compress_decompress_button_clicked(GtkButton* button, gpointer user_data);
 void on_algorithm_selected(GtkComboBox* combo, gpointer user_data);
 void toggle_compress_decompress_button(GtkButton* button, gpointer user_data);
@@ -46,6 +54,11 @@ void GUI::init(int argc, char* argv[])
     grid = gtk_grid_new();
     gtk_container_add(GTK_CONTAINER(window), grid);
 
+    // File chooser with event box
+    file_chooser_button = gtk_file_chooser_button_new("Choose a file", GTK_FILE_CHOOSER_ACTION_OPEN); 
+    gtk_grid_attach(GTK_GRID(grid), file_chooser_button, 0, 1, 1, 1);
+    g_signal_connect(GTK_FILE_CHOOSER(file_chooser_button), "file-set", G_CALLBACK(on_file_selected), NULL);
+
     // Algorithm selection
     algorithm_combo = gtk_combo_box_text_new(); 
     gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(algorithm_combo), "Huffman - Tree on memory");
@@ -55,11 +68,9 @@ void GUI::init(int argc, char* argv[])
     gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(algorithm_combo), "LZW");
     gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(algorithm_combo), "GZIP");
     gtk_grid_attach(GTK_GRID(grid), algorithm_combo, 0, 0, 1, 1);
-    g_signal_connect(GTK_COMBO_BOX_TEXT(algorithm_combo), "changed", G_CALLBACK(on_algorithm_selected), NULL);
+    g_signal_connect(GTK_COMBO_BOX_TEXT(algorithm_combo), "changed", G_CALLBACK(on_algorithm_selected),
+            file_chooser_button);
 
-    // File chooser with event box
-    file_chooser_button = gtk_file_chooser_button_new("Choose a file", GTK_FILE_CHOOSER_ACTION_OPEN); 
-    gtk_grid_attach(GTK_GRID(grid), file_chooser_button, 0, 1, 1, 1);
 
     // Labels to display sizes
     uncompressed_size_label = gtk_label_new("Uncompressed size: ");
@@ -82,12 +93,28 @@ void GUI::init(int argc, char* argv[])
     // Decompress button
     decompress_button = gtk_button_new_with_label("Decompress");
     g_signal_connect(GTK_BUTTON(decompress_button), "clicked", G_CALLBACK(on_decompress_button_clicked), NULL);
-    gtk_grid_attach(GTK_GRID(grid), decompress_button, 0, 5, 1, 1);
+    gtk_grid_attach(GTK_GRID(grid), decompress_button, 0, 4, 1, 1);
 
     gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
     gtk_widget_show_all(window);
-    
+
+    gtk_widget_hide(compress_decompress_button);
+    gtk_widget_hide(compress_button);
+    gtk_widget_hide(decompress_button);
+ 
     gtk_main();
+}
+
+static void create_dialog_and_destroy(const char* msg)
+{
+    GtkWidget* dialog = gtk_message_dialog_new(NULL,
+                                                GTK_DIALOG_MODAL,
+                                                GTK_MESSAGE_ERROR,
+                                                GTK_BUTTONS_OK,
+                                                msg);
+    gtk_window_set_position(GTK_WINDOW(dialog), GTK_WIN_POS_CENTER);
+    gtk_dialog_run(GTK_DIALOG(dialog));
+    gtk_widget_destroy(dialog);
 }
 
 static int read_selected_algorithm_and_file_path(int* selected_algorithm, const gchar** file_path)
@@ -95,26 +122,12 @@ static int read_selected_algorithm_and_file_path(int* selected_algorithm, const 
     *selected_algorithm = gtk_combo_box_get_active(GTK_COMBO_BOX(algorithm_combo)); 
     if(*selected_algorithm == -1)
     {
-        GtkWidget* dialog = gtk_message_dialog_new(NULL,
-                                                    GTK_DIALOG_MODAL,
-                                                    GTK_MESSAGE_ERROR,
-                                                    GTK_BUTTONS_OK,
-                                                    "Select a compression algorithm.");
-        gtk_window_set_position(GTK_WINDOW(dialog), GTK_WIN_POS_CENTER);
-        gtk_dialog_run(GTK_DIALOG(dialog));
-        gtk_widget_destroy(dialog);
+        create_dialog_and_destroy("Select a compression algorithm.");
         return -1;
     }
     *file_path = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(file_chooser_button));
     if(*file_path == nullptr) {
-        GtkWidget* dialog = gtk_message_dialog_new(NULL,
-                                                    GTK_DIALOG_MODAL,
-                                                    GTK_MESSAGE_ERROR,
-                                                    GTK_BUTTONS_OK,
-                                                    "Select a file.");
-        gtk_window_set_position(GTK_WINDOW(dialog), GTK_WIN_POS_CENTER);
-        gtk_dialog_run(GTK_DIALOG(dialog));
-        gtk_widget_destroy(dialog);
+        create_dialog_and_destroy("Select a file.");
         return -1;
     }
     return 0;
@@ -122,17 +135,57 @@ static int read_selected_algorithm_and_file_path(int* selected_algorithm, const 
 
 void on_algorithm_selected(GtkComboBox* combo, gpointer user_data)
 {
-    int selected_algorithm = gtk_combo_box_get_active(combo);
+    if(file_path != nullptr)
+        on_file_selected(GTK_FILE_CHOOSER_BUTTON(file_chooser_button), NULL);
+}
 
-    if(selected_algorithm == HUFFMAN_TREE_ON_MEMORY)
+static int valid_decompressed_extension(const gchar* extension)
+{
+    if(!strcmp(extension, ".txt") || !strcmp(extension, ".wav") || !strcmp(extension, ".bmp"))
+        return 1;
+    return 0;
+}
+
+static int valid_compressed_extension(const gchar* extension)
+{
+    if(!strcmp(extension, ".txt.GK") || !strcmp(extension, ".wav.GK") || !strcmp(extension, ".bmp.GK"))
+        return 1;
+    return 0;
+}
+
+void on_file_selected(GtkFileChooserButton* button, gpointer user_data)
+{
+    file_path = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(button));
+    if(file_path == nullptr)
+        return;
+    const gchar* extension = strchr(file_path, '.');
+    selected_algorithm = gtk_combo_box_get_active(GTK_COMBO_BOX(algorithm_combo)); 
+    if(selected_algorithm == -1)
+        return;
+    printf("extension: %s\n", extension);
+    printf("compressed: %d decompressed: %d\n", valid_compressed_extension(extension), valid_decompressed_extension(extension));
+    if(valid_decompressed_extension(extension) && selected_algorithm == HUFFMAN_TREE_ON_MEMORY)
     {
+        printf("oi\n");
         gtk_widget_show(compress_decompress_button);
         gtk_widget_hide(compress_button);
         gtk_widget_hide(decompress_button);
-    } else {
+        return ;
+    } else if(valid_decompressed_extension(extension) && selected_algorithm != HUFFMAN_TREE_ON_MEMORY) {
+        printf("oi2\n");
         gtk_widget_hide(compress_decompress_button);
         gtk_widget_show(compress_button);
+        gtk_widget_hide(decompress_button);
+    } else if(valid_compressed_extension(extension) && selected_algorithm != HUFFMAN_TREE_ON_MEMORY) {
+        printf("oi3\n");
+        gtk_widget_hide(compress_decompress_button);
+        gtk_widget_hide(compress_button);
         gtk_widget_show(decompress_button);
+    } else {
+        printf("oi4\n");
+        gtk_widget_hide(compress_decompress_button);
+        gtk_widget_hide(compress_button);
+        gtk_widget_hide(decompress_button);
     }
 }
 
@@ -156,12 +209,11 @@ void on_compress_decompress_button_clicked(GtkButton* button, gpointer user_data
 
 int on_compress_button_clicked(GtkButton* button, gpointer user_data)
 {
-    int selected_algorithm; 
     const gchar* file_path; 
     if(read_selected_algorithm_and_file_path(&selected_algorithm, &file_path) == -1)
         return -1;
     const gchar* extension = strrchr(file_path, '.');
-    printf("%d\n%s\n%s\n", selected_algorithm, file_path, extension);
+    printf("AQUI: %d\n%s\n%s\n", selected_algorithm, file_path, extension);
     std::string path(file_path); 
 
     if(selected_algorithm == HUFFMAN_TREE_ON_MEMORY)
@@ -169,47 +221,53 @@ int on_compress_button_clicked(GtkButton* button, gpointer user_data)
         if(!strcmp(".txt", extension)) {
             if(archive_txt.set_filepath(path) == -1)
             {
-                GtkWidget* dialog = gtk_message_dialog_new(NULL,
-                                                            GTK_DIALOG_MODAL,
-                                                            GTK_MESSAGE_ERROR,
-                                                            GTK_BUTTONS_OK,
-                                                            "File not found.");
-                gtk_window_set_position(GTK_WINDOW(dialog), GTK_WIN_POS_CENTER);
-                gtk_dialog_run(GTK_DIALOG(dialog));
-                gtk_widget_destroy(dialog);
+                create_dialog_and_destroy("File not found.");
                 return -1;
             }
-            archive_txt.compress();
+            archive_txt.compress(HUFFMAN_TREE_ON_MEMORY);
         } else if(!strcmp(".wav", extension)) {
             if(archive_wav.set_filepath(path) == -1)
             {
-                GtkWidget* dialog = gtk_message_dialog_new(NULL,
-                                                            GTK_DIALOG_MODAL,
-                                                            GTK_MESSAGE_ERROR,
-                                                            GTK_BUTTONS_OK,
-                                                            "File not found.");
-                gtk_window_set_position(GTK_WINDOW(dialog), GTK_WIN_POS_CENTER);
-                gtk_dialog_run(GTK_DIALOG(dialog));
-                gtk_widget_destroy(dialog);
+                create_dialog_and_destroy("File not found.");
                 return -1;
             }
-            archive_wav.compress();
+            archive_wav.compress(HUFFMAN_TREE_ON_MEMORY);
         } else if(!strcmp(".bmp", extension)) {
             if(archive_bmp.set_filepath(path) == -1)
             {
-                GtkWidget* dialog = gtk_message_dialog_new(NULL,
-                                                            GTK_DIALOG_MODAL,
-                                                            GTK_MESSAGE_ERROR,
-                                                            GTK_BUTTONS_OK,
-                                                            "File not found.");
-                gtk_window_set_position(GTK_WINDOW(dialog), GTK_WIN_POS_CENTER);
-                gtk_dialog_run(GTK_DIALOG(dialog));
-                gtk_widget_destroy(dialog);
+                create_dialog_and_destroy("File not found.");
                 return -1;
             }
-            archive_bmp.compress();
+            archive_bmp.compress(HUFFMAN_TREE_ON_MEMORY);
         } else {
-            EXIT_WITH_ERROR("error while opening file\n");
+            create_dialog_and_destroy("Extension not supported.");
+            return -1;
+        }
+    } else if(selected_algorithm == HUFFMAN_TREE_ON_DECOMPRESSED_FILE) {
+        if(!strcmp(".txt", extension)) {
+            if(archive_txt.set_filepath(path) == -1)
+            {
+                create_dialog_and_destroy("File not found.");
+                return -1;
+            }
+            archive_txt.compress(HUFFMAN_TREE_ON_DECOMPRESSED_FILE);
+        } else if(!strcmp(".wav", extension)) {
+            if(archive_wav.set_filepath(path) == -1)
+            {
+                create_dialog_and_destroy("File not found.");
+                return -1;
+            }
+            archive_wav.compress(HUFFMAN_TREE_ON_DECOMPRESSED_FILE);
+        } else if(!strcmp(".bmp", extension)) {
+            if(archive_bmp.set_filepath(path) == -1)
+            {
+                create_dialog_and_destroy("File not found.");
+                return -1;
+            }
+            archive_bmp.compress(HUFFMAN_TREE_ON_DECOMPRESSED_FILE);
+        } else {
+            create_dialog_and_destroy("Extension not supported.");
+            return -1;
         }
     }
     return 0;
@@ -217,65 +275,78 @@ int on_compress_button_clicked(GtkButton* button, gpointer user_data)
 
 int on_decompress_button_clicked(GtkButton* button, gpointer user_data)
 {
-    int selected_algorithm;
     const gchar* file_path;
     if(read_selected_algorithm_and_file_path(&selected_algorithm, &file_path) == -1)
         return -1;
-    const gchar* extension = strrchr(file_path, '.');
+    const gchar* extension = strchr(file_path, '.');
     if(selected_algorithm == HUFFMAN_TREE_ON_MEMORY)
     {
-        auto fun_not_compressed = []() -> int { printf("Compress the file first.\n"); return 0; };
         if(!strcmp(".txt", extension)) 
         {
-            int found_compressed_file = archive_txt.get_filepath() == "" ? fun_not_compressed() : archive_txt.decompress();
+            int found_compressed_file = archive_txt.decompress(HUFFMAN_TREE_ON_MEMORY);
             if(found_compressed_file == -1)
             {
-                GtkWidget* dialog = gtk_message_dialog_new(NULL,
-                                                            GTK_DIALOG_MODAL,
-                                                            GTK_MESSAGE_ERROR,
-                                                            GTK_BUTTONS_OK,
-                                                            "File not found.");
-                gtk_window_set_position(GTK_WINDOW(dialog), GTK_WIN_POS_CENTER);
-                gtk_dialog_run(GTK_DIALOG(dialog));
-                gtk_widget_destroy(dialog);
+                create_dialog_and_destroy("File not found.");
                 is_compressed = false;
                 gtk_button_set_label(GTK_BUTTON(button), "Compress");
                 return -1;
             }
         } else if(!strcmp(".wav", extension)) {
-            int found_compressed_file = archive_wav.get_filepath() == "" ? fun_not_compressed() : archive_wav.decompress();
+            int found_compressed_file = archive_wav.decompress(HUFFMAN_TREE_ON_MEMORY);
             if(found_compressed_file == -1)
             {
-                GtkWidget* dialog = gtk_message_dialog_new(NULL,
-                                                            GTK_DIALOG_MODAL,
-                                                            GTK_MESSAGE_ERROR,
-                                                            GTK_BUTTONS_OK,
-                                                            "File not found.");
-                gtk_window_set_position(GTK_WINDOW(dialog), GTK_WIN_POS_CENTER);
-                gtk_dialog_run(GTK_DIALOG(dialog));
-                gtk_widget_destroy(dialog);
+                create_dialog_and_destroy("File not found.");
                 is_compressed = false;
                 gtk_button_set_label(GTK_BUTTON(button), "Compress");
                 return -1;
             }
         } else if(!strcmp(".bmp", extension)) {
-            int found_compressed_file = archive_bmp.get_filepath() == "" ? fun_not_compressed() : archive_bmp.decompress();
+            int found_compressed_file = archive_bmp.decompress(HUFFMAN_TREE_ON_MEMORY);
             if(found_compressed_file == -1)
             {
-                GtkWidget* dialog = gtk_message_dialog_new(NULL,
-                                                            GTK_DIALOG_MODAL,
-                                                            GTK_MESSAGE_ERROR,
-                                                            GTK_BUTTONS_OK,
-                                                            "File not found.");
-                gtk_window_set_position(GTK_WINDOW(dialog), GTK_WIN_POS_CENTER);
-                gtk_dialog_run(GTK_DIALOG(dialog));
-                gtk_widget_destroy(dialog);
+                create_dialog_and_destroy("File not found.");
                 is_compressed = false;
                 gtk_button_set_label(GTK_BUTTON(button), "Compress");
                 return -1;
             }
         } else {
-            EXIT_WITH_ERROR("error while opening file\n");
+            create_dialog_and_destroy("Extension not supported.");
+            return -1;
+        }
+    } else if(selected_algorithm == HUFFMAN_TREE_ON_DECOMPRESSED_FILE) {
+        std::string path = file_path;
+        printf("%s\n", file_path);
+        if(archive_txt.set_filepath(path) == -1 || archive_wav.set_filepath(path) == -1 || archive_bmp.set_filepath(path) == -1)
+        {
+            create_dialog_and_destroy("File not found.");
+            return -1;
+        }
+        printf("%s\n", extension);
+        if(!strcmp(".txt.GK", extension)) 
+        {
+            int found_compressed_file = archive_txt.decompress(HUFFMAN_TREE_ON_DECOMPRESSED_FILE);
+            if(found_compressed_file == -1)
+            {
+                create_dialog_and_destroy("File not found.");
+                return -1;
+            }
+        } else if(!strcmp(".wav.GK", extension)) {
+            int found_compressed_file = archive_wav.decompress(HUFFMAN_TREE_ON_DECOMPRESSED_FILE);
+            if(found_compressed_file == -1)
+            {
+                create_dialog_and_destroy("File not found.");
+                return -1;
+            }
+        } else if(!strcmp(".bmp.GK", extension)) {
+            int found_compressed_file = archive_bmp.decompress(HUFFMAN_TREE_ON_DECOMPRESSED_FILE);
+            if(found_compressed_file == -1)
+            {
+                create_dialog_and_destroy("File not found.");
+                return -1;
+            }
+        } else {
+            create_dialog_and_destroy("Extension not supported.");
+            return -1;
         }
     } 
     return 0;
