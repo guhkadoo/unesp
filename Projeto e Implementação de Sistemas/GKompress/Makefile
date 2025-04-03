@@ -28,7 +28,7 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 
 # Clean up
 clean:
-	rm -rf $(OBJ_DIR)/* && rm -rf $(DATA_DIR)/output/* && rm $(EXEC) 
+	rm -f $(EXEC) && rm -rf $(OBJ_DIR)/* && rm -f $(DATA_DIR)/output/* 
 
 # Run the program (optional)
 run: $(EXEC)
