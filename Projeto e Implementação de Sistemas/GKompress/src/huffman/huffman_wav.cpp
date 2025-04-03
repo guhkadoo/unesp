@@ -33,7 +33,12 @@ void HuffmanWAV::compress(int option)
     tree.build(list);
     size_t max_columns_of_dictionary = tree.height();
     dictionary.build(max_columns_of_dictionary);
-    dictionary.fill(tree.root, "", max_columns_of_dictionary);
+    dictionary.fill(tree.root, "", max_columns_of_dictionary, option);
+    if(option == 2)
+    {
+        dictionary.generate_canonical_codes();
+        dictionary.print();
+    }
     char* code = encode(wav_file.data, wav_file.data_subchunk.size);
     internal_compress(option, code, write_wav_header, &wav_file);
 }

@@ -6,7 +6,12 @@
 #include <cstdlib>
 #include <cstring>
 #include <array>
+#include <vector>
 #include <string>
+#include <bitset>
+#include <map>
+#include <iostream>
+#include <algorithm>
 
 #define EXIT_WITH_ERROR(msg) (fprintf(stderr, "%s\n", msg), exit(1))
 
@@ -79,10 +84,14 @@ protected:
     class Dictionary {
     public:
         char** dictionary;
+        std::vector<std::pair<uint8_t, size_t>> sorted_symbols; // {symbol, code length}
+
         char*& operator[](size_t index);
-        void fill(Node* tree_root, char* code, size_t columns);
+        void fill(Node* tree_root, char* code, size_t columns, int option);
+        void generate_canonical_codes();
         void print();
-        void build(size_t j);
+        void build(size_t j); 
+        void write(FILE* file);
         ~Dictionary();
     };
     HuffmanTree tree;

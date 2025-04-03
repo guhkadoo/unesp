@@ -174,13 +174,16 @@ void Huffman::Dictionary::build(size_t j)
     dictionary = new char*[Huffman::SIZE];
     for(size_t i=0; i<Huffman::SIZE; i++)
         dictionary[i] = new char[j+1]();
+
 }
 
-void Huffman::Dictionary::fill(Node* tree_root, char* code, size_t columns)
+void Huffman::Dictionary::fill(Node* tree_root, char* code, size_t columns, int option)
 {
     char left[columns+1], right[columns+1];
     if(tree_root->left == nullptr && tree_root->right == nullptr) {
-        strcpy(dictionary[tree_root->byte], code);
+        dictionary[tree_root->byte] = strdup(code);
+        if(option == 2)
+            sorted_symbols.push_back({tree_root->byte, strlen(code)});
     } else {
         strcpy(left, code);
         strcpy(right, code);
@@ -188,8 +191,8 @@ void Huffman::Dictionary::fill(Node* tree_root, char* code, size_t columns)
         strcat(left, "0");
         strcat(right, "1");
 
-        fill(tree_root->left, left, columns);
-        fill(tree_root->right, right, columns);
+        fill(tree_root->left, left, columns, option);
+        fill(tree_root->right, right, columns, option);
     }
 }
 
@@ -204,6 +207,52 @@ void Huffman::Dictionary::print()
 
 char*& Huffman::Dictionary::operator[](size_t index) {
     return dictionary[index];
+}
+
+void Huffman::Dictionary::generate_canonical_codes()
+{
+    std::map<uint8_t, std::string> canonical_codes;
+    std::sort(sorted_symbols.begin(), sorted_symbols.end(),
+                [](const std::pair<uint8_t, size_t>& a, const std::pair<uint8_t, size_t>& b) {
+                    return (a.second < b.second) || (a.second == b.second && a.first < b.first);
+                 }
+             );
+
+    /*
+    for (const auto& pair : sorted_symbols) {
+        std::cout << "{ Symbol: " << static_cast<int>(pair.first) // Cast to int for readability
+                  << ", Code Length: " << pair.second << " }" << std::endl;
+    }
+    */
+
+    uint32_t code = 0;
+    size_t prev_length = 0;
+
+    for(auto& [symbol, length] : sorted_symbols) {
+        if(length > prev_length) {
+            code <<= (length - prev_length);
+            prev_length = length;
+        }
+        canonical_codes[symbol] = std::bitset<32>(code).to_string().substr(32 - length);
+    //    printf("%s\n", canonical_codes[symbol].c_str());
+        code++;
+    }
+    
+    for(const auto& [symbol, can_code] : canonical_codes) {
+        dictionary[symbol] = strdup(can_code.c_str());
+    }
+}
+
+void Huffman::Dictionary::write(FILE* file)
+{
+    uint8_t num_symbols = sorted_symbols.size();
+    fwrite(&num_symbols, sizeof(uint8_t), 1, file);
+    for(const auto& [symbol, code_length] : sorted_symbols)
+    {
+        uint8_t length = static_cast<uint8_t>(code_length);
+        fwrite(&symbol, sizeof(uint8_t), 1, file);
+        fwrite(&length, sizeof(uint8_t), 1, file);
+    }
 }
 
 Huffman::Dictionary::~Dictionary()
@@ -235,32 +284,6 @@ char* Huffman::encode(uint8_t* data, size_t data_size)
 
     return code;
 }
-
-/*
-char *decode(char *code, struct Node *tree)
-{
-    const int size = strlen(code);
-    char *decode = (char *)calloc(size+1, sizeof(char));
-
-    struct Node *traverse_node = tree;
-    for(int i=0; code[i] != '\0'; i++) {
-        if(code[i] == '0') {
-            traverse_node = traverse_node->left;
-        } else if(code[i] == '1') {
-            traverse_node = traverse_node->right;
-        }
-
-        if(traverse_node->left == NULL && traverse_node->right == NULL) {
-            char concat[2]; concat[0] = traverse_node->character; concat[1] = '\0';
-            strcat(decode, concat);
-
-            traverse_node = tree;
-        }
-    }
-
-    return decode;
-}
-*/
 
 static std::string get_filename_with_ext(std::string filepath)
 {
@@ -329,22 +352,17 @@ int Huffman::Node::is_leaf()
 
 void Huffman::HuffmanTree::write(FILE* file, Node* node, int option)
 {
-    if(option == 1) // tree on compressed file
+    char marker;
+    if(node->is_leaf())
     {
-        char marker;
-        if(node->is_leaf())
-        {
-            marker = '1';
-            fwrite(&marker, sizeof(char), 1, file);
-            fwrite(&node->byte, sizeof(char), 1, file);
-        } else {
-            marker = '0';
-            fwrite(&marker, sizeof(char), 1, file);
-            write(file, node->left, option);
-            write(file, node->right, option);
-        }
-    } else if(option == 2) { // adaptive coding
-
+        marker = '1';
+        fwrite(&marker, sizeof(char), 1, file);
+        fwrite(&node->byte, sizeof(char), 1, file);
+    } else {
+        marker = '0';
+        fwrite(&marker, sizeof(char), 1, file);
+        write(file, node->left, option);
+        write(file, node->right, option);
     }
 }
 
@@ -378,8 +396,10 @@ void Huffman::internal_compress(int option, char* code, void (*write_header)(FIL
     char byte = 0;
     if(file != NULL) {
         // WRITE TREE
-        if(option == 1 || option == 2) // tree on compressed file / adaptive coding
+        if(option == 1) // tree on compressed file 
             tree.write(file, tree.root, option);
+        else if(option == 2) // adaptive
+            dictionary.write(file);
         // END WRITE TREE
 
         if(write_header && filetype)

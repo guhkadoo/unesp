@@ -10,7 +10,7 @@
 
 #define HUFFMAN_TREE_ON_MEMORY 0
 #define HUFFMAN_TREE_ON_DECOMPRESSED_FILE 1
-#define HUFFMAN_TREE_ADAPTIVE_CODING 2
+#define CANONICAL_HUFFMAN_CODING 2
 #define LZ77 3
 #define LWZ 4
 #define GZIP 5
@@ -269,6 +269,32 @@ int on_compress_button_clicked(GtkButton* button, gpointer user_data)
             create_dialog_and_destroy("Extension not supported.");
             return -1;
         }
+    } else if(selected_algorithm == CANONICAL_HUFFMAN_CODING) {
+        if(!strcmp(".txt", extension)) {
+            if(archive_txt.set_filepath(path) == -1)
+            {
+                create_dialog_and_destroy("File not found.");
+                return -1;
+            }
+            archive_txt.compress(CANONICAL_HUFFMAN_CODING);
+        } else if(!strcmp(".wav", extension)) {
+            if(archive_wav.set_filepath(path) == -1)
+            {
+                create_dialog_and_destroy("File not found.");
+                return -1;
+            }
+            archive_wav.compress(CANONICAL_HUFFMAN_CODING);
+        } else if(!strcmp(".bmp", extension)) {
+            if(archive_bmp.set_filepath(path) == -1)
+            {
+                create_dialog_and_destroy("File not found.");
+                return -1;
+            }
+            archive_bmp.compress(CANONICAL_HUFFMAN_CODING);
+        } else {
+            create_dialog_and_destroy("Extension not supported.");
+            return -1;
+        }
     }
     return 0;
 }
@@ -348,6 +374,41 @@ int on_decompress_button_clicked(GtkButton* button, gpointer user_data)
             create_dialog_and_destroy("Extension not supported.");
             return -1;
         }
-    } 
+    } else if(selected_algorithm == CANONICAL_HUFFMAN_CODING) {
+        std::string path = file_path;
+        printf("%s\n", file_path);
+        if(archive_txt.set_filepath(path) == -1 || archive_wav.set_filepath(path) == -1 || archive_bmp.set_filepath(path) == -1)
+        {
+            create_dialog_and_destroy("File not found.");
+            return -1;
+        }
+        printf("%s\n", extension);
+        if(!strcmp(".txt.GK", extension)) 
+        {
+            int found_compressed_file = archive_txt.decompress(CANONICAL_HUFFMAN_CODING);
+            if(found_compressed_file == -1)
+            {
+                create_dialog_and_destroy("File not found.");
+                return -1;
+            }
+        } else if(!strcmp(".wav.GK", extension)) {
+            int found_compressed_file = archive_wav.decompress(CANONICAL_HUFFMAN_CODING);
+            if(found_compressed_file == -1)
+            {
+                create_dialog_and_destroy("File not found.");
+                return -1;
+            }
+        } else if(!strcmp(".bmp.GK", extension)) {
+            int found_compressed_file = archive_bmp.decompress(CANONICAL_HUFFMAN_CODING);
+            if(found_compressed_file == -1)
+            {
+                create_dialog_and_destroy("File not found.");
+                return -1;
+            }
+        } else {
+            create_dialog_and_destroy("Extension not supported.");
+            return -1;
+        }
+    }
     return 0;
 }
