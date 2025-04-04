@@ -217,10 +217,10 @@ void Huffman::Dictionary::generate_canonical_codes()
                  }
              );
 
-    for (const auto& pair : sorted_symbols) {
-        std::cout << "{ Symbol: " << static_cast<int>(pair.first) // Cast to int for readability
-                  << ", Code Length: " << pair.second << " }" << std::endl;
-    }
+    //for (const auto& pair : sorted_symbols) {
+    //    std::cout << "{ Symbol: " << static_cast<int>(pair.first) // Cast to int for readability
+    //              << ", Code Length: " << pair.second << " }" << std::endl;
+    //}
 
     uint32_t code = 0;
     size_t prev_length = 0;
@@ -231,7 +231,7 @@ void Huffman::Dictionary::generate_canonical_codes()
             prev_length = length;
         }
         canonical_codes[symbol] = std::bitset<32>(code).to_string().substr(32 - length);
-        printf("%s\n", canonical_codes[symbol].c_str());
+    //    printf("%s\n", canonical_codes[symbol].c_str());
         code++;
     }
     
@@ -250,13 +250,13 @@ void Huffman::Dictionary::write(FILE* file)
 {
     uint16_t num_symbols = static_cast<uint16_t>(sorted_symbols.size());
     fwrite(&num_symbols, sizeof(uint16_t), 1, file);
-    printf("\nSORTED_SYMBOLS.SIZE(): %d\nNUM_SYMBOLS: %d\n", num_symbols, sorted_symbols.size());
+    //printf("\nSORTED_SYMBOLS.SIZE(): %d\nNUM_SYMBOLS: %d\n", num_symbols, sorted_symbols.size());
     for(const auto& [symbol, code_length] : sorted_symbols)
     {
         uint8_t length = static_cast<uint8_t>(code_length);
         fwrite(&symbol, sizeof(uint8_t), 1, file);
         fwrite(&length, sizeof(uint8_t), 1, file);
-        printf("symbol: %d\ncode_length: %d\n", symbol, code_length);
+        //printf("symbol: %d\ncode_length: %d\n", symbol, code_length);
     }
 }
 
@@ -264,7 +264,7 @@ void Huffman::Dictionary::read(FILE* file)
 {
     uint16_t num_symbols;
     fread(&num_symbols, sizeof(uint16_t), 1, file);
-    printf("num_symbols: %d\n", num_symbols);
+    //printf("num_symbols: %d\n", num_symbols);
 
     sorted_symbols.clear();
     sorted_symbols.reserve(num_symbols);
@@ -274,7 +274,7 @@ void Huffman::Dictionary::read(FILE* file)
         uint8_t symbol, code_length;
         fread(&symbol, sizeof(uint8_t), 1, file);
         fread(&code_length, sizeof(uint8_t), 1, file);
-        printf("symbol: %d\ncode_length: %d\n", symbol, code_length);
+        //printf("symbol: %d\ncode_length: %d\n", symbol, code_length);
 
         sorted_symbols.emplace_back(symbol, code_length);
     }
@@ -477,6 +477,7 @@ void Huffman::clean_for_next_iteration()
 {
     duplicates.fill(0); // we fill the duplicates with 0 for the next iteration
     tree.clear(tree.root); // we clear the tree for the next iteration
+    tree.root = nullptr;
     list.front = nullptr; // we set the front of the list to nullptr for the next iteration 
     list.size = 0; // we set list size to 0 for the next iteration
 }
