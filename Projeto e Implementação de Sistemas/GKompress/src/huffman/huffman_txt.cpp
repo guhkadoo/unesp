@@ -35,7 +35,6 @@ void HuffmanTXT::compress(int option)
     size_t max_columns_of_dictionary = tree.height();
     dictionary.build(max_columns_of_dictionary);
     dictionary.fill(tree.root, "", max_columns_of_dictionary, option);
-    printf("\n");
     if(option == 2)
     {
         dictionary.generate_canonical_codes();

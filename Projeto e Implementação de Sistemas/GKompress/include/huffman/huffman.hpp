@@ -76,22 +76,25 @@ protected:
         void print();
         int height();
         void clear(Node*);
-        void write(FILE* file, Node* node, int option);
-        Node* read(FILE* file, int option);
+        void write(FILE* file, Node* node);
+        Node* read(FILE* file);
 
         ~HuffmanTree();
     };
     class Dictionary {
     public:
-        char** dictionary;
+        char** dictionary = nullptr;
         std::vector<std::pair<uint8_t, size_t>> sorted_symbols; // {symbol, code length}
 
         char*& operator[](size_t index);
         void fill(Node* tree_root, char* code, size_t columns, int option);
         void generate_canonical_codes();
+        std::map<std::string, uint8_t> get_reverse_map() const;
         void print();
         void build(size_t j); 
         void write(FILE* file);
+        void read(FILE* file);
+        void clear();
         ~Dictionary();
     };
     HuffmanTree tree;

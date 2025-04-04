@@ -174,7 +174,6 @@ void Huffman::Dictionary::build(size_t j)
     dictionary = new char*[Huffman::SIZE];
     for(size_t i=0; i<Huffman::SIZE; i++)
         dictionary[i] = new char[j+1]();
-
 }
 
 void Huffman::Dictionary::fill(Node* tree_root, char* code, size_t columns, int option)
@@ -218,12 +217,10 @@ void Huffman::Dictionary::generate_canonical_codes()
                  }
              );
 
-    /*
     for (const auto& pair : sorted_symbols) {
         std::cout << "{ Symbol: " << static_cast<int>(pair.first) // Cast to int for readability
                   << ", Code Length: " << pair.second << " }" << std::endl;
     }
-    */
 
     uint32_t code = 0;
     size_t prev_length = 0;
@@ -234,32 +231,76 @@ void Huffman::Dictionary::generate_canonical_codes()
             prev_length = length;
         }
         canonical_codes[symbol] = std::bitset<32>(code).to_string().substr(32 - length);
-    //    printf("%s\n", canonical_codes[symbol].c_str());
+        printf("%s\n", canonical_codes[symbol].c_str());
         code++;
     }
     
     for(const auto& [symbol, can_code] : canonical_codes) {
+        if(dictionary == nullptr)
+            build(sorted_symbols.back().second);
+        //else {
+        //    clear();
+        //    build(sorted_symbols.back().second);
+        //}
         dictionary[symbol] = strdup(can_code.c_str());
     }
 }
 
 void Huffman::Dictionary::write(FILE* file)
 {
-    uint8_t num_symbols = sorted_symbols.size();
-    fwrite(&num_symbols, sizeof(uint8_t), 1, file);
+    uint16_t num_symbols = static_cast<uint16_t>(sorted_symbols.size());
+    fwrite(&num_symbols, sizeof(uint16_t), 1, file);
+    printf("\nSORTED_SYMBOLS.SIZE(): %d\nNUM_SYMBOLS: %d\n", num_symbols, sorted_symbols.size());
     for(const auto& [symbol, code_length] : sorted_symbols)
     {
         uint8_t length = static_cast<uint8_t>(code_length);
         fwrite(&symbol, sizeof(uint8_t), 1, file);
         fwrite(&length, sizeof(uint8_t), 1, file);
+        printf("symbol: %d\ncode_length: %d\n", symbol, code_length);
     }
 }
 
-Huffman::Dictionary::~Dictionary()
+void Huffman::Dictionary::read(FILE* file)
+{
+    uint16_t num_symbols;
+    fread(&num_symbols, sizeof(uint16_t), 1, file);
+    printf("num_symbols: %d\n", num_symbols);
+
+    sorted_symbols.clear();
+    sorted_symbols.reserve(num_symbols);
+
+    for(uint16_t i=0; i<num_symbols; i++)
+    {
+        uint8_t symbol, code_length;
+        fread(&symbol, sizeof(uint8_t), 1, file);
+        fread(&code_length, sizeof(uint8_t), 1, file);
+        printf("symbol: %d\ncode_length: %d\n", symbol, code_length);
+
+        sorted_symbols.emplace_back(symbol, code_length);
+    }
+}
+
+std::map<std::string, uint8_t> Huffman::Dictionary::get_reverse_map() const {
+    std::map<std::string, uint8_t> reverse_dict;
+    for (int i = 0; i < 256; ++i) {
+        if (dictionary[i]) {
+            reverse_dict[dictionary[i]] = static_cast<uint8_t>(i);
+        }
+    }
+    return reverse_dict;
+}
+
+void Huffman::Dictionary::clear()
 {
     for(size_t i=0; i<Huffman::SIZE; i++)
         delete[] dictionary[i];
     delete[] dictionary;
+    dictionary = nullptr;
+}
+
+Huffman::Dictionary::~Dictionary()
+{
+    clear();
 }
 
 static inline char *strcat_endpointer(char *dest, char *src)
@@ -350,7 +391,7 @@ int Huffman::Node::is_leaf()
     return 0;
 }
 
-void Huffman::HuffmanTree::write(FILE* file, Node* node, int option)
+void Huffman::HuffmanTree::write(FILE* file, Node* node)
 {
     char marker;
     if(node->is_leaf())
@@ -361,31 +402,26 @@ void Huffman::HuffmanTree::write(FILE* file, Node* node, int option)
     } else {
         marker = '0';
         fwrite(&marker, sizeof(char), 1, file);
-        write(file, node->left, option);
-        write(file, node->right, option);
+        write(file, node->left);
+        write(file, node->right);
     }
 }
 
-Huffman::Node* Huffman::HuffmanTree::read(FILE* file, int option)
+Huffman::Node* Huffman::HuffmanTree::read(FILE* file)
 {
-    if(option == 1) // tree on compressed file  
+    char marker;
+    fread(&marker, sizeof(char), 1, file);
+    
+    if(marker == '1') // leaf
     {
-        char marker;
-        fread(&marker, sizeof(char), 1, file);
-        
-        if(marker == '1') // leaf
-        {
-            uint8_t byte;
-            fread(&byte, sizeof(char), 1, file);
-            return new Node(byte, 0); // duplicates 0 bcz they dont interest us
-        }
-        Node* node = new Node('\0', 0);
-        node->left = read(file, option);
-        node->right = read(file, option);
-        return node;
-    } else if (option == 2) { //adaptive coding
-
+        uint8_t byte;
+        fread(&byte, sizeof(char), 1, file);
+        return new Node(byte, 0); // duplicates 0 bcz they dont interest us
     }
+    Node* node = new Node('\0', 0);
+    node->left = read(file);
+    node->right = read(file);
+    return node;
 }
 
 void Huffman::internal_compress(int option, char* code, void (*write_header)(FILE*, void*), void* filetype)
@@ -397,7 +433,7 @@ void Huffman::internal_compress(int option, char* code, void (*write_header)(FIL
     if(file != NULL) {
         // WRITE TREE
         if(option == 1) // tree on compressed file 
-            tree.write(file, tree.root, option);
+            tree.write(file, tree.root);
         else if(option == 2) // adaptive
             dictionary.write(file);
         // END WRITE TREE
@@ -490,12 +526,21 @@ int Huffman::decompress(int option, void (*write_header)(FILE*, void*), void (*r
             aux = tree.root;
         // READ TREE
         size_t tree_size = 0;
-        if(option == 1 || option == 2) // Tree on decompressed file / adaptive coding
+        size_t dictionary_size = 0;
+        std::map<std::string, uint8_t> reverse_dict;
+        if(option == 1) // Tree on decompressed file 
         {
             size_t start_pos = ftell(file);
-            aux = tree.root = tree.read(file, option); 
+            aux = tree.root = tree.read(file); 
             size_t end_pos = ftell(file);
             tree_size = end_pos - start_pos;
+        } else if(option == 2) { // adaptive coding
+            size_t start_pos = ftell(file);
+            dictionary.read(file);
+            dictionary.generate_canonical_codes();
+            size_t end_pos = ftell(file);
+            dictionary_size = end_pos - start_pos;
+            reverse_dict = dictionary.get_reverse_map();
         }
         // END READ TREE
         if(filetype && read_header)
@@ -516,30 +561,58 @@ int Huffman::decompress(int option, void (*write_header)(FILE*, void*), void (*r
         {
             pos = get_pos(filetype);
         }
-        pos += tree_size;
-        fseek(file, pos, SEEK_SET);
-        int condition=0;
-
-        while(fread(&byte, sizeof(char), 1, file)) {
-            pos = ftell(file);
-            if(pos == last_byte_to_read_pos + 1) {
-                break;
-            }
-            for(int i=7; i>=condition; i--) {
-                if(pos == last_byte_to_read_pos)
-                    condition = 7-quantity+1;
-
-                if(is_bit_1(byte, i)) {
-                    aux = aux->right;
-                } else {
-                    aux = aux->left;
+        if(option != 2)
+        {
+            pos += tree_size;
+            fseek(file, pos, SEEK_SET);
+            int condition=0;
+            while(fread(&byte, sizeof(char), 1, file)) {
+                pos = ftell(file);
+                if(pos == last_byte_to_read_pos + 1) {
+                    break;
                 }
-                if(aux->right == nullptr && aux->left == nullptr) {
-                    fwrite(&aux->byte, 1, 1, out);
-                    aux = tree.root;
-                }
+                for(int i=7; i>=condition; i--) {
+                    if(pos == last_byte_to_read_pos)
+                        condition = 7-quantity+1;
+
+                    if(is_bit_1(byte, i)) {
+                        aux = aux->right;
+                    } else {
+                        aux = aux->left;
+                    }
+                    if(aux->right == nullptr && aux->left == nullptr) {
+                        fwrite(&aux->byte, 1, 1, out);
+                        aux = tree.root;
+                    }
+                } 
             } 
-        } 
+        } else if(option == 2) {
+            pos += dictionary_size;
+            fseek(file, pos, SEEK_SET);
+            int condition=0;
+            std::string str = "";
+            while(fread(&byte, sizeof(char), 1, file)) {
+                pos = ftell(file);
+                if(pos == last_byte_to_read_pos + 1) {
+                    break;
+                }
+                for(int i=7; i>=condition; i--) {
+                    if(pos == last_byte_to_read_pos)
+                        condition = 7-quantity+1;
+
+                    if(is_bit_1(byte, i)) {
+                        str.append("1");
+                    } else {
+                        str.append("0");
+                    }
+                    if(reverse_dict.find(str) != reverse_dict.end())
+                    {
+                        fwrite(&reverse_dict[str], sizeof(char), 1, out);
+                        str = "";
+                    }
+                } 
+            } 
+        }
         fclose(file);
         fclose(out);
         clean_for_next_iteration();

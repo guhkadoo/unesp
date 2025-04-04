@@ -49,7 +49,6 @@ void HuffmanBMP::compress(int option)
     if(option == 2)
     {
         dictionary.generate_canonical_codes();
-        dictionary.print();
     }
     char* code = encode(bmp_file.data, bmp_file.data_size);
     internal_compress(option, code, write_bmp_header, &bmp_file);

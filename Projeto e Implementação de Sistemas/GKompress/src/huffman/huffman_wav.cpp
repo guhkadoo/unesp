@@ -37,7 +37,6 @@ void HuffmanWAV::compress(int option)
     if(option == 2)
     {
         dictionary.generate_canonical_codes();
-        dictionary.print();
     }
     char* code = encode(wav_file.data, wav_file.data_subchunk.size);
     internal_compress(option, code, write_wav_header, &wav_file);
