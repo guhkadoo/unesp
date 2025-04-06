@@ -77,6 +77,8 @@ protected:
         int height();
         void clear(Node*);
         void write(FILE* file, Node* node);
+        //Node* build_from_dictionary(Dictionary dictionary);
+
         Node* read(FILE* file);
 
         ~HuffmanTree();
