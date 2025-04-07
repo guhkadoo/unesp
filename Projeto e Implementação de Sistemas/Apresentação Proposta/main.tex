@@ -200,6 +200,20 @@
     \end{frame}
 
     \begin{frame}{Como analisar a eficiência?}
+        \begin{block}{Taxa de compressão}
+            \[
+            T = \frac{T_{\text{original}} - T_{\text{comprimido}}}{T_{\text{original}}}
+            \]
+        \end{block}
+
+        \begin{block}{Taxa de compressão média}
+            \[
+            T_{\text{média}} = \frac{1}{n} \sum_{i=1}^{n} \frac{T_{\text{original}, i} - T_{\text{comprimido}, i}}{T_{\text{original}, i}}
+            \]
+        \end{block}
+    \end{frame}
+
+    \begin{frame}{Como analisar a eficiência?}
         \begin{block}{Gráficos}
             \begin{itemize}
                 \item \textbf{Barras}: 
@@ -230,17 +244,50 @@
     \end{frame}
 
     \begin{frame}{Como analisar a eficiência?}
+
         Com os gráficos de dispersão e de linha, podemos traçar uma \textbf{Regressão Linear} para ver se é
         aplicável.
         \[
         Y = \beta_0 + \beta_1 \cdot X + \epsilon
         \]
+
+       \begin{block}{Coeficiente de correlação de Pearson}
+           \[
+                r = \frac{n \sum{xy} - \sum{x} \sum{y}}{\sqrt{[n \sum{x^2} - (\sum{x})^2] [n \sum{y^2} - (\sum{y})^2]}}
+           \]
+           \begin{itemize}
+                \item r = 1: Correlação positiva perfeita.
+                \item r = -1: Correlação negativa perfeita.
+                \item r = 0: Nenhuma correlação linear.
+                \item 0 < r < 1: Correlação positiva.
+                \item -1 < r < 0: Correlação negativa.
+           \end{itemize}
+       \end{block}
+    \end{frame}
+
+    \begin{frame}{Como analisar a eficiência?}
+        \begin{block}{Teste de normalidade de Shapiro-Wilk}
+            \begin{itemize}
+                \item Hipotese nula (\(H_0\)): Os dados seguem uma distribuição normal.
+                \item Hipotese alternativa (\(H_1\)): Os dados não seguem uma distribuição normal.
+            \end{itemize}
+            Se o valor-p (p-value) do teste for menor que o nível de significância (geralmente 0,05), você rejeita a hipótese nula e conclui que os dados não são normais.
+        \end{block}
+
+        \begin{block}{Teste t de Student}
+            \begin{itemize}
+            \item O teste t de Student compara as médias de dois grupos independentes.
+            \item Se o valor-p do teste t for menor que 0,05, rejeitamos a hipótese nula (não há diferença significativa entre os grupos) e concluímos que há uma diferença significativa nas taxas de compressão.
+            \end{itemize}
+        \end{block}
     \end{frame}
 
     \begin{frame}{Como será a implementação?}
 
         \begin{block}{\textit{Back-End}}
             A implementação do \textit{back-end} será feita utilizando a linguagem \texttt{C++}.
+
+            A análise de eficiência e geração de gráficos será feita com a linguagem \texttt{Python}.
         \end{block}
         \begin{block}{\textit{Front-End}}
             A implementação do \textit{front-end} será feita utilizando a biblioteca \texttt{GTK}.
