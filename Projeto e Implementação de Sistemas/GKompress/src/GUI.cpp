@@ -3,6 +3,9 @@
 #include "../include/huffman/huffman_txt.hpp"
 #include "../include/huffman/huffman_wav.hpp"
 #include "../include/huffman/huffman_bmp.hpp"
+#include "../include/lz77/lz_txt.hpp"
+#include "../include/lz77/lz_wav.hpp"
+#include "../include/lz77/lz_bmp.hpp"
 #include <cstdio>
 #include <string>
 #include <cstdlib>
@@ -29,7 +32,9 @@ const gchar* file_path = nullptr;
 HuffmanTXT archive_txt;
 HuffmanBMP archive_bmp;
 HuffmanWAV archive_wav;
-
+LZ77TXT archive_lz77_txt;
+LZ77WAV archive_lz77_wav;
+LZ77BMP archive_lz77_bmp;
 
 int on_compress_button_clicked(GtkButton* button, gpointer user_data);
 int on_decompress_button_clicked(GtkButton* button, gpointer user_data);
@@ -295,6 +300,29 @@ int on_compress_button_clicked(GtkButton* button, gpointer user_data)
             create_dialog_and_destroy("Extension not supported.");
             return -1;
         }
+    } else if (selected_algorithm == LZ77) {
+        if (!strcmp(".txt", extension)) {
+            if (archive_lz77_txt.set_filepath(path) == -1) {
+                create_dialog_and_destroy("File not found.");
+                return -1;
+            }
+            archive_lz77_txt.compress(LZ77);
+        } else if (!strcmp(".wav", extension)) {
+            if (archive_lz77_wav.set_filepath(path) == -1) {
+                create_dialog_and_destroy("File not found.");
+                return -1;
+            }
+            archive_lz77_wav.compress(LZ77);
+        } else if (!strcmp(".bmp", extension)) {
+            if (archive_lz77_bmp.set_filepath(path) == -1) {
+                create_dialog_and_destroy("File not found.");
+                return -1;
+            }
+            archive_lz77_bmp.compress(LZ77);
+        } else {
+            create_dialog_and_destroy("Extension not supported.");
+            return -1;
+        }
     }
     return 0;
 }
@@ -409,6 +437,30 @@ int on_decompress_button_clicked(GtkButton* button, gpointer user_data)
             create_dialog_and_destroy("Extension not supported.");
             return -1;
         }
+    } else if (selected_algorithm == LZ77) {
+        std::string path = file_path;
+        if (!strcmp(".txt.GK", extension)) {
+            if (archive_lz77_txt.set_filepath(path) == -1 || archive_lz77_txt.decompress(LZ77) == -1) {
+                create_dialog_and_destroy("Invalid LZ77 compressed file.");
+                return -1;
+            }
+        } else if (!strcmp(".wav.GK", extension)) {
+            if (archive_lz77_wav.set_filepath(path) == -1 || 
+                archive_lz77_wav.decompress(LZ77, write_wav_header, read_wav_header, get_pos, &wav_file) == -1) {
+                create_dialog_and_destroy("Invalid LZ77 compressed file.");
+                return -1;
+            }
+        } else if (!strcmp(".bmp.GK", extension)) {
+            if (archive_lz77_bmp.set_filepath(path) == -1 || 
+                archive_lz77_bmp.decompress(LZ77, write_bmp_header, read_bmp_header, get_pos, &bmp_file) == -1) {
+                create_dialog_and_destroy("Invalid LZ77 compressed file.");
+                return -1;
+            }
+        } else {
+            create_dialog_and_destroy("Extension not supported.");
+            return -1;
+        }
     }
+
     return 0;
 }
