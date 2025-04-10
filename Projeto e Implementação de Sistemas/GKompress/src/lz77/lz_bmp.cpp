@@ -17,6 +17,7 @@ static void read_bmp_header(FILE* file, void* image_file) {
     bmp* bmp_ptr = static_cast<bmp*>(image_file);
     fread(&bmp_ptr->header, sizeof(bmp_ptr->header), 1, file);
     fread(&bmp_ptr->info_header, sizeof(bmp_ptr->info_header), 1, file);
+    printf("estamos em %d\n", ftell(file));
     if (bmp_ptr->has_color_table()) {
         fread(bmp_ptr->color_table, bmp_ptr->get_color_table_size(), 1, file);
     }
@@ -34,4 +35,10 @@ static size_t get_pos(void* image_file) {
 void LZ77BMP::compress(int option) {
     bmp_file.read(filepath.c_str());
     internal_compress(bmp_file.data, bmp_file.data_size, write_bmp_header, &bmp_file);
+}
+
+int LZ77BMP::decompress(int option)
+{
+    bmp decompressed_bmp;
+    return LZ77::decompress(option, write_bmp_header, read_bmp_header, get_pos, &decompressed_bmp);
 }

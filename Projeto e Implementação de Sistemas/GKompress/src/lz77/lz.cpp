@@ -111,6 +111,9 @@ void LZ77::internal_compress(uint8_t* data, size_t data_size, void (*write_heade
 
     BitWriter writer(out);
     size_t pos = 0;
+    printf("out estamos em %d\n", ftell(out));
+
+    printf("data_size internal: %zu\n", data_size);
     while (pos < data_size) {
         int bestOffset = 0, bestLength = 0;
         int windowStart = std::max(0, static_cast<int>(pos) - WINDOW_SIZE);
@@ -158,18 +161,20 @@ int LZ77::decompress(int option, void (*write_header)(FILE*, void*), void (*read
     fread(&version, 1, 1, in);
     uint32_t origSize;
     fread(&origSize, 4, 1, in);
-    fseek(in, 1, SEEK_CUR); // Skip reserved byte
+    fseek(in, 1, SEEK_CUR); 
 
     size_t headerSize = 0;
     if (read_header && filetype) {
+        printf("aqui entrou\n");
         long startPos = ftell(in);
         read_header(in, filetype);
         headerSize = ftell(in) - startPos;
     }
+    printf("in estamos em %d\n", ftell(in));
 
     BitReader reader(in);
     std::vector<uint8_t> buffer;
-    buffer.reserve(origSize);
+    buffer.reserve(origSize - headerSize);
 
     while (buffer.size() < origSize) {
         bool flag = reader.readBit();

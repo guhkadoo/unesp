@@ -11,7 +11,6 @@ uint8_t* LZ77TXT::read_text(FILE* file) {
 
     data = new uint8_t[file_size];
     fread(data, 1, file_size, file);
-    fclose(file);
     return data;
 }
 
@@ -21,6 +20,7 @@ void LZ77TXT::compress(int option) {
     uint8_t* data = read_text(file);
     fseek(file, 0, SEEK_END);
     size_t data_size = ftell(file);
+    printf("data_size compress: %zu\n", data_size);
     internal_compress(data, data_size);
     delete[] data;
 
