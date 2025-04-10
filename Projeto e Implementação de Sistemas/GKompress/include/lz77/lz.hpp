@@ -51,8 +51,7 @@ public:
     LZ77(std::string fp) : filepath(fp) {}
     int set_filepath(const std::string& path);
     virtual void compress(int option) = 0;
-    int decompress(int option, void (*write_header)(FILE*, void*) = nullptr, void (*read_header)(FILE*, void*) =
-            nullptr, size_t (*get_pos)(void*) = nullptr, void* filetype = nullptr);
+    int decompress(int option, void (*write_header)(FILE*, void*) = nullptr, void (*read_header)(FILE*, void*) = nullptr, size_t (*get_pos)(void*) = nullptr, void* filetype = nullptr);
 };
 
 #endif //LZ77_HPP

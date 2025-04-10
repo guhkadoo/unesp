@@ -12,6 +12,7 @@ public:
     LZ77BMP() : LZ77() {}
     LZ77BMP(std::string fp) : LZ77(fp) {}
     void compress(int option) override;
+    int decompress(int option);
 };
 
 #endif // LZ77_BMP_HPP
