@@ -302,19 +302,22 @@ int on_compress_button_clicked(GtkButton* button, gpointer user_data)
         }
     } else if (selected_algorithm == LZ77) {
         if (!strcmp(".txt", extension)) {
-            if (archive_lz77_txt.set_filepath(path) == -1) {
+            if (archive_lz77_txt.set_filepath(path) == -1)
+            {
                 create_dialog_and_destroy("File not found.");
                 return -1;
             }
             archive_lz77_txt.compress(LZ77);
         } else if (!strcmp(".wav", extension)) {
-            if (archive_lz77_wav.set_filepath(path) == -1) {
+            if (archive_lz77_wav.set_filepath(path) == -1)
+            {
                 create_dialog_and_destroy("File not found.");
                 return -1;
             }
             archive_lz77_wav.compress(LZ77);
         } else if (!strcmp(".bmp", extension)) {
-            if (archive_lz77_bmp.set_filepath(path) == -1) {
+            if (archive_lz77_bmp.set_filepath(path) == -1)
+            {
                 create_dialog_and_destroy("File not found.");
                 return -1;
             }
@@ -439,21 +442,32 @@ int on_decompress_button_clicked(GtkButton* button, gpointer user_data)
         }
     } else if (selected_algorithm == LZ77) {
         std::string path = file_path;
+        printf("%s\n", file_path);
+        if(archive_lz77_txt.set_filepath(path) == -1 || archive_lz77_wav.set_filepath(path) == -1 || archive_lz77_bmp.set_filepath(path) == -1)
+        {
+            create_dialog_and_destroy("File not found.");
+            return -1;
+        }
+        printf("%s\n", extension);
         if (!strcmp(".txt.GK", extension)) {
-            if (archive_lz77_txt.set_filepath(path) == -1 || archive_lz77_txt.decompress(LZ77) == -1) {
-                create_dialog_and_destroy("Invalid LZ77 compressed file.");
+            int found_compressed_file = archive_lz77_txt.decompress(LZ77);
+            if(found_compressed_file == -1)
+            {
+                create_dialog_and_destroy("File not found.");
                 return -1;
             }
         } else if (!strcmp(".wav.GK", extension)) {
-            if (archive_lz77_wav.set_filepath(path) == -1 || 
-                archive_lz77_wav.decompress(LZ77, write_wav_header, read_wav_header, get_pos, &wav_file) == -1) {
-                create_dialog_and_destroy("Invalid LZ77 compressed file.");
+            int found_compressed_file = archive_lz77_wav.decompress(LZ77);
+            if(found_compressed_file == -1)
+            {
+                create_dialog_and_destroy("File not found.");
                 return -1;
             }
         } else if (!strcmp(".bmp.GK", extension)) {
-            if (archive_lz77_bmp.set_filepath(path) == -1 || 
-                archive_lz77_bmp.decompress(LZ77, write_bmp_header, read_bmp_header, get_pos, &bmp_file) == -1) {
-                create_dialog_and_destroy("Invalid LZ77 compressed file.");
+            int found_compressed_file = archive_lz77_bmp.decompress(LZ77);
+            if(found_compressed_file == -1)
+            {
+                create_dialog_and_destroy("File not found.");
                 return -1;
             }
         } else {
