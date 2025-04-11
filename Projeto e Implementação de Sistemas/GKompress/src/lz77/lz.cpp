@@ -1,5 +1,6 @@
-#include "../include/lz77/lz.hpp"
+#include "../../include/lz77/lz.hpp"
 #include <cstring>
+#include <cstdio>
 #include <unistd.h>
 
 void LZ77::BitWriter::writeBit(bool bit)
@@ -174,7 +175,7 @@ int LZ77::decompress(int option, void (*write_header)(FILE*, void*), void (*read
 
     BitReader reader(in);
     std::vector<uint8_t> buffer;
-    buffer.reserve(origSize - headerSize);
+    buffer.reserve(origSize);
 
     while (buffer.size() < origSize) {
         bool flag = reader.readBit();

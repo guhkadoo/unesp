@@ -27,3 +27,8 @@ void LZ77WAV::compress(int option) {
     wav_file.read(filepath);
     internal_compress(wav_file.data, wav_file.data_subchunk.size, write_wav_header, &wav_file);
 }
+
+int LZ77WAV::decompress(int option) {
+    wav decompressed_wav;
+    return LZ77::decompress(option, write_wav_header, read_wav_header, get_pos, &decompressed_wav);
+}
