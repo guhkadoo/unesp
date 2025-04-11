@@ -12,6 +12,7 @@ public:
     LZ77WAV() : LZ77() {}
     LZ77WAV(std::string fp) : LZ77(fp) {}
     void compress(int option) override;
+    int decompress(int option);
 };
 
 #endif // LZ77_WAV_HPP
