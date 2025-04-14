@@ -121,8 +121,7 @@ void LZ77::internal_compress(uint8_t* data, size_t data_size, void (*write_heade
 
         for (int i = windowStart; i < static_cast<int>(pos); ++i) {
             int length = 0;
-            while (length < MAX_LENGTH && pos + length < data_size &&
-                   data[i + length] == data[pos + length]) {
+            while (length < MAX_LENGTH && pos + length < data_size && data[i + length] == data[pos + length]) {
                 ++length;
             }
             if (length > bestLength && length >= 3) {

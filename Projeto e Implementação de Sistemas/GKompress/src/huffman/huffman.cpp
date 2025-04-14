@@ -295,6 +295,7 @@ void Huffman::Dictionary::clear()
     for(size_t i=0; i<Huffman::SIZE; i++)
         delete[] dictionary[i];
     delete[] dictionary;
+    std::vector<std::pair<uint8_t, size_t>>().swap(sorted_symbols);
     dictionary = nullptr;
 }
 
@@ -475,6 +476,7 @@ static int is_bit_1(char byte, int i)
 
 void Huffman::clean_for_next_iteration()
 {
+    dictionary.clear();
     duplicates.fill(0); // we fill the duplicates with 0 for the next iteration
     tree.clear(tree.root); // we clear the tree for the next iteration
     tree.root = nullptr;
