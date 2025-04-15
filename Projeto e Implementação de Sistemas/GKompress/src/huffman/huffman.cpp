@@ -441,7 +441,7 @@ void Huffman::internal_compress(int option, char* code, void (*write_header)(FIL
 
         if(write_header && filetype)
             write_header(file, filetype);
-        int j=7;
+            int j=7;
         for(size_t i=0; code[i] != '\0'; i++) {
             if(code[i] == '1')
                 byte |= (1U << j); 
@@ -548,10 +548,12 @@ int Huffman::decompress(int option, void (*write_header)(FILE*, void*), void (*r
         // END READ TREE
         if(filetype && read_header)
         {
+            printf("está lendo\n");
             read_header(file, filetype);
         }
         if(filetype && write_header)
         {
+            printf("está escrevendo\n");
             write_header(out, filetype);
         }
 

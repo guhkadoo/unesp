@@ -24,7 +24,9 @@ static void read_bmp_header(FILE* file, void* image_file)
     fread(&bmp_ptr->info_header, sizeof(bmp_ptr->info_header), 1, file);
     if(bmp_ptr->has_color_table())
     {
-        fwrite(bmp_ptr->color_table, bmp_ptr->get_color_table_size(), 1, file);
+        size_t color_table_size = bmp_ptr->get_color_table_size();
+        bmp_ptr->color_table = new uint8_t[color_table_size];    
+        fread(bmp_ptr->color_table, bmp_ptr->get_color_table_size(), 1, file);
     }
 }
 
@@ -51,6 +53,7 @@ void HuffmanBMP::compress(int option)
         dictionary.generate_canonical_codes();
     }
     char* code = encode(bmp_file.data, bmp_file.data_size);
+    printf("%s\n", code);
     internal_compress(option, code, write_bmp_header, &bmp_file);
 }
 

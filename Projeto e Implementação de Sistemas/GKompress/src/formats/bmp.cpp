@@ -79,7 +79,7 @@ int bmp::read(const char* filename)
     {
         color_table = NULL;
     } else {
-        size_t color_table_size = (size_t)get_color_table_size(); 
+        size_t color_table_size = (size_t)get_color_table_size();
         color_table = new uint8_t[color_table_size];
 
         if(fread(color_table, color_table_size, 1, file) != 1)

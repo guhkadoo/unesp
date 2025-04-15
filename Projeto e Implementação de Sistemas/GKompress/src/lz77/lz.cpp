@@ -84,9 +84,9 @@ std::string LZ77::decompressed_filepath_from_compressed(const std::string& compr
     size_t pos = compressed_path.find(".GK");
     if (pos != std::string::npos) {
         std::string base = compressed_path.substr(0, pos);
-        size_t lz77_pos = base.find("_lz77");
-        if (lz77_pos != std::string::npos) {
-            return base.substr(0, lz77_pos) + "decompressed" + base.substr(lz77_pos + 5);
+        size_t dot_pos = base.find(".");
+        if (dot_pos != std::string::npos) {
+            return base.substr(0, dot_pos) + "decompressed" + base.substr(dot_pos, 4);
         }
     }
     return compressed_path;
