@@ -19,6 +19,8 @@ static void read_bmp_header(FILE* file, void* image_file) {
     fread(&bmp_ptr->info_header, sizeof(bmp_ptr->info_header), 1, file);
     printf("estamos em %d\n", ftell(file));
     if (bmp_ptr->has_color_table()) {
+        size_t color_table_size = bmp_ptr->get_color_table_size();
+        bmp_ptr->color_table = new uint8_t[color_table_size];    
         fread(bmp_ptr->color_table, bmp_ptr->get_color_table_size(), 1, file);
     }
 }
