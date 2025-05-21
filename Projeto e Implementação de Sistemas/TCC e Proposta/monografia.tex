@@ -24,8 +24,10 @@
 % --------------------------------------------------------
 % PACOTES
 % --------------------------------------------------------
+\usepackage{pdfpages}
 \usepackage{cmap}				% Mapear caracteres especiais no PDF
-\usepackage{lmodern}			% Usa a fonte Latin Modern
+\usepackage{helvet}
+%\usepackage{lmodern}			% Usa a fonte Latin Modern
 \usepackage[T1]{fontenc}		% Selecao de codigos de fonte.
 \usepackage[utf8]{inputenc}		% Codificacao do documento (conversão automática dos acentos)
 \usepackage{lastpage}			% Usado pela Ficha catalográfica
@@ -33,6 +35,7 @@
 \usepackage{color}				% Controle das cores
 \usepackage{graphicx}			% Inclusão de gráficos
 \usepackage{lipsum}				% para geração de dummy text
+\usepackage{courier}            % fonte courier
 
 \let\printglossary\relax
 \let\theglossary\relax
@@ -86,12 +89,11 @@
 % INFORMAÇÕES DE DADOS PARA CAPA E FOLHA DE ROSTO
 % --------------------------------------------------------
 
-\titulo{Título do Texto}
-\autor{Nome do Autor}
+\titulo{Explorando Algoritmos de Compressão de Dados: Teoria, Implementação e Desempenho}
+\autor{Gustavo Yujii Silva Kadooka}
 \local{Bauru}
-\data{Outubro/2018}
-\orientador{Prof. Dr. Seu Orientador}
-\coorientador{Prof. Dr. Seu Coorientador}
+\data{Novembro/2025}
+\orientador{Profa. Dra. Andréa Carla Gonçalves Vianna}
 \instituicao{%
   Universidade Estadual Paulista ``Júlio de Mesquita Filho''
   \par
@@ -99,7 +101,7 @@
   \par
   Ciência da Computação}
 \tipotrabalho{Trabalho de Conclusão de Curso}
-\preambulo{Trabalho de Conclusão de Curso do Curso de Ciência da Computação da Universidade Estadual Paulista ``Júlio de Mesquita Filho'', Faculdade de Ciências, Campus Bauru.}
+\preambulo{Trabalho de Conclusão de Curso em Ciência da Computação apresentado ao Departamento de Computação da Universidade Estadual Paulista ``Júlio de Mesquita Filho'', Faculdade de Ciências, Campus Bauru.}
 
 
 % --------------------------------------------------------
@@ -108,6 +110,7 @@
 
 % alterando o aspecto da cor azul
 \definecolor{blue}{RGB}{41,5,195}
+
 
 % informações do PDF
 \makeatletter
@@ -119,10 +122,10 @@
 	    pdfcreator={LaTeX with abnTeX2},
 		pdfkeywords={abnt}{latex}{abntex}{abntex2}{trabalho acadêmico},
 		colorlinks=true,       		% false: boxed links; true: colored links
-    	linkcolor=blue,          	% color of internal links
-    	citecolor=blue,        		% color of links to bibliography
+    	linkcolor=black,          	% color of internal links
+    	citecolor=black,        		% color of links to bibliography
     	filecolor=magenta,      		% color of file links
-		urlcolor=blue,
+		urlcolor=black,
 		bookmarksdepth=4
 }
 \makeatother
@@ -210,27 +213,7 @@
 
 % Inserir a ficha bibliografica
 \begin{fichacatalografica}
-	\sffamily
-	\vspace*{\fill}					% Posição vertical
-	\begin{center}					% Minipage Centralizado
-		\fbox{\begin{minipage}[c][7.5cm]{12.5cm}		% Largura
-			\small
-			\imprimirautor
-			\hspace{0.5cm} \imprimirtitulo  / \imprimirautor. --
-			\imprimirlocal, \imprimirdata-
-			\hspace{0.5cm} \pageref{LastPage} p. : il. (algumas color.) ; 30 cm.\\
-			\hspace{0.5cm} \imprimirorientadorRotulo~\imprimirorientador\\
-			\hspace{0.5cm}
-			\parbox[t]{\textwidth}{\imprimirtipotrabalho~--~\imprimirinstituicao,
-				\imprimirdata.}\\
-			\hspace{0.5cm}
-			1. Tags
-			2. Para
-			3. A
-			4. Ficha
-			5. Catalográfica
-			\end{minipage}}
-	\end{center}
+    \includepdf[pages=1,offset=0cm 0cm,scale=1]{figs/ficha_catalografica.pdf}
 \end{fichacatalografica}
 
 % Inserir folha de aprovação
@@ -250,21 +233,21 @@
 	\end{center}
 	\center Banca Examinadora
 	\assinatura{\textbf{\imprimirorientador} \\ Orientador\\
-		Universidade Estadual Paulista "Júlio de Mesquita Filho"\\
+		Universidade Estadual Paulista ``Júlio de Mesquita Filho''\\
 		Faculdade de Ciências \\
 	Departamento de Ciência da Computação}
 	\assinatura{\textbf{Professor Convidado 1} \\
-		Universidade Estadual Paulista "Júlio de Mesquita Filho"\\
+		Universidade Estadual Paulista ``Júlio de Mesquita Filho''\\
 		Faculdade de Ciências \\
 	Departamento de Ciência da Computação}
 	\assinatura{\textbf{Professor Convidado 2} \\
-		Universidade Estadual Paulista "Júlio de Mesquita Filho"\\
+		Universidade Estadual Paulista ``Júlio de Mesquita Filho''\\
 		Faculdade de Ciências \\
 	Departamento de Ciência da Computação}
 	\begin{center}
 		\vspace*{0.5cm}
 		\par
-		{Bauru, \_\_\_\_\_ de \_\_\_\_\_\_\_\_\_\_\_ de \_\_\_\_.}
+		{Bauru, 11 de novembro de 2025.}
 		\vspace*{1cm}
 	\end{center}
 \end{folhadeaprovacao}
@@ -273,23 +256,37 @@
 \begin{dedicatoria}
 	\vspace*{\fill}
 	\begin{flushright}
-		\textit{Espaço destinado à dedicátoria do texto.} 
+        \textit{À minha amada família, fonte inesgotável de inspiração e força.} 
 	\end{flushright}
 \end{dedicatoria}
 
 % Agradecimentos
 \begin{agradecimentos}
-	Espaço destinado aos agradecimentos.
+    Agradeço à Universidade Estadual Paulista ``Júlio de Mesquita Filho'' -- Faculdade de Ciências, Campus de Bauru --,
+    por ter sido o espaço onde pude me desenvolver como estudante, profissional e indivíduo. Sou grato a todos os
+    professores e funcionários da instituição pelo conhecimento compartilhado e pelo apoio ao longo da graduação.
+    
+    À minha orientadora, Profa. Dra. Andréa Carla Gonçalves Vianna, pela disponibilidade, paciência diante das dificuldades 
+    e por acreditar no meu potencial durante o desenvolvimento deste trabalho.
+
+    Aos meus colegas de curso, que estiveram presentes ao longo desta jornada, dividindo aprendizados,
+    desafios e conquistas. O convívio e a troca de experiências tornaram a caminhada mais leve e significativa.
+
+    À minha irmã Gabriely, pelas palavras de incentivo e carinho em todos os momentos, mesmo nos mais difíceis.
+
+    E, com o meu mais profundo e sincero agradecimento, menciono especialmente meus pais -- Flávia e Silvio
+    --, por todo o apoio emocional, pelos ensinamentos de vida, pela confiança depositada em mim e por sempre me encorajarem a seguir em frente.
+    Esta conquista é, acima de tudo, de vocês.
 \end{agradecimentos}
 
 % Epígrafe
-\begin{epigrafe}
-	\vspace*{\fill}
-	\begin{flushright}
-		\textit{Espaço destinado à epígrafe.}\\
-		Não esquecer autor
-	\end{flushright}
-\end{epigrafe}
+%\begin{epigrafe}
+%	\vspace*{\fill}
+%	\begin{flushright}
+%		\textit{De tanto ver triunfar as nulidades; de tanto ver prosperar a desonra, de tanto ver crescer a injustiça. De tanto ver agigantarem-se os poderes nas mãos dos maus, o homem chega a desanimar-se da virtude, a rir-se da honra e a ter vergonha de ser honesto.}\\
+%	    Rui Barbosa	
+%	\end{flushright}
+%\end{epigrafe}
 
 
 % --------------------------------------------------------
@@ -299,15 +296,25 @@
 % resumo em português
 \setlength{\absparsep}{18pt} % ajusta o espaçamento dos parágrafos do resumo
 \begin{resumo}
-	Espaço destinado à escrita do resumo.\\
-	\textbf{Palavras-chave:} Palavras-chave de seu resumo.
+O volume crescente de dados digitais gerados diariamente tem intensificado a necessidade de técnicas eficientes de compressão de dados, com o objetivo de otimizar o espaço de armazenamento e a largura de banda para transmissão. Este trabalho apresenta um estudo abrangente, a implementação prática e a análise de desempenho de algoritmos clássicos de compressão de dados, a saber: Huffman, LZ77, LZW e GZIP. São explorados os conceitos teóricos fundamentais de cada algoritmo, seguidos pela implementação prática utilizando a linguagem de programação C++. As implementações suportam múltiplos formatos de arquivo, incluindo texto simples (.txt), imagens bitmap (.bmp) e arquivos de áudio PCM (.wav), demonstrando versatilidade e aplicabilidade em diferentes domínios de dados.
+Para facilitar a interação do usuário, foi desenvolvida uma interface gráfica utilizando a biblioteca GTK, permitindo a seleção dos algoritmos de compressão e o arquivo de entrada. Ademais, para realizar uma análise comparativa rigorosa, foram utilizados scripts em Python para processar os dados experimentais e gerar representações gráficas dos principais indicadores de desempenho, como a taxa de compressão e o tempo de execução para diferentes tipos de arquivos.
+Os resultados experimentais indicam que não há um algoritmo que se destaque universalmente, pois cada um apresenta
+vantagens específicas conforme o tipo de arquivo e as características dos dados. Isso ressalta a importância da escolha
+do método de compressão adequado às necessidades específicas da aplicação. O projeto contribui tanto com uma ferramenta
+prática para compressão de dados quanto com um recurso educacional que auxilia na compreensão dos algoritmos clássicos e
+seu comportamento em cenários reais.\\
+        \textbf{Palavras-chave:} Compressão de dados. Algoritmos de compressão. Huffman. LZ77. LZW. GZIP. C++. Python. GTK.
 \end{resumo}
 
 % resumo em inglês
 \begin{resumo}[Abstract]
 	\begin{otherlanguage*}{english}
-		Abstract area.\\
-		\textbf{Keywords:} Abstract keywords.
+	    The growing volume of digital data generated daily has increased the need for efficient data compression techniques to optimize storage space and transmission bandwidth. This work presents a comprehensive study, implementation, and performance analysis of classical data compression algorithms, namely Huffman, LZ77, LZW, and GZIP. The theoretical concepts behind each algorithm are explored in depth, followed by practical implementations using C++ programming language. The implementations support multiple file formats including plain text (.txt), bitmap images (.bmp), and PCM audio files (.wav), demonstrating versatility and applicability in different data domains.
+To facilitate user interaction, a graphical user interface (GUI) was developed with the GTK library, enabling selection of compression algorithms, and input files. Furthermore, to conduct a rigorous comparative analysis, Python scripts were employed to process experimental data and generate graphical representations of key performance metrics such as compression ratio and execution time for different file types.
+The experimental results indicate that no single algorithm universally outperforms others; rather, each one exhibits
+specific advantages depending on the file type and data characteristics. This highlights the importance of choosing the
+appropriate compression method tailored to the application's needs. The project contributes as a practical tool for data compression and an educational resource that aids in understanding fundamental compression algorithms and their behavior in real-world scenarios.\\
+		\textbf{Keywords:} Data compression, compression algorithms, Huffman coding, LZ77, LZW, GZIP, C++, Python, GTK.
 	\end{otherlanguage*}
 \end{resumo}
 
@@ -324,9 +331,9 @@
 % --------------------------------------------------------
 % LISTA DE QUADROS
 % --------------------------------------------------------
-\pdfbookmark[0]{\listofquadrosname}{loq}
-\listofquadros*
-\cleardoublepage
+%\pdfbookmark[0]{\listofquadrosname}{loq}
+%\listofquadros*
+%\cleardoublepage
 % ---
 
 % --------------------------------------------------------
@@ -342,8 +349,10 @@
 % LISTA DE ABREVIATURAS E SIGLAS
 % ---
 \begin{siglas}
-	\item[S1] Sigla 1
-	\item[S2] Sigla 2
+	\item[LZ77] Lempel-Ziv 1977 (algoritmo de compressão)
+	\item[LZW] Lempel-Ziv-Welch (algoritmo de compressão)
+    \item[GZIP] GNU zip (algoritmo de compressão)
+    \item[GTK] GIMP Toolkit (biblioteca gráfica para interface)
 	
 \end{siglas}
 % --------------------------------------------------------
@@ -365,8 +374,13 @@
 \pagestyle{simple}
 
 % Arquivos .tex do texto, podendo ser escritos em um único arquivo ou divididos da forma desejada
-\input{chapters/introducao}
-\input{chapters/conclusao}
+\input{chapters_monografia/introducao}
+\input{chapters_monografia/problema}
+\input{chapters_monografia/objetivos}
+\input{chapters_monografia/fundamentacao_teorica}
+\input{chapters_monografia/implementacao}
+\input{chapters_monografia/analise_comparativa}
+\input{chapters_monografia/conclusao}
 
 
 % --------------------------------------------------------
@@ -380,7 +394,7 @@
 % REFERÊNCIAS BIBLIOGRÁFICAS
 % --------------------------------------------------------
 
-\bibliography{chapters/referencias}
+\bibliography{chapters_monografia/referencias}
 
 
 % --------------------------------------------------------
