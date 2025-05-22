@@ -1,4 +1,59 @@
 \chapter{Introdução}
 \label{c.introducao}
 
+  A compressão de dados é uma técnica essencial na ciência da computação, utilizada para reduzir o tamanho dos arquivos,
+  otimizando o uso de recursos e acelerando a transmissão de dados -- aspectos cruciais na era digital em que vivemos.
 
+  O desenvolvimento da área teve início na década de 1950, com os primeiros métodos voltados à otimização do espaço de
+  armazenamento. Entre estes métodos, destaca-se o algoritmo de Huffman~\cite{huffman1952method}, que
+  emprega uma codificação de prefixo variável, atribuindo códigos menores aos símbolos mais frequentes e maiores aos
+  menos frequentes. Essa abordagem se consolidou como um dos pilares da área e é utilizada em formatos como ZIP e GZIP.
+
+  Posteriormente, novos algoritmos surgiram. Um dos mais significativos é o LZ77, proposto por Abraham Lempel e
+  Jacob Ziv~\cite{ziv1977universal}, que adota uma estratégia baseada em dicionários, substituindo sequências repetidas
+  por referências a posições anteriores. A partir desta ideia, o LZW vem à tona aprimorando o LZ77 ao construir
+  dinamicamente um dicionário de \textit{strings} durante a compressão~\cite{welch1984technique}, sendo amplamente
+  utilizado em formatos como GIF e TIFF.
+
+  Outro algoritmo relevante é o GZIP, amplamente adotado em sistemas Unix e aplicações web. Ele combina a eficiência da
+  codificação de Huffman com o LZ77, alcançando boas taxas de compressão sem perdas. Sua popularidade decorre da
+  combinação de alta eficácia com a facilidade de descompressão.
+
+  Apesar do surgimento de novas técnicas, os algoritmos de Huffman, LZ77, LZW e GZIP continuam a formar a espinha dorsal
+  dos métodos clássicos de compressão de dados e são amplamente utilizados em diversas aplicações. 
+
+  Nos últimos anos, surgiram algoritmos mais modernos, como o Brotli -- desenvolvido pela Google -- que combina
+  codificação de Huffman e transformações de fluxo de dados para obter taxas de compressão superiores às do
+  GZIP~\cite{alakuijala2016brotli}. Outro exemplo é o Zstandard (Zstd), criado pelo Facebook, que alia velocidade e
+  compressão eficiente, sendo adequado tanto para compressão em tempo real quanto para grandes volumes de
+  dados~\cite{collet2016zstandard}.
+
+  Além disto, algoritmos baseados em aprendizado de máquina têm ganhado destaque, principalmente na compressão de
+  imagens e áudio. Redes neurais como GANs (para imagens) e modelos como o WaveNet (para áudio)~\cite{wavenet} vêm sendo
+  explorados para melhorar a qualidade das compressões. No campo da compressão de vídeo, codecs como HEVC (H.265) e VVC
+  vêm sendo desenvolvidos para oferecer compressões mais eficazes em vídeos de alta definição.
+
+  A compressão de dados desempenha, portanto, um papel estratégico em diversas áreas tecnológicas, impactando diretamente sistemas de armazenamento, transmissão de dados, streaming, redes e computação em nuvem. A análise de desempenho dos algoritmos, considerando métricas como taxa de compressão e tempo de execução, é essencial para a escolha do método mais adequado a cada situação.
+
+Neste contexto, apresenta-se um estudo aprofundado sobre os algoritmos clássicos de compressão Huffman, LZ77, LZW e GZIP. São abordados os fundamentos teóricos de cada método, suas implementações práticas em linguagem C++ com suporte a arquivos nos formatos .txt, .bmp e .wav, e uma interface gráfica desenvolvida com GTK. A avaliação experimental é realizada por meio de comparações de desempenho, com auxílio de scripts em Python para geração de gráficos e análise dos resultados. O objetivo é compreender o comportamento dos algoritmos em diferentes tipos de dados, destacando suas vantagens, limitações e aplicações mais adequadas.
+
+O restante deste trabalho está organizado da seguinte forma: o Capítulo 2 apresenta os fundamentos teóricos sobre compressão de dados, abordando a Teoria da Informação e os algoritmos Huffman, LZ77, LZW e GZIP. O Capítulo 3 descreve a implementação dos algoritmos, incluindo aspectos técnicos e ferramentas utilizadas. No Capítulo 4, é realizada uma análise comparativa com base nos testes realizados, considerando taxa de compressão e tempo de execução. Por fim, o Capítulo 5 apresenta as conclusões do trabalho e sugestões para pesquisas futuras.
+
+\section{Problema}
+Como os diferentes algoritmos clássicos de compressão de dados (Huffman, LZ77, LZW e GZIP) 
+se comparam em termos de eficiência de compressão e tempo de execução, e qual o impacto dessas métricas em aplicações práticas que
+lidam com texto, imagem e áudio?
+
+\section{Objetivos}
+\subsection{Objetivo geral}
+Investigar e comparar o desempenho de algoritmos clássicos de compressão de dados sem perdas, a saber: Huffman, LZ77, LZW e GZIP, por meio da implementação prática dessas técnicas, 
+aplicando-as a diferentes tipos de arquivos e analisando sua eficiência em termos da taxa de compressão e tempo de execução.
+\subsection{Objetivos específicos}
+	\begin{itemize}
+		\item{Estudar os fundamentos teóricos dos algoritmos de compressão sem perdas selecionados, compreendendo o seu funcionamento, estrutura e aplicação histórica.}
+		\item{Implementar, em linguagem C++, os algoritmos Huffman, LZ77, LZW e GZIP, com foco na compressão e descompressão de arquivos de texto (.txt), imagem bitmap (.bmp) e áudio PCM (.wav).}
+		\item{Desenvolver uma interface gráfica com a biblioteca GTK, que permita ao usuário escolher o algoritmo e o algoritmo de entrada de forma interativa.}
+		\item{Criar scripts em Python para a análise comparativa, organizando e visualizando os resultados experimentais por meio de gráficos e tabelas.}
+		\item{Avaliar os pontos fortes e fracos de cada algoritmo, considerando o tipo de dado, a estrutura do arquivo, o tempo de processamento e a taxa de compressão.}
+		\item{Identificar o algoritmo mais adequado a cada cenário específico, com base nos resultados experimentais obtidos.}
+	\end{itemize}
