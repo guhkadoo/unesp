@@ -296,25 +296,34 @@
 % resumo em português
 \setlength{\absparsep}{18pt} % ajusta o espaçamento dos parágrafos do resumo
 \begin{resumo}
-O volume crescente de dados digitais gerados diariamente tem intensificado a necessidade de técnicas eficientes de compressão de dados, com o objetivo de otimizar o espaço de armazenamento e a largura de banda para transmissão. Este trabalho apresenta um estudo abrangente, a implementação prática e a análise de desempenho de algoritmos clássicos de compressão de dados, a saber: Huffman, LZ77, LZW e GZIP. São explorados os conceitos teóricos fundamentais de cada algoritmo, seguidos pela implementação prática utilizando a linguagem de programação C++. As implementações suportam múltiplos formatos de arquivo, incluindo texto simples (.txt), imagens bitmap (.bmp) e arquivos de áudio PCM (.wav), demonstrando versatilidade e aplicabilidade em diferentes domínios de dados.
+%O volume crescente de dados digitais gerados diariamente tem intensificado a necessidade de técnicas eficientes de
+%compressão de dados, com o objetivo de otimizar o espaço de armazenamento e a largura de banda para transmissão.
+Este trabalho apresenta um estudo abrangente, a implementação prática e a análise de desempenho de algoritmos clássicos de
+compressão de dados, a saber: Huffman, LZ77, LZW e GZIP. São explorados os conceitos teóricos fundamentais de cada
+algoritmo, seguidos pela implementação prática utilizando a linguagem de programação C++. As implementações dos
+algoritmos lidam com os formatos
+de arquivo de texto simples (.txt), imagens bitmap (.bmp) e arquivos de áudio PCM (.wav), demonstrando versatilidade e aplicabilidade em diferentes domínios de dados.
 Para facilitar a interação do usuário, foi desenvolvida uma interface gráfica utilizando a biblioteca GTK, permitindo a seleção dos algoritmos de compressão e o arquivo de entrada. Ademais, para realizar uma análise comparativa rigorosa, foram utilizados scripts em Python para processar os dados experimentais e gerar representações gráficas dos principais indicadores de desempenho, como a taxa de compressão e o tempo de execução para diferentes tipos de arquivos.
 Os resultados experimentais indicam que não há um algoritmo que se destaque universalmente, pois cada um apresenta
 vantagens específicas conforme o tipo de arquivo e as características dos dados. Isso ressalta a importância da escolha
 do método de compressão adequado às necessidades específicas da aplicação. O projeto contribui tanto com uma ferramenta
 prática para compressão de dados quanto com um recurso educacional que auxilia na compreensão dos algoritmos clássicos e
-seu comportamento em cenários reais.\\
-        \textbf{Palavras-chave:} Compressão de dados. Algoritmos de compressão. Huffman. LZ77. LZW. GZIP. C++. Python. GTK.
+seu comportamento em cenários reais.
+        
+\textbf{Palavras-chave:} Compressão de dados. Algoritmos de compressão. Huffman. LZ77. LZW. GZIP. C++. Python. GTK.
 \end{resumo}
 
 % resumo em inglês
 \begin{resumo}[Abstract]
 	\begin{otherlanguage*}{english}
-	    The growing volume of digital data generated daily has increased the need for efficient data compression techniques to optimize storage space and transmission bandwidth. This work presents a comprehensive study, implementation, and performance analysis of classical data compression algorithms, namely Huffman, LZ77, LZW, and GZIP. The theoretical concepts behind each algorithm are explored in depth, followed by practical implementations using C++ programming language. The implementations support multiple file formats including plain text (.txt), bitmap images (.bmp), and PCM audio files (.wav), demonstrating versatility and applicability in different data domains.
+	    %The growing volume of digital data generated daily has increased the need for efficient data compression techniques to optimize storage space and transmission bandwidth. 
+This work presents a comprehensive study, implementation, and performance analysis of classical data compression algorithms, namely Huffman, LZ77, LZW, and GZIP. The theoretical concepts behind each algorithm are explored in depth, followed by practical implementations using C++ programming language. The implementations support plain text (.txt), bitmap images (.bmp), and PCM audio files (.wav), demonstrating versatility and applicability in different data domains.
 To facilitate user interaction, a graphical user interface (GUI) was developed with the GTK library, enabling selection of compression algorithms, and input files. Furthermore, to conduct a rigorous comparative analysis, Python scripts were employed to process experimental data and generate graphical representations of key performance metrics such as compression ratio and execution time for different file types.
 The experimental results indicate that no single algorithm universally outperforms others; rather, each one exhibits
 specific advantages depending on the file type and data characteristics. This highlights the importance of choosing the
-appropriate compression method tailored to the application's needs. The project contributes as a practical tool for data compression and an educational resource that aids in understanding fundamental compression algorithms and their behavior in real-world scenarios.\\
-		\textbf{Keywords:} Data compression, compression algorithms, Huffman coding, LZ77, LZW, GZIP, C++, Python, GTK.
+appropriate compression method tailored to the application's needs. The project contributes as a practical tool for data compression and an educational resource that aids in understanding fundamental compression algorithms and their behavior in real-world scenarios.
+		
+\textbf{Keywords:} Data compression, compression algorithms, Huffman coding, LZ77, LZW, GZIP, C++, Python, GTK.
 	\end{otherlanguage*}
 \end{resumo}
 
@@ -375,8 +384,6 @@ appropriate compression method tailored to the application's needs. The project 
 
 % Arquivos .tex do texto, podendo ser escritos em um único arquivo ou divididos da forma desejada
 \input{chapters_monografia/introducao}
-\input{chapters_monografia/problema}
-\input{chapters_monografia/objetivos}
 \input{chapters_monografia/fundamentacao_teorica}
 \input{chapters_monografia/implementacao}
 \input{chapters_monografia/analise_comparativa}
