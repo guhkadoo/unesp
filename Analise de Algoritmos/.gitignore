@@ -250,8 +250,5 @@ TSWLatexianTemp*
 # vscode
 **/*.vscode
 
-# png
-*.png
-
 # Ignora arquivos sem extensão (binários compilados)
 *.[!a-zA-Z]*
