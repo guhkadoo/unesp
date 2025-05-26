@@ -8,7 +8,9 @@ df = pd.read_csv("../resultados/resultados.csv")
 
 # Mapear tipos para nomes legíveis
 mapa_tipos = {0: "Crescente", 1: "Decrescente", 2: "Aleatório"}
+print(df)
 df["tipo"] = df["tipo"].map(mapa_tipos)
+print(df)
 
 # Estilo bonito com seaborn
 sns.set(style="whitegrid")

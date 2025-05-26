@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ALGOS=("bubble" "insertion" "merge" "quick" "heap" "radix")
-TAMANHOS=(1000 5000 10000 15000 25000 35000 50000 60000 75000 80000 100000)
+TAMANHOS=(1000 7600 14200 20800 27400 34000 40600 47200 53800 60400 67000 73600 80200 86800 93400 100000)
 TIPOS=(0 1 2) # 0=crescente, 1=decrescente, 2=aleatório
 
 mkdir -p ../resultados
