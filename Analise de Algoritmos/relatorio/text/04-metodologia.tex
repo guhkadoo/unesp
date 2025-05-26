@@ -1,0 +1,226 @@
+\section{Metodologia}
+Os experimentos foram realizados por meio da implementação dos algoritmos Bubble Sort, Insertion Sort, Merge Sort, Quick
+Sort, Heap Sort e Radix Sort em linguagem C. Para cada algoritmo, foram gerados vetores de diferentes tamanhos (1.000,
+        5.000, 10.000, 15.000, 25.000, 35.000, 50.000, 60.000, 75.000, 80.000, 100.000 elementos), organizados em três tipos de ordenação:
+\begin{itemize}
+    \item Crescente: vetor previamente ordenado em ordem crescente;
+    \item Decrescente: vetor ordenado em ordem decrescente;
+    \item Aleatória: vetor com elementos gerados de forma randômica.
+\end{itemize}
+Cada experimento foi executado cinco vezes, sendo registrado o tempo de execução médio, em milissegundos, para garantir maior confiabilidade nos resultados.
+Os tempos de execução foram obtidos por meio da biblioteca time.h da linguagem de programação C. Os dados coletados
+foram organizados em uma tabela csv e representados graficamente para facilitar a análise comparativa.
+
+\begin{figure}[H]
+\centering
+\begin{forest}
+for tree={
+    font=\ttfamily,
+    grow'=0,
+    child anchor=west,
+    parent anchor=east,
+    anchor=west,
+    calign=first,
+    edge={},
+    inner sep=4pt,
+    l sep=2cm,
+    before typesetting nodes={
+      for tree={
+        inner sep=0pt,
+        outer sep=0pt,
+        if level=0{font=\ttfamily\bfseries}{font=\ttfamily},
+      }
+    }
+}
+[codigos/
+    [main.c]
+    [sort.c                 \textit{<-- todas as funções de ordenação}]
+    [sort.h]
+    [scripts/
+        [iterar.sh]
+        [gerar\_grafico.py]
+    ]
+    [resultados/
+        [resultados.csv]
+        [bubble\_grafico.png]
+        [insertion\_grafico.png]
+        [\dots]
+    ]
+]
+\end{forest}
+\caption{Estrutura de diretórios do projeto.}
+\label{fig:estrutura-diretorios}
+\end{figure}
+
+A estrutura do projeto foi organizada de forma modular, conforme ilustrado na Figura~\ref{fig:estrutura-diretorios}, com o objetivo de facilitar a manutenção, testes e análise de desempenho dos algoritmos de ordenação. A seguir, são descritas as funcionalidades dos principais componentes do projeto:
+
+\begin{itemize}
+    \item \texttt{main.c}: Arquivo principal que interpreta os argumentos passados via linha de comando, gera os vetores de entrada conforme o tipo solicitado (crescente, decrescente ou aleatório) e executa o algoritmo de ordenação correspondente.
+
+    \item \texttt{sort.c} e \texttt{sort.h}: Contêm, respectivamente, a implementação e os protótipos das funções dos algoritmos de ordenação utilizados no projeto: Bubble Sort, Insertion Sort, Merge Sort, Quick Sort, Heap Sort e Radix Sort. O algoritmo a ser utilizado é selecionado de acordo com o parâmetro passado na execução.
+
+    \item \texttt{scripts/}: Diretório com scripts auxiliares para automação dos testes e geração de gráficos:
+    \begin{itemize}
+        \item \texttt{iterar.sh}: Script em Bash responsável por automatizar a execução de testes para diferentes tamanhos de vetores, tipos de ordenação e algoritmos. Os resultados são armazenados em um arquivo \texttt{.csv}.
+        \item \texttt{gerar\_grafico.py}: Script em Python que utiliza as bibliotecas \texttt{seaborn, numpy, pandas e
+            matplotlib} para gerar gráficos de desempenho com base nos resultados obtidos.
+    \end{itemize}
+
+    \item \texttt{resultados/}: Diretório onde são armazenados os resultados dos testes e os gráficos gerados:
+    \begin{itemize}
+        \item \texttt{resultados.csv}: Arquivo contendo os dados brutos dos testes, incluindo o algoritmo utilizado, o tamanho do vetor, o tipo de ordenação e o tempo de execução.
+        \item Arquivos \texttt{.png}: Gráficos de desempenho para cada algoritmo, gerados automaticamente a partir do script Python.
+    \end{itemize}
+\end{itemize}
+
+Essa organização modular permitiu realizar testes sistemáticos e automatizados, além de facilitar a coleta e visualização dos dados, contribuindo para uma análise comparativa eficiente do desempenho dos algoritmos de ordenação.
+
+\subsection{Principais Trechos de Código}
+
+Nesta seção, são apresentados os principais trechos de código que compõem a base da execução dos experimentos, com foco na automação e análise dos resultados.
+
+\subsubsection{Função Principal (\texttt{main.c})}
+
+A função \texttt{main} é responsável por interpretar os parâmetros de entrada, gerar o vetor com base no tipo escolhido e executar o algoritmo de ordenação correspondente.
+
+\begin{lstlisting}[language=C, caption={Função principal com medição de tempo}, label={lst:main}]
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
+#include "sort.h"
+
+void preencher_vetor(int *v, int n, int tipo) {
+    if (tipo == 0)
+        for (int i = 0; i < n; i++) v[i] = i;
+    else if (tipo == 1)
+        for (int i = 0; i < n; i++) v[i] = n - i;
+    else {
+        srand(42);
+        for (int i = 0; i < n; i++) v[i] = rand()%100000;
+    }
+}
+
+int main(int argc, char *argv[]) {
+    if (argc != 4) {
+        printf("Uso: %s <algoritmo> <tamanho> <tipo>\n", argv[0]);
+        printf("Algoritmos: bubble, insertion, merge, quick, heap, radix\n");
+        return 1;
+    }
+
+    char *alg = argv[1];
+    int n = atoi(argv[2]);
+    int tipo = atoi(argv[3]);
+
+    int *v = malloc(n * sizeof(int));
+    preencher_vetor(v, n, tipo);
+
+    clock_t ini = clock();
+
+    if (strcmp(alg, "bubble") == 0)
+        bubble_sort(v, n);
+    else if (strcmp(alg, "insertion") == 0)
+        insertion_sort(v, n);
+    else if (strcmp(alg, "merge") == 0)
+        merge_sort(v, 0, n-1);
+    else if (strcmp(alg, "quick") == 0)
+        quick_sort(v, 0, n-1);
+    else if (strcmp(alg, "heap") == 0)
+        heap_sort(v, n);
+    else if (strcmp(alg, "radix") == 0)
+        radix_sort(v, n);
+    else {
+        fprintf(stderr, "Algoritmo inválido: %s\n", alg);
+        free(v);
+        return 1;
+    }
+
+    clock_t fim = clock();
+    double tempo = (double)(fim - ini) / CLOCKS_PER_SEC;
+
+    printf("%s,%d,%d,%.6f\n", alg, n, tipo, tempo);
+
+    free(v);
+    return 0;
+}
+\end{lstlisting}
+
+\subsubsection{Script de Execução Automática (\texttt{iterar.sh})}
+
+Este script em Bash automatiza a execução dos testes, iterando sobre todos os algoritmos, tamanhos de vetor e tipos de ordenação. Os resultados são salvos em formato CSV para posterior análise.
+
+\begin{lstlisting}[language=bash, caption={Script para automação dos testes}, label={lst:script}]
+#!/bin/bash
+
+ALGOS=("bubble" "insertion" "merge" "quick" "heap" "radix")
+TAMANHOS=(1000 5000 10000 15000 25000 35000 50000 60000 75000 80000 100000)
+TIPOS=(0 1 2) # 0=crescente, 1=decrescente, 2=aleatório
+
+mkdir -p ../resultados
+echo "algoritmo,tamanho,tipo,tempo" > ../resultados/resultados.csv
+
+gcc -O2 -o ../sorter ../main.c ../sort.c
+
+for algo in "${ALGOS[@]}"; do
+    echo "Executando testes para $algo..."
+    for tipo in "${TIPOS[@]}"; do
+        for n in "${TAMANHOS[@]}"; do
+            soma=0
+            for i in {1..5}; do
+                resultado=$(../sorter $algo $n $tipo)
+                tempo=$(echo "$resultado" | awk -F',' '{print $4}')
+                soma=$(echo "$soma + $tempo" | bc -l)
+            done
+            media=$(echo "$soma / 5" | bc -l)
+            echo "$algo,$n,$tipo,$media" >> ../resultados/resultados.csv
+        done
+    done
+done
+\end{lstlisting}
+
+\subsubsection{Script de Geração de Gráficos (\texttt{gerar\_grafico.py})}
+
+O script em Python utiliza a biblioteca \texttt{pandas} para ler os resultados e \texttt{matplotlib/seaborn} para criar gráficos que comparam o desempenho dos algoritmos em diferentes cenários.
+
+\begin{lstlisting}[language=Python, caption={Geração de gráficos com base nos dados}, label={lst:plot}]
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+import numpy as np
+
+# Carregar os dados
+df = pd.read_csv("../resultados/resultados.csv")
+
+# Mapear tipos para nomes legíveis
+mapa_tipos = {0: "Crescente", 1: "Decrescente", 2: "Aleatório"}
+df["tipo"] = df["tipo"].map(mapa_tipos)
+
+# Estilo bonito com seaborn
+sns.set(style="whitegrid")
+
+# Lista de algoritmos únicos
+algoritmos = df["algoritmo"].unique()
+print(algoritmos)
+
+# Gerar um gráfico para cada algoritmo
+for alg in algoritmos:
+    dados_alg = df[df["algoritmo"] == alg]
+
+    plt.figure(figsize=(8,5))
+
+    # Plotar curvas para cada tipo de vetor
+    for tipo in dados_alg["tipo"].unique():
+        dados_tipo = dados_alg[dados_alg["tipo"] == tipo]
+        plt.plot(dados_tipo["tamanho"], dados_tipo["tempo"], marker="o", label=tipo)
+
+    plt.title(f"Desempenho do {alg.capitalize()} Sort")
+    plt.xlabel("Tamanho do Vetor")
+    plt.ylabel("Tempo (s)")
+    plt.legend()
+    plt.tight_layout()
+    plt.savefig(f"../resultados/{alg}_grafico.png")
+    plt.close()  # Fechar para não sobrepor gráficos
+\end{lstlisting}
+
+Esses trechos representam o núcleo da automação do projeto, permitindo a execução sistemática dos algoritmos e a análise gráfica dos seus desempenhos.
+

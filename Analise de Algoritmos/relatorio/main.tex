@@ -1,0 +1,61 @@
+\documentclass[
+    a4paper,    % Página do tipo a4
+    12pt,       % Fonte padrão 12pt
+    oneside     % Imprimir de apenas um lado da folha
+]{article}
+
+\input{structure/package}   % Chamando arquivos de pacotes
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                  dados da universidade               %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\universidade{Universidade Estadual Paulista ``Júlio de Mesquita Filho''}
+\universidadesigla{UNESP}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                  seus da instituição                  %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Deixe vazio "sp" e "subtitulo" se não houver subtitulo
+
+\nome{Gustavo Yujii Silva Kadooka}
+\disciplina{Análise de Algoritmos}
+\titulo{Análise comparativa de algoritmos de ordenação aplicados a diferentes conjuntos de dados} 
+\professor{Prof. Dr. João Paulo Papa}
+\curso{Bacharelado em Ciência da Computação}
+\local{Bauru/SP}
+\ano{2025}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                        conteúdos                     %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\conteudos{     % Coloque os seus novos arquivos aqui.
+    \newcont{01-introducao.tex}
+    \newcont{02-objetivos.tex}
+    \newcont{03-justificativas.tex}
+    \newcont{04-metodologia.tex}
+    \newcont{05-resultados.tex}
+    \newcont{06-conclusoes.tex}
+    
+    \bibliography{text/referencias.bib}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                  começo do documento                 %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+    
+    \imprimircapa               % Imprime a capa
+    \imprimircontracapa         % Imprime a conta capa
+    
+    \imprimirlistadefiguras     % Imprime lista de figuras
+    \imprimirsumario            % Imprime o sumário
+    
+    \imprimirconteudos          % Imprime os conteúdos
+    
+    \imprimiranexos             % Imprime os anexos
+    
+\end{document}

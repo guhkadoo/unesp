@@ -1,0 +1,32 @@
+\section{Conclusão}
+
+Neste trabalho, foi realizada uma análise teórica e prática de seis algoritmos de ordenação: Bubble Sort, Insertion Sort, Merge Sort, Quick Sort (com particionamentos de Hoare e Lomuto), Heap Sort e Radix Sort. Cada algoritmo foi implementado em linguagem C e avaliado quanto ao seu desempenho utilizando vetores de diferentes tamanhos e tipos de ordenação inicial (crescente, decrescente e aleatória).
+
+\subsection*{Considerações Teóricas}
+
+A análise teórica permitiu classificar os algoritmos em diferentes categorias:
+
+\begin{itemize}
+    \item \textbf{Quadráticos:} Bubble Sort e Insertion Sort possuem complexidade \(O(n^2)\) no pior caso, sendo mais adequados para vetores pequenos ou quase ordenados.
+    \item \textbf{Divisão e Conquista:} Merge Sort e Quick Sort oferecem melhor desempenho assintótico (\(O(n \log n)\)), sendo amplamente utilizados em aplicações reais.
+    \item \textbf{Baseados em Heap e Dígitos:} Heap Sort também apresenta \(O(n \log n)\) no pior caso, enquanto Radix Sort pode atingir complexidade linear \(O(n)\), desde que os dados sejam inteiros e com tamanho limitado.
+\end{itemize}
+
+\subsection*{Resultados Experimentais}
+
+Os testes práticos confirmaram as expectativas teóricas:
+
+\begin{itemize}
+    \item O \textbf{Bubble Sort} foi consistentemente o mais lento, especialmente para vetores grandes.
+    \item O \textbf{Insertion Sort} apresentou bom desempenho em vetores quase ordenados, mas sofreu em vetores aleatórios ou decrescentes.
+    \item \textbf{Merge Sort} e \textbf{Quick Sort} (em ambas as variações) apresentaram desempenho estável e eficiente, com Quick Sort geralmente sendo ligeiramente mais rápido, embora sensível à escolha do pivô.
+    \item \textbf{Heap Sort} teve desempenho competitivo, mas com overhead de estruturação do heap.
+    \item \textbf{Radix Sort} superou os demais em vetores grandes com números inteiros, destacando-se por sua abordagem não-comparativa e linear em muitos casos.
+\end{itemize}
+
+\subsection*{Conclusão Final}
+
+A escolha do algoritmo ideal depende fortemente do contexto da aplicação. Para entradas pequenas ou quase ordenadas, algoritmos simples como o Insertion Sort são suficientes. Já para aplicações gerais e de grande escala, algoritmos como Merge Sort, Quick Sort ou Radix Sort se mostram mais apropriados. A análise experimental complementa a teoria e evidencia como fatores como a natureza dos dados e o custo de operações impactam diretamente na eficiência dos algoritmos na prática.
+
+Trabalhos futuros poderiam incluir o estudo de algoritmos híbridos (como Timsort), variações paralelas ou o impacto da cache e otimizações de hardware no desempenho.
+

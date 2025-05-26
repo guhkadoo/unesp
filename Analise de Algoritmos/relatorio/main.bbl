@@ -1,0 +1,54 @@
+\providecommand{\abntreprintinfo}[1]{%
+ \citeonline{#1}}
+\setlength{\labelsep}{0pt}\begin{thebibliography}{}
+\providecommand{\abntrefinfo}[3]{}
+\providecommand{\abntbstabout}[1]{}
+\abntbstabout{v-1.9.7 }
+
+\bibitem[GeeksforGeeks 2021]{geeksforgeeks_heap_sort}
+\abntrefinfo{GeeksforGeeks}{GEEKSFORGEEKS}{2021a}
+{GEEKSFORGEEKS. \textbf{Heap Sort}. 2021.
+Accessed: 2025-05-25.
+Dispon{\'\i}vel em: \url{https://www.geeksforgeeks.org/heap-sort/}.}
+
+\bibitem[GeeksforGeeks 2021]{geeksforgeeks_bubble_sort}
+\abntrefinfo{GeeksforGeeks}{GEEKSFORGEEKS}{2021b}
+{GEEKSFORGEEKS. \textbf{Time and Space Complexity Analysis of Bubble Sort}.
+  2021.
+Accessed: 2025-05-25.
+Dispon{\'\i}vel em:
+  \url{https://www.geeksforgeeks.org/time-and-space-complexity-analysis-of-bubble-sort/}.}
+
+\bibitem[GeeksforGeeks 2021]{geeksforgeeks_merge_sort}
+\abntrefinfo{GeeksforGeeks}{GEEKSFORGEEKS}{2021c}
+{GEEKSFORGEEKS. \textbf{Time and Space Complexity Analysis of Merge Sort}.
+  2021.
+Accessed: 2025-05-25.
+Dispon{\'\i}vel em:
+  \url{https://www.geeksforgeeks.org/time-and-space-complexity-analysis-of-merge-sort/}.}
+
+\bibitem[GeeksforGeeks 2021]{geeksforgeeks_quick_sort}
+\abntrefinfo{GeeksforGeeks}{GEEKSFORGEEKS}{2021d}
+{GEEKSFORGEEKS. \textbf{Time and Space Complexity Analysis of Quick Sort}.
+  2021.
+Accessed: 2025-05-25.
+Dispon{\'\i}vel em:
+  \url{https://www.geeksforgeeks.org/time-and-space-complexity-analysis-of-quick-sort/}.}
+
+\bibitem[GeeksforGeeks 2021]{geeksforgeeks_insertion_sort}
+\abntrefinfo{GeeksforGeeks}{GEEKSFORGEEKS}{2021e}
+{GEEKSFORGEEKS. \textbf{Time and Space Complexity of Insertion Sort Algorithm}.
+  2021.
+Accessed: 2025-05-25.
+Dispon{\'\i}vel em:
+  \url{https://www.geeksforgeeks.org/time-and-space-complexity-of-insertion-sort-algorithm/}.}
+
+\bibitem[GeeksforGeeks 2021]{geeksforgeeks_radix_sort}
+\abntrefinfo{GeeksforGeeks}{GEEKSFORGEEKS}{2021f}
+{GEEKSFORGEEKS. \textbf{Time and Space Complexity of Radix Sort Algorithm}.
+  2021.
+Accessed: 2025-05-25.
+Dispon{\'\i}vel em:
+  \url{https://www.geeksforgeeks.org/time-and-space-complexity-of-radix-sort-algorithm/}.}
+
+\end{thebibliography}

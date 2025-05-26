@@ -1,0 +1,202 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                   configurações gerais                 %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\onehalfspacing     % espaçamento de 1.5 entre linhas.
+\setlength{\parindent}{1.3cm}
+
+\addtocontents{toc}{~\hfill\textbf{Páginas}\par} % Sumário com o nome pagina ao final.
+
+\newcommand{\universidade}{\def \@universidade}
+\newcommand{\universidadesigla}{\def \@universidadesigla}
+\newcommand{\universidadecentro}{\def \@universidadecentro}
+\newcommand{\universidadecentrosigla}{\def \@universidadecentrosigla}
+\newcommand{\universidadedepartamento}{\def \@universidadedepartamento}
+\newcommand{\nome}{\def \@nome}
+\newcommand{\curso}{\def \@curso}
+\newcommand{\disciplina}{\def \@disciplina}
+\newcommand{\titulo}{\def \@titulo}
+\renewcommand{\sp}{\def \@sp}
+\newcommand{\subtitulo}{\def \@subtitulo}
+\newcommand{\professor}{\def \@professor}
+\newcommand{\local}{\def \@local}
+\newcommand{\ano}{\def \@ano}
+\newcommand{\spacamento}{\def \@spacamento}
+
+
+\newcommand{\imprimiruniversidade}{\@universidade}
+\newcommand{\imprimiruniversidadesigla}{\@universidadesigla}
+\newcommand{\imprimiruniversidadecentro}{\@universidadecentro}
+\newcommand{\imprimiruniversidadecentrosigla}{\@universidadecentrosigla}
+\newcommand{\imprimiruniversidadededepartamento}{\@universidadedepartamento}
+\newcommand{\imprimirnome}{\@nome}
+\newcommand{\imprimircurso}{\@curso}
+\newcommand{\imprimirdisciplina}{\@disciplina}
+\newcommand{\imprimirtitulo}{\@titulo}
+\newcommand{\imprimirsp}{\@sp}
+\newcommand{\imprimirsubtitulo}{\@subtitulo}
+\newcommand{\imprimirprofessor}{\@professor}
+\newcommand{\imprimirlocal}{\@local}
+\newcommand{\imprimirano}{\@ano}
+\newcommand{\imprimirspacamento}{\@spacamento}
+
+\universidade{}
+\universidadesigla{}
+\universidadecentro{}
+\universidadecentrosigla{}
+\universidadedepartamento{}
+\nome{}
+\curso{}
+\disciplina{}
+\titulo{}
+\sp{}
+\subtitulo{}
+\professor{}
+\local{}
+\ano{}
+\spacamento{}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                         conteúdos                      %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\newcont}[1]{
+    \input{text/#1}
+}
+
+\newcommand{\conteudos}{\def \@conteudos}
+\newcommand{\imprimirconteudos}{\@conteudos}
+
+\conteudos{}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                     listas e sumário                   %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\imprimirlistadefiguras}{   \thispagestyle{empty}
+    \listoffigures   \newpage
+}
+
+\newcommand{\imprimirsumario}{          \thispagestyle{empty}
+    \tableofcontents \newpage
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                configurações da capa                  %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\imprimircapa}{     \thispagestyle{empty}   % Estrutura da capa
+    \begin{center}
+%        \begin{figure}[!h]  \centering
+%            \includegraphics[height=4cm]{figure/unesp.png}
+%        \end{figure}
+        
+        \MakeUppercase{
+            \imprimiruniversidade \ (\imprimiruniversidadesigla)\\
+            \imprimirdisciplina
+        }
+        
+        \vspace{1.5cm}
+        
+        {\MakeUppercase\imprimirnome}
+        
+        \vfill
+        
+        {\large\MakeUppercase\imprimirtitulo\imprimirsp\\\imprimirsubtitulo}
+        
+        \vfill
+        
+        \MakeUppercase{\imprimirlocal\\\imprimirano}
+    \end{center}    \newpage
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%             configurações de contra capa               %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\spacamento{3cm}    % Espaçamento da folha de rosto
+
+\newcommand{\imprimircontracapa}{     \thispagestyle{empty}
+    \begin{center}
+        \MakeUppercase{
+            \imprimiruniversidade \ (\imprimiruniversidadesigla)\\
+            \imprimirnome
+        }
+        
+        \vspace{\imprimirspacamento}
+        
+        {\MakeUppercase\imprimirtitulo\imprimirsp\\\imprimirsubtitulo}
+        
+        \vspace{\imprimirspacamento}
+        
+        {\raggedleft
+            \begin{minipage}{10cm}
+                \begin{singlespace}
+                    Relatório apresentado como requisito à obtenção
+                    de uma das notas da disciplina de \imprimirdisciplina 
+                    \ do curso de \imprimircurso \ da \imprimiruniversidade.
+                    \onehalfspacing\begin{flushleft}
+                        \imprimirprofessor
+                    \end{flushleft}
+                \end{singlespace}
+            \end{minipage}
+        \par}
+        
+        \vfill
+        
+        \MakeUppercase{\imprimirlocal\\\imprimirano}
+    
+    \end{center}    \newpage
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                         anexos                         %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcounter{magicrowroman}
+\newcommand\rowroman{\stepcounter{magicrowroman}\Roman{magicrowroman}}
+
+\newcommand{\anexo}[3]{ \pagebreak \thispagestyle{empty}
+    \renewcommand{\figurename}{Anexo}
+    \section*{Anexo \rowroman}
+    \ifthenelse{\equal{#3}{y}}{%
+        \begin{figure}[!ht]      \centering
+            \includegraphics[width=.95\textwidth]{anexos/#1}
+            \caption[]{#2} 
+        \end{figure}
+    }{
+        \begin{figure}[!ht]      \centering
+            \includegraphics[width=.95\textwidth]{anexos/#1}
+            % \caption[]{#2} 
+        \end{figure}
+    }
+    \newpage
+}
+
+\newcommand{\anexos}{\def \@anexos}
+\newcommand{\imprimiranexos}{\@anexos}
+
+\anexos{}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                     funções diversas                   %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\imagemlogo}[2]{
+    \begin{figure}[!h]  \centering
+        \includegraphics[scale=#1]{figuras/#2}
+    \end{figure}
+}
+
+\providecommand{\chamafig}[3]{
+    \begin{figure}[!h]  \centering
+        \input{#1}
+        \caption{#2} \label{#3}
+    \end{figure}
+}
+
+\providecommand{\chamaimg}[4]{
+    \begin{figure}[!h]  \centering
+        \includegraphics[width=#1\textwidth]{#2}
+        \caption{#3} \label{#4}
+    \end{figure}
+}
