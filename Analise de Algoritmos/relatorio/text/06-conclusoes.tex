@@ -1,6 +1,6 @@
 \section{Conclusão}
 
-Neste trabalho, foi realizada uma análise teórica e prática de seis algoritmos de ordenação: Bubble Sort, Insertion Sort, Merge Sort, Quick Sort (com particionamentos de Hoare e Lomuto), Heap Sort e Radix Sort. Cada algoritmo foi implementado em linguagem C e avaliado quanto ao seu desempenho utilizando vetores de diferentes tamanhos e tipos de ordenação inicial (crescente, decrescente e aleatória).
+Foi realizada uma análise teórica e prática de seis algoritmos de ordenação: Bubble Sort, Insertion Sort, Merge Sort, Quick Sort (com particionamentos de Hoare e Lomuto), Heap Sort e Radix Sort. Cada algoritmo foi implementado em linguagem C e avaliado quanto ao seu desempenho utilizando vetores de diferentes tamanhos e tipos de ordenação inicial (crescente, decrescente e aleatória).
 
 \subsection*{Considerações Teóricas}
 
@@ -19,7 +19,7 @@ Os testes práticos confirmaram as expectativas teóricas:
 \begin{itemize}
     \item O \textbf{Bubble Sort} foi consistentemente o mais lento, especialmente para vetores grandes.
     \item O \textbf{Insertion Sort} apresentou bom desempenho em vetores quase ordenados, mas sofreu em vetores aleatórios ou decrescentes.
-    \item \textbf{Merge Sort} e \textbf{Quick Sort} (em ambas as variações) apresentaram desempenho estável e eficiente, com Quick Sort geralmente sendo ligeiramente menos rápido, principalmente com vetores já ordenados.
+    \item \textbf{Merge Sort} e \textbf{Quick Sort} (em ambas as variações) apresentaram desempenho estável e eficiente, com Merge Sort geralmente sendo ligeiramente mais rápido. O Quick apresentou perda de rendimento quando os vetores já estavam ordenados tanto de forma crescente quanto decrescente.
     \item \textbf{Heap Sort} teve desempenho competitivo, mas com overhead de estruturação do heap.
     \item \textbf{Radix Sort} superou os demais em vetores grandes com números inteiros, destacando-se por sua abordagem não-comparativa e linear em muitos casos.
 \end{itemize}
