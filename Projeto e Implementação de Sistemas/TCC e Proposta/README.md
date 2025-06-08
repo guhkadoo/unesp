@@ -6,7 +6,7 @@ Esta pasta contém o Latex do TCC desenvolvido durante a matéria de Projeto e I
 ``` bash
 sudo apt install texlive
 sudo apt install texlive-full
-pdflatex file.tex && latexmk -pdf -c file.tex
+pdflatex file.tex && bibtex file && pdflatex file.tex && latexmk -pdf -c file.tex
 ```
 
 ## Estrutura do Projeto 
@@ -14,9 +14,15 @@ pdflatex file.tex && latexmk -pdf -c file.tex
 O arquivo **monografia.tex** se refere ao Trabalho de Conclusão de Curso já completo.
 
 Por sua vez, o arquivo **proposta.tex** se refere à proposta de Projeto a ser desenvolvida.
-
 ``` bash
-├── chapters
+├── chapters_monografia
+│   ├── analise_comparativa.tex
+│   ├── conclusao.tex
+│   ├── fundamentacao_teorica.tex
+│   ├── implementacao.tex
+│   ├── introducao.tex
+│   └── referencias.bib
+├── chapters_proposta
 │   ├── cronograma.tex
 │   ├── introducao.tex
 │   ├── justificativa.tex
@@ -25,7 +31,8 @@ Por sua vez, o arquivo **proposta.tex** se refere à proposta de Projeto a ser d
 │   ├── problema.tex
 │   └── referencias.bib
 ├── figs
-├── lib
+│   ├── entropia-moeda.png 
+│   └── ficha_catalografica.pdf 
 ├── monografia.tex
 └── proposta.tex
-``` 
+```
