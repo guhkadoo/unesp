@@ -15,7 +15,6 @@ def calculate_compression_rates(csv_file):
 
             if original_size > 0:
                 compression_rate = compressed_size / original_size
-                print(compression_rate)
                 if file_name.endswith('.wav'):
                     compression_data['wav'].append(compression_rate)
                 elif file_name.endswith('.bmp'):
