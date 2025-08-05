@@ -6,6 +6,9 @@
 #include "../include/lz77/lz_txt.hpp"
 #include "../include/lz77/lz_wav.hpp"
 #include "../include/lz77/lz_bmp.hpp"
+#include "../include/lzw/lzw_txt.hpp"
+#include "../include/lzw/lzw_wav.hpp"
+#include "../include/lzw/lzw_bmp.hpp"
 #include <cstdio>
 #include <string>
 #include <cstdlib>
@@ -15,7 +18,7 @@
 #define HUFFMAN_TREE_ON_DECOMPRESSED_FILE 1
 #define CANONICAL_HUFFMAN_CODING 2
 #define LZ77 3
-#define LWZ 4
+#define LZW 4
 #define GZIP 5
 
 static bool is_compressed = false;
@@ -35,6 +38,9 @@ HuffmanWAV archive_wav;
 LZ77TXT archive_lz77_txt;
 LZ77WAV archive_lz77_wav;
 LZ77BMP archive_lz77_bmp;
+LZW_TXT archive_lzw_txt;
+LZW_WAV archive_lzw_wav;
+LZW_BMP archive_lzw_bmp;
 
 int on_compress_button_clicked(GtkButton* button, gpointer user_data);
 int on_decompress_button_clicked(GtkButton* button, gpointer user_data);
@@ -326,6 +332,29 @@ int on_compress_button_clicked(GtkButton* button, gpointer user_data)
             create_dialog_and_destroy("Extension not supported.");
             return -1;
         }
+    } else if (selected_algorithm == LZW) {
+        if (!strcmp(".txt", extension)) {
+            if (archive_lzw_txt.set_filepath(path) == -1) {
+                create_dialog_and_destroy("File not found.");
+                return -1;
+            }
+            archive_lzw_txt.compress(LZW);
+        } else if (!strcmp(".wav", extension)) {
+            if (archive_lzw_wav.set_filepath(path) == -1) {
+                create_dialog_and_destroy("File not found.");
+                return -1;
+            }
+            archive_lzw_wav.compress(LZW);
+        } else if (!strcmp(".bmp", extension)) {
+            if (archive_lzw_bmp.set_filepath(path) == -1) {
+                create_dialog_and_destroy("File not found.");
+                return -1;
+            }
+            archive_lzw_bmp.compress(LZW);
+        } else {
+            create_dialog_and_destroy("Extension not supported.");
+            return -1;
+        }
     }
     return 0;
 }
@@ -467,6 +496,34 @@ int on_decompress_button_clicked(GtkButton* button, gpointer user_data)
             int found_compressed_file = archive_lz77_bmp.decompress(LZ77);
             if(found_compressed_file == -1)
             {
+                create_dialog_and_destroy("File not found.");
+                return -1;
+            }
+        } else {
+            create_dialog_and_destroy("Extension not supported.");
+            return -1;
+        }
+    } else if (selected_algorithm == LZW) {
+        std::string path = file_path;
+        if (archive_lzw_txt.set_filepath(path) == -1 || archive_lzw_wav.set_filepath(path) == -1 || archive_lzw_bmp.set_filepath(path) == -1) {
+            create_dialog_and_destroy("File not found.");
+            return -1;
+        }
+        if (!strcmp(".txt.GK", extension)) {
+            int found_compressed_file = archive_lzw_txt.decompress(LZW);
+            if (found_compressed_file == -1) {
+                create_dialog_and_destroy("File not found.");
+                return -1;
+            }
+        } else if (!strcmp(".wav.GK", extension)) {
+            int found_compressed_file = archive_lzw_wav.decompress(LZW);
+            if (found_compressed_file == -1) {
+                create_dialog_and_destroy("File not found.");
+                return -1;
+            }
+        } else if (!strcmp(".bmp.GK", extension)) {
+            int found_compressed_file = archive_lzw_bmp.decompress(LZW);
+            if (found_compressed_file == -1) {
                 create_dialog_and_destroy("File not found.");
                 return -1;
             }
