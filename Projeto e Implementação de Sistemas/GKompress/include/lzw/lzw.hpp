@@ -7,12 +7,15 @@
 #include <cstdint>
 #include <cstdio>
 
+#define RESET_CODE 4095 // Fixed reset code
+#define RESET_CODE_WIDTH 12 // Fixed width for RESET_CODE
+
 #define EXIT_WITH_ERROR(msg) (fprintf(stderr, "%s\n", msg), exit(1))
 
 class LZW {
 protected:
     std::string filepath;
-    static const size_t MAX_DICT_SIZE = 4096; // Max dictionary entries
+    static const size_t MAX_DICT_SIZE = 100; // Max dictionary entries
     static const size_t INITIAL_DICT_SIZE = 256; // ASCII characters
     static const size_t INITIAL_CODE_WIDTH = 9; // Start with 9-bit codes
 
@@ -50,7 +53,7 @@ protected:
     std::string get_compressed_filepath(int option);
     std::string get_decompressed_filepath(int option);
     std::string decompressed_filepath_from_compressed(const std::string& compressed_path);
-    std::vector<std::pair<uint16_t, int>> encode(const uint8_t* data, size_t size); // Modified to return code and bit-width pairs
+    std::vector<std::pair<uint16_t, int>> encode(const uint8_t* data, size_t size);
     std::vector<uint8_t> decode(const std::vector<std::pair<uint16_t, int>>& codes);
     void internal_compress(int option, const std::vector<std::pair<uint16_t, int>>& codes, void (*write_header)(FILE*, void*) = nullptr, void* filetype = nullptr);
     int internal_decompress(int option, void (*write_header)(FILE*, void*) = nullptr, void (*read_header)(FILE*, void*) = nullptr, size_t (*get_pos)(void*) = nullptr, void* filetype = nullptr);
