@@ -15,7 +15,7 @@
 class LZW {
 protected:
     std::string filepath;
-    static const size_t MAX_DICT_SIZE = 100; // Max dictionary entries
+    static const size_t MAX_DICT_SIZE = 4096; // Max dictionary entries
     static const size_t INITIAL_DICT_SIZE = 256; // ASCII characters
     static const size_t INITIAL_CODE_WIDTH = 9; // Start with 9-bit codes
 

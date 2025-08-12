@@ -65,7 +65,6 @@ void LZW::BitWriter::writeBits(uint32_t value, int bits) {
         bit_string += bit ? "1" : "0";
         writeBit(bit);
     }
-    std::cout << "Writing code=" << value << " with " << bits << " bits (" << bit_string << ")" << std::endl;
 }
 
 void LZW::BitWriter::flush() {
@@ -82,7 +81,6 @@ void LZW::BitWriter::finalize() {
         buffer <<= (8 - bitCount);
         uint8_t byte = buffer & 0xFF;
         fwrite(&byte, 1, 1, file);
-        std::cout << "Finalizing: wrote " << bitCount << " bits, byte=" << (int)byte << std::endl;
         buffer = 0;
         bitCount = 0;
     }
@@ -100,7 +98,6 @@ bool LZW::BitReader::readBit() {
         }
         buffer = byte;
         bitCount = 8;
-        std::cout << "Read byte: " << (int)byte << std::endl;
     }
     bool bit = (buffer >> (bitCount - 1)) & 1;
     bitCount--;
@@ -115,7 +112,6 @@ uint32_t LZW::BitReader::readBits(int bits) {
         bit_string += bit ? "1" : "0";
         value = (value << 1) | (bit ? 1 : 0);
     }
-    std::cout << "Read code=" << value << " with " << bits << " bits (" << bit_string << ")" << std::endl;
     return value;
 }
 
@@ -131,42 +127,54 @@ std::vector<std::pair<uint16_t, int>> LZW::encode(const uint8_t* data, size_t si
     int current_bit_width = INITIAL_CODE_WIDTH;
 
     for (size_t i = 0; i < size; ++i) {
-        current += static_cast<char>(data[i]);
+        char ch = static_cast<char>(data[i]);
+        std::string next = current + ch;
         
-        if (compress_dict.find(current) == compress_dict.end()) {
-            codes.emplace_back(compress_dict[current.substr(0, current.size()-1)], current_bit_width);
-            std::cout << "Encode: code=" << compress_dict[current.substr(0, current.size()-1)] 
-                      << ", bit_width=" << current_bit_width << ", next_code=" << next_code << std::endl;
-            
-            if (next_code >= MAX_DICT_SIZE) { // Reset before assigning 4095
-                printf("\n\n\nAQUIII\n\n\nRESET_CODE: %ld\n", RESET_CODE);
-                codes.emplace_back(RESET_CODE, RESET_CODE_WIDTH);
-                compress_dict.clear();
-                for (uint16_t j = 0; j < INITIAL_DICT_SIZE; ++j) {
-                    compress_dict[std::string(1, static_cast<char>(j))] = j;
-                }
-                next_code = INITIAL_DICT_SIZE;
-                current_bit_width = INITIAL_CODE_WIDTH;
-                continue;
-            }
-            
-            compress_dict[current] = next_code++;
-            if (next_code > (1 << current_bit_width)) {
-                current_bit_width++;
-            }
-            
-            current = current.substr(current.size()-1);
+        if (compress_dict.find(next) != compress_dict.end()) {
+            current = next;
+            continue;
         }
+
+        // Output code for current string
+        codes.emplace_back(compress_dict[current], current_bit_width);
+        
+        // Check if we need to reset dictionary
+        if (next_code >= MAX_DICT_SIZE - 1) {
+            codes.emplace_back(RESET_CODE, current_bit_width);
+            
+            // Reset everything
+            compress_dict.clear();
+            for (uint16_t j = 0; j < INITIAL_DICT_SIZE; ++j) {
+                compress_dict[std::string(1, static_cast<char>(j))] = j;
+            }
+            next_code = INITIAL_DICT_SIZE;
+            current_bit_width = INITIAL_CODE_WIDTH;
+            
+            // Start fresh with current character
+            current = std::string(1, ch);
+            continue;
+        }
+        
+        // Add new entry to dictionary
+        compress_dict[next] = next_code++;
+        
+        // Increase bit width if needed
+        if (next_code > (1 << current_bit_width)) {
+            current_bit_width++;
+        }
+        
+        // Start new string with current character
+        current = std::string(1, ch);
     }
     
+    // Output remaining string
     if (!current.empty()) {
         codes.emplace_back(compress_dict[current], current_bit_width);
     }
-
-    printf("current: %s\n", current);
     
     return codes;
 }
+
 
 std::vector<uint8_t> LZW::decode(const std::vector<std::pair<uint16_t, int>>& codes) {
     decompress_dict.clear();
@@ -175,20 +183,20 @@ std::vector<uint8_t> LZW::decode(const std::vector<std::pair<uint16_t, int>>& co
     }
     
     std::vector<uint8_t> output;
-    uint16_t next_code = INITIAL_DICT_SIZE;
+    uint16_t next_code = INITIAL_DICT_SIZE;  // Start at 256
     int current_bit_width = INITIAL_CODE_WIDTH;
     std::string previous;
 
     for (size_t i = 0; i < codes.size(); ++i) {
         const auto& [code, bit_width] = codes[i];
-        std::cout << "Decode: code=" << code << ", bit_width=" << bit_width << ", next_code=" << next_code << std::endl;
+
         if (code == RESET_CODE) {
+            // Proper reset handling
             decompress_dict.clear();
             for (uint16_t j = 0; j < INITIAL_DICT_SIZE; ++j) {
                 decompress_dict[j] = std::string(1, static_cast<char>(j));
             }
-            printf("\n\n\n\noiiii\n\n\n\n");
-            next_code = INITIAL_DICT_SIZE;
+            next_code = INITIAL_DICT_SIZE;  // Reset to 256, not 257!
             current_bit_width = INITIAL_CODE_WIDTH;
             previous.clear();
             continue;
@@ -233,7 +241,6 @@ void LZW::internal_compress(int option, const std::vector<std::pair<uint16_t, in
     fwrite(&origSize, 4, 1, out);
     uint8_t initial_bit_width = INITIAL_CODE_WIDTH;
     fwrite(&initial_bit_width, 1, 1, out);
-    std::cout << "Writing header: numCodes=" << origSize << ", initial_bit_width=" << (int)initial_bit_width << std::endl;
 
     if (write_header && filetype) {
         write_header(out, filetype);
@@ -241,7 +248,6 @@ void LZW::internal_compress(int option, const std::vector<std::pair<uint16_t, in
 
     BitWriter writer(out);
     for (const auto& [code, bit_width] : codes) {
-        std::cout << "Compressing: code=" << code << ", bit_width=" << bit_width << std::endl;
         writer.writeBits(code, bit_width);
     }
     writer.finalize();
@@ -274,7 +280,6 @@ int LZW::internal_decompress(int option, void (*write_header)(FILE*, void*), voi
         fclose(in);
         return -1;
     }
-    std::cout << "Reading header: numCodes=" << numCodes << ", initial_bit_width=" << (int)initial_bit_width << std::endl;
 
     if (read_header && filetype) {
         long startPos = ftell(in);
@@ -282,8 +287,6 @@ int LZW::internal_decompress(int option, void (*write_header)(FILE*, void*), voi
         long headerSize = get_pos(filetype);
         long currentPos = ftell(in);
         if (currentPos != startPos + headerSize) {
-            std::cout << "Header misalignment: expected pos=" << startPos + headerSize 
-                      << ", actual pos=" << currentPos << std::endl;
             fseek(in, startPos + headerSize, SEEK_SET);
         }
     }
@@ -296,27 +299,25 @@ int LZW::internal_decompress(int option, void (*write_header)(FILE*, void*), voi
 
     for (uint32_t i = 0; i < numCodes && !feof(in); ++i) {
         uint16_t code = reader.readBits(current_bit_width);
-        std::cout << "Decompress: code=" << code << ", bit_width=" << current_bit_width 
-                  << ", next_code=" << next_code << std::endl;
+
+        // Always add the code to the vector, including RESET_CODE
+        codes.emplace_back(code, current_bit_width);
+
         if (code == RESET_CODE) {
-            printf("aquii\n");
+            // Reset dictionary state
             current_bit_width = initial_bit_width;
             reader.setCodeWidth(current_bit_width);
-            next_code = INITIAL_DICT_SIZE + 1;
-          //  codes.emplace_back(code, current_bit_width);
+            next_code = INITIAL_DICT_SIZE;  // Reset to 256
             continue;
         }
+
         if (next_code < MAX_DICT_SIZE) {
             next_code++;
-            if (next_code >= MAX_DICT_SIZE) {
-                current_bit_width = RESET_CODE_WIDTH; // Set to 12 for RESET_CODE
-            } else if (next_code > (1U << current_bit_width)) {
+            if (next_code > (1 << current_bit_width)) {
                 current_bit_width++;
                 reader.setCodeWidth(current_bit_width);
-                std::cout << "Increasing bit_width to " << current_bit_width << " at next_code=" << next_code << std::endl;
             }
         }
-        codes.emplace_back(code, current_bit_width);
     }
 
     std::vector<uint8_t> buffer = decode(codes);
