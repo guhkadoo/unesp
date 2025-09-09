@@ -209,7 +209,7 @@ A entropia dessa fonte, em bits por símbolo, é:
 H(X) = - (0{,}5 \log_2 0{,}5 + 0{,}3 \log_2 0{,}3 + 0{,}2 \log_2 0{,}2) \approx 1{,}485 \text{ bits/símbolo}
 \]
 
-Após aplicar o algoritmo de Huffman, suponha que os símbolos sejam codificados da seguinte forma:
+Após aplicar um algoritmo de compressão de dados qualquer, suponha que os símbolos sejam codificados da seguinte forma:
 \begin{itemize}
     \item A → 1 bit
     \item B → 2 bits
@@ -228,19 +228,213 @@ Portanto, a redundância é:
 R = L - H(X) = 1{,}5 - 1{,}485 = 0{,}015 \text{ bits/símbolo}
 \]
 
-Esse pequeno valor de \( R \) indica que o código de Huffman se aproxima do limite teórico de compressão, demonstrando alta eficiência.
+Esse pequeno valor de \( R \) indica que o código comprimido se aproxima do limite teórico, demonstrando alta eficiência.
 
-É importante distinguir entre entropia por símbolo e por bit. A entropia calculada a partir da distribuição de probabilidades de uma fonte discreta refere-se, por definição, à quantidade média de informação por símbolo. No processo de compressão:
 
-\begin{itemize}
-    \item A entropia total da informação permanece constante (nenhuma informação é perdida);
-    \item A entropia por símbolo diminui, pois menos bits são usados por símbolo;
-    \item A entropia por bit aumenta, indicando que cada bit carrega mais informação útil.
-\end{itemize}
+É importante destacar que a entropia \( H(X) \) é uma propriedade intrínseca da fonte, determinada unicamente pela distribuição de probabilidades dos símbolos, e representa a quantidade média de informação por símbolo. Portanto, seu valor não se altera durante o processo de compressão. O que se modifica é o comprimento médio de codificação \( L \), que tende a se aproximar de \( H(X) \) à medida que o código se torna mais eficiente.
 
-Esse comportamento evidencia a eficácia da compressão, que reduz o volume de dados sem comprometer o conteúdo informacional original.
+Dessa forma, ao reduzir o número médio de bits por símbolo, não ocorre uma diminuição da entropia da fonte, mas sim um aumento da quantidade de informação útil carregada por cada bit. Esse efeito pode ser expresso pela razão entre a entropia e o comprimento médio:
+
+\[
+\eta = \frac{H(X)}{L}
+\]
+
+onde \( \eta \) representa a eficiência do código. À medida que \( L \to H(X) \), tem-se \( \eta \to 1 \), indicando que cada bit transmitido se torna mais informativo e menos redundante. Esse comportamento evidencia a eficácia da compressão, que reduz o volume de dados a serem armazenados ou transmitidos sem comprometer o conteúdo informacional original.
+
+\subsection{Desigualdade de Kraft-McMillan e taxa de compressão}
+
+Ao estudar a relação entre entropia e os algoritmos de compressão, dois conceitos adicionais merecem destaque: a desigualdade de Kraft-McMillan e a taxa de compressão.  
+
+A desigualdade de Kraft-McMillan estabelece uma condição necessária e suficiente para a existência de códigos prefixos,
+  ou seja, códigos em que nenhum código é prefixo de outro, como no algoritmo de Huffman. Seja $l_i$ o comprimento do código associado ao símbolo $i$. A desigualdade é dada por:
+
+\begin{equation}
+\sum_{i=1}^{n} 2^{-l_i} \leq 1
+\end{equation}
+
+O significado da desigualdade é que, se os comprimentos \(l_i\) satisfazem a condição, então é matematicamente garantido que existe ao menos um conjunto de códigos de prefixo que pode ser atribuído aos símbolos. Em outras palavras, é possível construir um código em que nenhum símbolo seja prefixo de outro, assegurando uma decodificação instantânea e sem ambiguidades. A desigualdade, portanto, não descreve o código em si, mas estabelece a condição necessária e suficiente para a sua existência.
+
+Por exemplo, considere um conjunto de símbolos $\{A, B, C\}$ com comprimentos de código $l_A = 1$, $l_B = 2$ e $l_C = 2$. Temos:
+
+\[
+2^{-1} + 2^{-2} + 2^{-2} = 0,5 + 0,25 + 0,25 = 1
+\]
+
+Como a desigualdade é satisfeita, é possível construir um código de prefixo válido, como $A = 0$, $B = 10$ e $C = 11$.  
+
+Ao se tratar da eficiência de um algoritmo, define-se a \textit{taxa de compressão} como a razão entre o tamanho do arquivo original e o tamanho do arquivo comprimido:
+
+\begin{equation}
+\text{Taxa de compressão} = \frac{T_{\text{original}}}{T_{\text{comprimido}}}
+\end{equation}
+
+Além disso, é comum expressar a \textit{redução percentual} obtida pela compressão:
+
+\begin{equation}
+\text{Redução} = \left( 1 - \frac{T_{\text{comprimido}}}{T_{\text{original}}} \right) \times 100\%
+\end{equation}
+
+Essas métricas permitem comparar algoritmos de compressão distintos de forma objetiva, complementando a análise teórica baseada em entropia e redundância.  
+
+Por fim, cabe destacar que a entropia pode ser definida não apenas em termos de símbolos isolados, mas também considerando dependências entre símbolos consecutivos, conhecida como \textit{entropia de ordem superior}. Esse conceito é explorado por algoritmos como LZ77 e LZW, que buscam padrões e repetições em sequências, indo além da simples análise da frequência de símbolos individuais.
 
 \section{Compressão de dados}
+\label{sec:compressao_dados}
+
+A compressão de dados consiste em um conjunto de técnicas destinadas a representar informações de forma mais compacta, reduzindo o espaço necessário para armazenamento ou o tempo exigido para transmissão. Trata-se de um campo fundamental da ciência da computação, com aplicações diretas em praticamente todas as áreas que envolvem o tratamento de dados digitais, como bancos de dados, sistemas de arquivos, comunicação em rede, multimídia e computação em nuvem.
+
+O princípio básico da compressão é a exploração da redundância presente nos dados. Arquivos digitais, independentemente de sua natureza (texto, imagem, áudio ou vídeo), frequentemente apresentam padrões estatísticos, repetições ou estruturas previsíveis que podem ser representados de maneira mais eficiente. A eliminação ou redução dessa redundância resulta em representações mais curtas, possibilitando economia de recursos sem comprometer a utilidade da informação.
+
+De maneira geral, os métodos de compressão podem ser classificados em duas categorias: compressão sem perdas e compressão com perdas. 
+
+Na compressão sem perdas, os dados comprimidos podem ser restaurados integralmente em sua forma original após a descompressão. Não ocorre perda de informação, sendo essa abordagem indispensável em contextos em que a integridade dos dados é crucial, como em documentos de texto, programas executáveis, imagens médicas e determinados formatos de áudio. 
+
+Já a compressão com perdas permite alcançar taxas de compressão mais elevadas ao descartar parte das informações, geralmente aquelas que são perceptualmente redundantes ou irrelevantes. Embora o arquivo reconstruído não seja idêntico ao original, a diferença pode ser imperceptível ao usuário final. Esse modelo é amplamente utilizado em mídias digitais, como fotografias (JPEG), música (MP3, AAC) e vídeo (MPEG, H.264).
+
+O presente trabalho concentra-se exclusivamente na compressão sem perdas, uma vez que seu objetivo é a análise de algoritmos clássicos de codificação que buscam aproximar-se do limite teórico estabelecido pela entropia da fonte de informação. Essa escolha se justifica não apenas pela relevância prática da compressão sem perdas em diversos domínios, mas também por seu caráter teórico, que permite avaliar a eficiência dos algoritmos em termos formais, sem a interferência de fatores perceptuais.
+
+Para avaliar a eficácia de um algoritmo de compressão, algumas métricas são comumente empregadas:
+
+\begin{itemize}
+    \item Taxa de compressão: relação entre o tamanho do arquivo comprimido e o tamanho do arquivo original, expressa geralmente em porcentagem;
+    \item Ganho de compressão: medida complementar, definida pela razão entre o tamanho original e o tamanho comprimido, indicando quantas vezes o volume de dados foi reduzido;
+    \item Tempo de execução: tempo necessário para realizar os processos de compressão e descompressão;
+\end{itemize}
+
+Em síntese, a compressão de dados busca otimizar recursos computacionais ao reduzir a quantidade de informação redundante em uma representação digital. A decisão entre compressão sem perdas ou com perdas depende do contexto e das exigências de cada aplicação. No âmbito deste trabalho, o foco em algoritmos de compressão sem perdas permite investigar de forma detalhada a relação entre teoria da informação e implementação prática, bem como comparar a eficiência de diferentes abordagens clássicas nesse domínio.
 
 \section{Algoritmos clássicos de compressão sem perdas}
+\label{sec:algoritmos}
+
+Os algoritmos de compressão sem perdas constituem a base teórica e prática de diversos sistemas computacionais modernos. Entre os mais conhecidos e aplicados estão os algoritmos de Huffman, LZ77, LZW e GZIP, cada um com características específicas que os tornam adequados a diferentes contextos de uso. A seguir, apresentam-se seus princípios de funcionamento, vantagens, limitações e principais aplicações.
+
+\subsection{Codificação de Huffman}
+
+O algoritmo de Huffman, proposto por David A. Huffman em 1952~\cite{huffman1952method}, é um método de codificação estatística que constrói códigos de prefixo ótimos para compressão sem perdas. O algoritmo fundamenta-se no princípio de atribuir códigos binários de comprimentos variáveis aos símbolos de uma fonte, de modo que símbolos mais frequentes recebem códigos mais curtos, minimizando assim o comprimento médio da codificação.
+
+\subsubsection{Funcionamento do algoritmo}
+
+A construção do código de Huffman é realizada através da criação de uma árvore binária, seguindo os seguintes passos:
+
+\begin{enumerate}
+    \item \textbf{Análise de frequência}: Conta-se a frequência de ocorrência de cada símbolo no conjunto de dados a ser comprimido;
+    
+    \item \textbf{Criação de nós folha}: Cada símbolo é representado por um nó folha, associado à sua respectiva frequência;
+    
+    \item \textbf{Construção da árvore}: Iterativamente, os dois nós com menores frequências são combinados em um novo nó pai, cuja frequência é a soma das frequências dos nós filhos. Este processo continua até restar apenas um nó (a raiz);
+    
+    \item \textbf{Atribuição de códigos}: Percorre-se a árvore da raiz até as folhas, atribuindo '0' para ramos esquerdos e '1' para ramos direitos (ou vice-versa). O código de cada símbolo é formado pela sequência de bits do caminho da raiz até sua folha correspondente.
+\end{enumerate}
+
+\subsubsection{Exemplo prático}
+
+Considere uma mensagem com os símbolos e suas respectivas frequências:
+
+\begin{center}
+\begin{tabular}{cccc}
+\toprule
+Símbolo & Frequência & Probabilidade & Código Huffman \\
+\midrule
+A & 45 & 0,45 & 0 \\
+B & 13 & 0,13 & 101 \\
+C & 12 & 0,12 & 100 \\
+D & 16 & 0,16 & 111 \\
+E & 9 & 0,09 & 1100 \\
+F & 5 & 0,05 & 1101 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+O processo de construção da árvore de Huffman para este exemplo seria:
+
+O comprimento médio da codificação seria:
+\[
+L = 0{,}45 \times 1 + 0{,}13 \times 3 + 0{,}12 \times 3 + 0{,}16 \times 3 + 0{,}09 \times 4 + 0{,}05 \times 4 = 2{,}04 \text{ bits/símbolo}
+\]
+
+Comparado com uma codificação binária fixa (que exigiria $\lceil \log_2 6 \rceil = 3$ bits por símbolo), o algoritmo de Huffman oferece uma redução significativa no tamanho da representação.
+
+\subsubsection{Propriedades matemáticas}
+
+O algoritmo de Huffman possui propriedades teóricas importantes:
+
+\begin{itemize}
+    \item \textbf{Otimalidade}: Para uma fonte com probabilidades conhecidas e símbolos independentes, o código de Huffman minimiza o comprimento médio de codificação entre todos os códigos de prefixo possíveis;
+    
+    \item \textbf{Satisfação da desigualdade de Kraft}: Os comprimentos dos códigos gerados sempre satisfazem $\sum_{i=1}^{n} 2^{-l_i} = 1$, garantindo a existência de um código de prefixo válido;
+    
+    \item \textbf{Limitação pela entropia}: O comprimento médio $L$ do código de Huffman satisfaz $H(X) \leq L < H(X) + 1$, onde $H(X)$ é a entropia da fonte.
+\end{itemize}
+
+\subsubsection{Variações do algoritmo}
+
+Existem algumas variações importantes do algoritmo básico de Huffman:
+
+\begin{itemize}
+    \item \textbf{Huffman adaptativo}: Ajusta dinamicamente o código conforme novos símbolos são processados, sem necessidade de conhecimento prévio das frequências;
+    
+    \item \textbf{Huffman canônico}: Produz uma representação padronizada do código que facilita a transmissão da tabela de códigos;
+    
+    \item \textbf{Huffman de duas passadas}: Realiza uma primeira passada para calcular frequências e uma segunda para codificar, sendo mais eficiente em termos de memória.
+\end{itemize}
+
+\textbf{Vantagens}: 
+\begin{itemize}
+    \item Algoritmo ótimo para fontes com probabilidades conhecidas e símbolos independentes;
+    \item Simplicidade de implementação e baixo overhead computacional;
+    \item Garantia matemática de código de prefixo válido;
+    \item Eficiência comprovada em dados com distribuições não uniformes.
+\end{itemize}
+
+\textbf{Limitações}: 
+\begin{itemize}
+    \item Eficiência dependente da precisão das estimativas de probabilidade dos símbolos;
+    \item Não se adapta dinamicamente a variações estatísticas da fonte (versão estática);
+    \item Desempenho subótimo em fontes com distribuições uniformes;
+    \item Necessidade de transmitir ou armazenar a tabela de códigos junto com os dados comprimidos.
+\end{itemize}
+
+\textbf{Casos de uso}: 
+\begin{itemize}
+    \item Componente fundamental em formatos de compressão como DEFLATE (ZIP, PNG);
+    \item Codificação de coeficientes em compressão de imagem (JPEG);
+    \item Protocolos de comunicação que requerem compressão em tempo real;
+    \item Sistemas de armazenamento que priorizam alta taxa de compressão para dados textuais.
+\end{itemize}
+
+\textbf{Vantagens}: trata-se de um algoritmo ótimo para fontes com probabilidades conhecidas e independentes, sendo simples de implementar e eficiente em termos de espaço.  
+
+\textbf{Limitações}: sua eficiência depende da precisão das probabilidades dos símbolos e não se adapta dinamicamente a variações da fonte. Além disso, o código gerado pode não ser ideal em cenários de alta complexidade estatística.  
+
+\textbf{Casos de uso}: amplamente empregado em formatos de compressão de imagem (como JPEG, em conjunto com a DCT) e em protocolos de comunicação.
+
+\subsection{LZ77}
+
+Proposto por Abraham Lempel e Jacob Ziv em 1977, o LZ77 é um algoritmo de compressão baseado em dicionário que explora a redundância de sequências repetidas em um fluxo de dados. Seu funcionamento baseia-se em uma janela deslizante que mantém um histórico dos símbolos já processados; cada ocorrência repetida é substituída por um triplo \((\text{distância}, \text{comprimento}, \text{próximo símbolo})\), que referencia a posição e o tamanho da repetição anterior.
+
+\textbf{Vantagens}: o algoritmo é universal (não requer conhecimento prévio das probabilidades dos símbolos), adapta-se dinamicamente ao fluxo de dados e é eficiente para dados com padrões repetitivos.  
+
+\textbf{Limitações}: a eficiência depende do tamanho da janela e do custo de gerenciamento de referências. Em dados altamente aleatórios, o ganho de compressão pode ser baixo ou inexistente.  
+
+\textbf{Casos de uso}: constitui a base de diversos esquemas de compressão modernos, como DEFLATE, usado em formatos ZIP e PNG.
+
+\subsection{LZW}
+
+O algoritmo LZW (Lempel-Ziv-Welch), desenvolvido por Terry Welch em 1984, é uma variação do LZ78 que constrói dinamicamente um dicionário de padrões encontrados nos dados. Ao contrário do LZ77, que usa referências de deslocamento, o LZW substitui sequências por índices de um dicionário em crescimento contínuo.
+
+\textbf{Vantagens}: simplicidade de implementação, bom desempenho em dados com repetições estruturadas e independência de modelos estatísticos prévios.  
+
+\textbf{Limitações}: pode gerar tabelas de dicionário grandes, o que demanda controle para evitar estouro de memória. Em fluxos curtos ou pouco redundantes, a eficiência pode ser reduzida.  
+
+\textbf{Casos de uso}: foi amplamente empregado no formato GIF e em implementações de compressão em softwares de sistemas UNIX (como o utilitário \texttt{compress}).
+
+\subsection{GZIP}
+
+O GZIP é um formato de compressão que combina o algoritmo LZ77 com a codificação de Huffman, de forma a explorar tanto redundâncias estruturais quanto estatísticas. O fluxo de compressão inicia com a detecção de padrões repetidos pelo LZ77, que são em seguida codificados de maneira mais eficiente através da codificação de Huffman.
+
+\textbf{Vantagens}: alto grau de compressão em uma ampla variedade de dados, eficiência prática comprovada, suporte a múltiplos arquivos e metadados de integridade (CRC).  
+
+\textbf{Limitações}: maior complexidade computacional em comparação a algoritmos isolados; embora eficiente, pode não atingir a compressão máxima em todos os cenários.  
+
+\textbf{Casos de uso}: amplamente utilizado em sistemas operacionais e protocolos de rede, sendo padrão em distribuições de arquivos no ambiente UNIX/Linux e em transmissões web (HTTP/HTTPS).
 
