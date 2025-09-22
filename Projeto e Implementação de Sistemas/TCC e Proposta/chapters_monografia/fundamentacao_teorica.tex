@@ -345,14 +345,20 @@ F & 5 & 0,05 & 1101 \\
 \end{tabular}
 \end{center}
 
-O processo de construção da árvore de Huffman para este exemplo seria:
-
 O comprimento médio da codificação seria:
 \[
 L = 0{,}45 \times 1 + 0{,}13 \times 3 + 0{,}12 \times 3 + 0{,}16 \times 3 + 0{,}09 \times 4 + 0{,}05 \times 4 = 2{,}04 \text{ bits/símbolo}
 \]
 
 Comparado com uma codificação binária fixa (que exigiria $\lceil \log_2 6 \rceil = 3$ bits por símbolo), o algoritmo de Huffman oferece uma redução significativa no tamanho da representação.
+
+\begin{figure}[htbp]
+    \caption{\small Exemplo de uma Árvore de Huffman} 
+    \centering
+    \includegraphics[width=1\textwidth]{figs/huffman_tree.png}
+    \label{fig:huffman-tree}
+    \legend{\small Fonte: Elaborada pelo autor}
+\end{figure}
 
 \subsubsection{Propriedades matemáticas}
 
@@ -402,21 +408,141 @@ Existem algumas variações importantes do algoritmo básico de Huffman:
     \item Sistemas de armazenamento que priorizam alta taxa de compressão para dados textuais.
 \end{itemize}
 
-\textbf{Vantagens}: trata-se de um algoritmo ótimo para fontes com probabilidades conhecidas e independentes, sendo simples de implementar e eficiente em termos de espaço.  
-
-\textbf{Limitações}: sua eficiência depende da precisão das probabilidades dos símbolos e não se adapta dinamicamente a variações da fonte. Além disso, o código gerado pode não ser ideal em cenários de alta complexidade estatística.  
-
-\textbf{Casos de uso}: amplamente empregado em formatos de compressão de imagem (como JPEG, em conjunto com a DCT) e em protocolos de comunicação.
-
 \subsection{LZ77}
 
-Proposto por Abraham Lempel e Jacob Ziv em 1977, o LZ77 é um algoritmo de compressão baseado em dicionário que explora a redundância de sequências repetidas em um fluxo de dados. Seu funcionamento baseia-se em uma janela deslizante que mantém um histórico dos símbolos já processados; cada ocorrência repetida é substituída por um triplo \((\text{distância}, \text{comprimento}, \text{próximo símbolo})\), que referencia a posição e o tamanho da repetição anterior.
+O algoritmo LZ77, proposto por Abraham Lempel e Jacob Ziv em 1977~\cite{ziv1977universal}, representa um marco na compressão de dados sem perdas ao introduzir o conceito de compressão baseada em dicionário dinâmico. Diferentemente dos métodos estatísticos como Huffman, que dependem da frequência de símbolos individuais, o LZ77 explora a redundância temporal presente em sequências de dados, identificando e codificando repetições de subsequências já observadas.
 
-\textbf{Vantagens}: o algoritmo é universal (não requer conhecimento prévio das probabilidades dos símbolos), adapta-se dinamicamente ao fluxo de dados e é eficiente para dados com padrões repetitivos.  
+\subsubsection{Funcionamento do algoritmo}
 
-\textbf{Limitações}: a eficiência depende do tamanho da janela e do custo de gerenciamento de referências. Em dados altamente aleatórios, o ganho de compressão pode ser baixo ou inexistente.  
+O LZ77 opera com base em uma janela deslizante que divide o fluxo de entrada em duas regiões principais:
 
-\textbf{Casos de uso}: constitui a base de diversos esquemas de compressão modernos, como DEFLATE, usado em formatos ZIP e PNG.
+\begin{itemize}
+    \item \textbf{Buffer de busca}: região que contém os dados já processados, servindo como dicionário para identificar repetições;
+    \item \textbf{Buffer de antecipação}: região que contém os dados ainda não processados, onde se busca por correspondências com o buffer de busca.
+\end{itemize}
+
+O algoritmo funciona através dos seguintes passos:
+
+\begin{enumerate}
+    \item \textbf{Inicialização}: Define-se o tamanho do buffer de busca tipicamente entre 4KB e 32KB e do buffer de antecipação entre 4 e 258 bytes;
+    
+    \item \textbf{Busca por correspondências}: Para cada posição no buffer de antecipação, procura-se a maior subsequência que tenha uma correspondência no buffer de busca;
+    
+    \item \textbf{Codificação}: Se uma correspondência é encontrada, ela é codificada como um triplo $(\text{distância}, \text{comprimento}, \text{próximo\_símbolo})$, onde:
+    \begin{itemize}
+        \item \textit{distância}: número de posições para trás onde a correspondência foi encontrada;
+        \item \textit{comprimento}: número de símbolos que correspondem;
+        \item \textit{próximo\_símbolo}: primeiro símbolo após a correspondência que não faz parte dela.
+    \end{itemize}
+    
+    \item \textbf{Avanço da janela}: A janela desliza para a direita, incorporando os símbolos processados ao buffer de busca e carregando novos símbolos no buffer de antecipação;
+    
+    \item \textbf{Repetição}: O processo continua até que todos os dados sejam processados.
+\end{enumerate}
+
+\subsubsection{Exemplo prático}
+
+Considere a sequência de entrada: \texttt{"AACAACABCABAAAC"}
+
+Assumindo uma janela de busca de tamanho 6 e buffer de antecipação de tamanho 4:
+
+\begin{center}
+\begin{tabular}{cccc}
+\toprule
+Passo & Buffer de busca & Buffer antecipação & Saída \\
+\midrule
+1 & (vazio) & AACA & (0,0,A) \\
+2 & A & ACAA & (1,1,C) \\
+3 & AAC & AACA & (3,4,B) \\
+4 & CAACAB & CABA & (3,3,A) \\
+5 & ABCABA & AAC & (1,2,C) \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+A saída comprimida seria: 
+
+\texttt{(0,0,A); (1,1,C); (3,4,B); (3,3,A); (1,2,C)}
+
+\subsubsection{Variações e otimizações}
+
+O algoritmo LZ77 possui diversas variações que melhoram seu desempenho:
+
+\begin{itemize}
+    \item \textbf{LZSS (Lempel-Ziv-Storer-Szymanski)}: Elimina o campo "próximo\_símbolo" do triplo, usando um bit de flag para distinguir entre literais e referências, resultando em melhor compressão;
+    
+    \item \textbf{LZ77 com hash}: Utiliza tabelas hash para acelerar a busca por correspondências, reduzindo a complexidade de $O(n \cdot w)$ para $O(n)$, onde $w$ é o tamanho da janela;
+    
+    \item \textbf{LZ77 com árvores de sufixos}: Emprega estruturas de dados mais sofisticadas para otimizar a busca, especialmente eficaz para textos longos;
+    
+    \item \textbf{LZ77 com codificação aritmética}: Combina o LZ77 com codificação aritmética em vez de representação direta dos triplos, melhorando a taxa de compressão.
+\end{itemize}
+
+\subsubsection{Análise de complexidade}
+
+A complexidade computacional do LZ77 depende da implementação:
+
+\begin{itemize}
+    \item \textbf{Implementação ingênua}: $O(n \cdot w \cdot l)$, onde $n$ é o tamanho da entrada, $w$ o tamanho da janela de busca e $l$ o comprimento máximo de correspondência;
+    
+    \item \textbf{Com otimizações (hash)}: $O(n \cdot l)$ no caso médio, $O(n \cdot w \cdot l)$ no pior caso;
+    
+    \item \textbf{Espaço}: $O(w + l)$ para armazenar as janelas de busca e antecipação.
+\end{itemize}
+
+A descompressão é significativamente mais rápida, com complexidade $O(n)$, pois requer apenas a expansão sequencial das referências.
+
+\subsubsection{Propriedades teóricas}
+
+O LZ77 possui importantes propriedades teóricas:
+
+\begin{itemize}
+    \item \textbf{Universalidade}: É um algoritmo universal, ou seja, para qualquer fonte estacionária e ergódica, a taxa de compressão converge para a taxa de entropia da fonte quando o tamanho da janela tende ao infinito;
+    
+    \item \textbf{Adaptabilidade}: Não requer conhecimento prévio das estatísticas da fonte, adaptando-se dinamicamente aos padrões presentes nos dados;
+    
+    \item \textbf{Garantia de não expansão}: No pior caso, o tamanho da saída é limitado pelo tamanho da entrada mais um overhead constante por bloco processado.
+\end{itemize}
+
+\subsubsection{Parâmetros de configuração}
+
+A eficiência do LZ77 depende criticamente da escolha de seus parâmetros:
+
+\begin{itemize}
+    \item \textbf{Tamanho do buffer de busca}: Janelas maiores permitem encontrar correspondências mais distantes, mas aumentam o tempo de processamento e o espaço necessário para codificar as distâncias;
+    
+    \item \textbf{Comprimento máximo de correspondência}: Valores maiores permitem codificar repetições mais longas, mas requerem mais bits para representar o comprimento;
+    
+    \item \textbf{Comprimento mínimo de correspondência}: Correspondências muito curtas podem não compensar o overhead da codificação, sendo mais eficiente tratá-las como literais.
+\end{itemize}
+
+\textbf{Vantagens}:
+\begin{itemize}
+    \item Algoritmo universal que não requer conhecimento prévio das estatísticas da fonte;
+    \item Adapta-se dinamicamente aos padrões presentes nos dados;
+    \item Excelente desempenho em dados com repetições estruturais (textos, código fonte, dados binários com padrões);
+    \item Descompressão rápida e de baixa complexidade;
+    \item Base teórica sólida com garantias de convergência para a taxa de entropia.
+\end{itemize}
+
+\textbf{Limitações}:
+\begin{itemize}
+    \item Eficiência limitada pelo tamanho da janela de busca, que determina quão distantes podem estar as repetições;
+    \item Desempenho inferior em dados altamente aleatórios ou sem padrões repetitivos;
+    \item Overhead significativo para representar as referências quando as correspondências são curtas;
+    \item Complexidade computacional elevada na compressão, especialmente sem otimizações;
+    \item Sensibilidade à escolha dos parâmetros (tamanhos de janela e buffer).
+\end{itemize}
+
+\textbf{Casos de uso}:
+\begin{itemize}
+    \item Base fundamental do algoritmo DEFLATE, usado em formatos ZIP, PNG e HTTP/HTTPS (gzip);
+    \item Compressão de arquivos de texto, código fonte e documentos estruturados;
+    \item Sistemas de backup e arquivamento que priorizam alta taxa de compressão;
+    \item Protocolos de comunicação que requerem compressão em tempo real com boa adaptabilidade;
+    \item Compressão de dados binários com padrões repetitivos (executáveis, bibliotecas).
+\end{itemize}
+
 
 \subsection{LZW}
 
