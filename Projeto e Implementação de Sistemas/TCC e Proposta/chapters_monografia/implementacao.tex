@@ -1,2 +1,92 @@
 \chapter{Implementação}
 \label{c.împlementacao}
+
+Este capítulo apresenta a implementação dos principais componentes desenvolvidos no projeto, abordando desde a manipulação dos headers dos formatos BMP e WAV até a construção das classes e algoritmos responsáveis pela compressão e descompressão de dados. São detalhados os módulos referentes à leitura e interpretação de arquivos, a classe auxiliar \textit{BitStream} para manipulação de bits, e os algoritmos de compressão Huffman, LZ77, LZW e GZIP, explicando suas estruturas, funcionamento e integração com a API desenvolvida.
+
+\subsection{Manipulação de Headers BMP e WAV}
+
+Durante o desenvolvimento deste trabalho, foi necessário lidar com diferentes tipos de arquivos como entrada para os algoritmos de compressão e descompressão. Um ponto importante a ser considerado é a estrutura interna desses arquivos, especialmente no que diz respeito à presença ou ausência de cabeçalhos (headers).
+
+Arquivos de texto puro, com extensão \texttt{.txt}, são compostos exclusivamente por dados representados em formato ASCII ou Unicode e, portanto, não possuem um cabeçalho estruturado. Esses arquivos não contêm metadados incorporados sobre seu conteúdo, formato ou estrutura, o que simplifica o processo de compressão, já que todos os dados podem ser processados diretamente.
+
+Entretanto, o mesmo não ocorre com arquivos dos formatos \texttt{.bmp} (bitmap image) e \texttt{.wav} (waveform audio file format). Esses formatos binários possuem estruturas de cabeçalho bem definidas que armazenam metadados essenciais para a correta interpretação dos dados contidos no arquivo. No caso de arquivos BMP, o cabeçalho armazena informações como o tamanho da imagem, profundidade de cor, largura, altura, tipo de compressão (se houver), entre outras. Já no caso dos arquivos WAV, o cabeçalho especifica dados como a taxa de amostragem, número de canais, taxa de bits, tamanho do arquivo, e o formato do áudio (PCM, por exemplo).
+
+Durante o processo de compressão implementado neste trabalho, optou-se por não aplicar compressão sobre os dados de cabeçalho desses arquivos. Essa decisão foi tomada por duas razões principais: (i) o cabeçalho geralmente ocupa uma pequena fração do tamanho total do arquivo, e sua compressão traria benefícios marginais; (ii) preservar o cabeçalho intacto facilita o processo de descompressão e garante que o arquivo reconstruído mantenha sua estrutura original, permitindo sua correta abertura por softwares padrão após a descompressão.
+
+Dessa forma, a implementação realiza a leitura e extração do cabeçalho no momento da compressão e o armazena separadamente do corpo dos dados. Ao descomprimir o arquivo, o cabeçalho original é restaurado no início do arquivo reconstruído, seguido pelos dados descomprimidos. Esse procedimento assegura que os arquivos BMP e WAV mantêm sua integridade e permanecem compatíveis com os leitores padrão desses formatos.
+
+A manipulação correta dos headers foi essencial para garantir a funcionalidade completa do sistema de compressão e descompressão implementado. Sem esse cuidado, os arquivos descomprimidos poderiam se tornar ilegíveis ou corrompidos, uma vez que muitos softwares dependem da presença e exatidão do cabeçalho para interpretar o conteúdo do arquivo de forma apropriada.
+
+
+\begin{quadro}[htbp]
+    \caption{Formato básico de arquivo BMP}
+    \label{qua:bmp}
+    
+    \begin{tabularx}{\textwidth}{|>{\raggedright\arraybackslash}p{3cm}|
+                                      >{\raggedright\arraybackslash}p{3cm}|
+                                      X|}
+    \hline
+    \textbf{Nome} & \textbf{Tamanho} & \textbf{Descrição} \\ \hline
+    
+    Signature & 2 bytes & Assinatura ``BM'' \\ \hline
+    FileSize & 4 bytes & Tamanho do arquivo em bytes \\ \hline
+    reserved & 4 bytes & Reservado (=0) \\ \hline
+    DataOffset & 4 bytes & Offset para os dados da imagem \\ \hline
+    Size & 4 bytes & Tamanho do InfoHeader (=40) \\ \hline
+    Width & 4 bytes & Largura da imagem \\ \hline
+    Height & 4 bytes & Altura da imagem \\ \hline
+    Planes & 2 bytes & Número de planos (=1) \\ \hline
+    
+    BitCount & 2 bytes &
+    \makecell[l]{
+    Bits por pixel: \\
+    1 = monocromático \\
+    4 = paleta de 4 bits \\
+    8 = paleta de 8 bits \\
+    16 = 16-bit RGB \\
+    24 = 24-bit RGB
+    } \\ \hline
+    
+    Compression & 4 bytes &
+    \makecell[l]{
+    Tipo de compressão: \\
+    0 = BI\_RGB (sem compressão) \\
+    1 = BI\_RLE8 (RLE 8 bits) \\
+    2 = BI\_RLE4 (RLE 4 bits)
+    } \\ \hline
+    
+    ImageSize & 4 bytes & Tamanho da imagem (pode ser 0 se sem compressão) \\ \hline
+    XPixelsPerM & 4 bytes & Resolução horizontal (pixels/metro) \\ \hline
+    YPixelsPerM & 4 bytes & Resolução vertical (pixels/metro) \\ \hline
+    ColorsUsed & 4 bytes & Número de cores realmente usadas \\ \hline
+    ColorsImportant & 4 bytes & Número de cores importantes (0 = todas) \\ \hline
+    
+    Tabela de Cores & 4 * NumColors &
+    \makecell[l]{
+    Presente se BitsPorPixel $\leq 8$: \\
+    Red (1 byte) \\
+    Green (1 byte) \\
+    Blue (1 byte) \\
+    reserved (1 byte)
+    } \\ \hline
+    
+    Raster Data & ImageSize bytes & Os dados reais da imagem \\ \hline
+    
+\end{tabularx}
+\end{quadro}
+    
+
+
+
+
+
+
+\subsection{Classe BitStream}
+
+\subsection{Huffman}
+
+\subsection{LZ77}
+
+\subsection{LZW}
+
+\subsection{GZIP}
