@@ -17,73 +17,158 @@ Dessa forma, a implementação realiza a leitura e extração do cabeçalho no m
 
 A manipulação correta dos headers foi essencial para garantir a funcionalidade completa do sistema de compressão e descompressão implementado. Sem esse cuidado, os arquivos descomprimidos poderiam se tornar ilegíveis ou corrompidos, uma vez que muitos softwares dependem da presença e exatidão do cabeçalho para interpretar o conteúdo do arquivo de forma apropriada.
 
+\begin{figure}[htbp]
+    \caption{\small Header do arquivo BMP}
+    \centering
+    \includegraphics[width=0.8\textwidth]{figs/bmp_header.png}
+    \label{fig:bmp-header}
+    \legend{\small Fonte: \cite{gdansk2025bmp}}
+\end{figure}
 
-\begin{quadro}[htbp]
-    \caption{Formato básico de arquivo BMP}
-    \label{qua:bmp}
-    
-    \begin{tabularx}{\textwidth}{|>{\raggedright\arraybackslash}p{3cm}|
-                                      >{\raggedright\arraybackslash}p{3cm}|
-                                      X|}
-    \hline
-    \textbf{Nome} & \textbf{Tamanho} & \textbf{Descrição} \\ \hline
-    
-    Signature & 2 bytes & Assinatura ``BM'' \\ \hline
-    FileSize & 4 bytes & Tamanho do arquivo em bytes \\ \hline
-    reserved & 4 bytes & Reservado (=0) \\ \hline
-    DataOffset & 4 bytes & Offset para os dados da imagem \\ \hline
-    Size & 4 bytes & Tamanho do InfoHeader (=40) \\ \hline
-    Width & 4 bytes & Largura da imagem \\ \hline
-    Height & 4 bytes & Altura da imagem \\ \hline
-    Planes & 2 bytes & Número de planos (=1) \\ \hline
-    
-    BitCount & 2 bytes &
-    \makecell[l]{
-    Bits por pixel: \\
-    1 = monocromático \\
-    4 = paleta de 4 bits \\
-    8 = paleta de 8 bits \\
-    16 = 16-bit RGB \\
-    24 = 24-bit RGB
-    } \\ \hline
-    
-    Compression & 4 bytes &
-    \makecell[l]{
-    Tipo de compressão: \\
-    0 = BI\_RGB (sem compressão) \\
-    1 = BI\_RLE8 (RLE 8 bits) \\
-    2 = BI\_RLE4 (RLE 4 bits)
-    } \\ \hline
-    
-    ImageSize & 4 bytes & Tamanho da imagem (pode ser 0 se sem compressão) \\ \hline
-    XPixelsPerM & 4 bytes & Resolução horizontal (pixels/metro) \\ \hline
-    YPixelsPerM & 4 bytes & Resolução vertical (pixels/metro) \\ \hline
-    ColorsUsed & 4 bytes & Número de cores realmente usadas \\ \hline
-    ColorsImportant & 4 bytes & Número de cores importantes (0 = todas) \\ \hline
-    
-    Tabela de Cores & 4 * NumColors &
-    \makecell[l]{
-    Presente se BitsPorPixel $\leq 8$: \\
-    Red (1 byte) \\
-    Green (1 byte) \\
-    Blue (1 byte) \\
-    reserved (1 byte)
-    } \\ \hline
-    
-    Raster Data & ImageSize bytes & Os dados reais da imagem \\ \hline
-    
-\end{tabularx}
-\end{quadro}
-    
+\begin{figure}[htbp]
+    \caption{\small Header do arquivo WAV}
+    \centering
+    \includegraphics[width=0.8\textwidth]{figs/wav_header.png}
+    \label{fig:wav-header}
+    \legend{\small Fonte: \cite{sappwavheader}}
+\end{figure}
 
+\newpage
 
+\subsubsection{Implementação da Classe BMP}
 
+Para manipular arquivos BMP, foi implementada uma classe específica que encapsula toda a estrutura do formato, incluindo headers, tabela de cores e dados da imagem. A implementação utiliza estruturas com alinhamento de bytes controlado através da diretiva \texttt{\#pragma pack} para garantir que os dados sejam lidos corretamente do arquivo binário.
 
+\begin{lstlisting}[language=C++, caption=Estrutura da classe BMP]
+#pragma pack(push,1) 
+class bmp {
+public:
+    struct HEADER {
+        char signature[2];        
+        uint32_t file_size;      
+        uint32_t reserved;       
+        uint32_t data_offset; 
+    } header;
+    
+    struct INFO_header {
+        uint32_t size;           
+        uint32_t width;          
+        uint32_t height;         
+        uint16_t planes;         
+        uint16_t bits_per_pixel; 
+        uint32_t compression;    
+        uint32_t image_size;     
+        uint32_t x_pixels_per_m; 
+        uint32_t y_pixels_per_m; 
+        uint32_t colors_used;    
+        uint32_t important_colors; 
+    } info_header;
+    
+    uint8_t *color_table;        
+    uint8_t *data;              
+    size_t data_size;           
 
+    int read(const char* filename);
+    void print();
+    uint32_t get_color_table_size();
+    int has_color_table();
+private:
+    void read_bmp_data(FILE* file);
+};
+#pragma pack(pop)
+\end{lstlisting}
+
+A classe BMP implementa métodos essenciais para a leitura e manipulação de arquivos bitmap. O método \texttt{read()} é responsável por abrir o arquivo e ler sequencialmente todos os componentes: header principal, info header, tabela de cores (quando aplicável) e dados da imagem. A verificação da existência de tabela de cores é feita através do método \texttt{has\_color\_table()}, que retorna verdadeiro quando o número de bits por pixel é menor ou igual a 8.
+
+O método \texttt{read\_bmp\_data()} implementa uma estratégia de alocação dinâmica de memória que utiliza o padrão de "table doubling" para otimizar o uso de memória durante a leitura dos dados da imagem. Essa abordagem evita a necessidade de conhecer previamente o tamanho dos dados e permite a leitura eficiente de arquivos de qualquer tamanho.
+
+\begin{lstlisting}[language=C++, caption=Método de leitura de dados da imagem BMP]
+size_t buffer_size = 1024;
+size_t var_data_size = 0;
+uint8_t* var_data = new uint8_t[buffer_size];
+if(!var_data) {
+    fclose(file);
+    EXIT_WITH_ERROR("Memory allocation failed");
+}
+size_t bytes_read;
+while((bytes_read = fread(var_data + var_data_size, 1, 
+                            buffer_size-var_data_size, file)) > 0) {
+    var_data_size += bytes_read;
+    if(var_data_size >= buffer_size) {  // table doubling 
+        buffer_size *= 2;
+        uint8_t* new_data = (uint8_t*)realloc(var_data, 
+                                                buffer_size);
+        if(!new_data) {
+            free(var_data);
+            fclose(file);
+            EXIT_WITH_ERROR("Memory allocation failed");
+        }
+        var_data = new_data;
+    }
+}
+data_size = var_data_size;
+
+data = (uint8_t*)malloc(data_size);
+if(!data) {
+    free(data);
+    fclose(file);
+    EXIT_WITH_ERROR("Memory allocation failed");
+}
+memcpy(data, var_data, data_size);
+free(var_data);
+\end{lstlisting}
+
+\subsubsection{Implementação da Classe WAV}
+
+Similarmente à classe BMP, a classe WAV foi implementada para manipular arquivos de áudio no formato WAVE PCM. A estrutura segue o padrão RIFF (Resource Interchange File Format), que organiza os dados em chunks identificados por tags de 4 caracteres.
+
+\begin{lstlisting}[language=C++, caption=Estrutura da classe WAV]
+#pragma pack(push,1)
+class wav {
+public:
+    struct RIFF_chunk_descriptor {
+        char ID[4];              
+        uint32_t size;           
+        char format[4];          
+    } riff_chunk_descriptor;
+    
+    struct FMT_subchunk {
+        char ID[4];              
+        uint32_t size;           
+        uint16_t audio_format;   
+        uint16_t num_channels;   
+        uint32_t sample_rate;    
+        uint32_t byte_rate;      
+        uint16_t block_align;    
+        uint16_t bits_per_sample; 
+    } fmt_subchunk;
+    
+    struct DATA_subchunk {
+        char ID[4];              
+        uint32_t size;           
+    } data_subchunk;
+    
+    uint8_t* data;              
+
+    int read(std::string filename);
+    void print();
+};
+#pragma pack(pop)
+\end{lstlisting}
+
+A implementação do método de leitura para arquivos WAV segue uma sequência específica: primeiro lê o descriptor RIFF, depois o subchunk de formato (fmt) e finalmente o subchunk de dados (data). Cada chunk é identificado por sua tag de 4 caracteres, garantindo que a estrutura do arquivo seja respeitada.
+
+Ambas as classes implementam métodos de debug (\texttt{print()}) que exibem todas as informações dos headers em formato hexadecimal, facilitando a verificação da integridade dos dados lidos e o desenvolvimento de testes para validar a implementação.
 
 \subsection{Classe BitStream}
 
 \subsection{Huffman}
+
+\subsubsection{Huffman TXT}
+
+\subsubsection{Huffman BMP}
+
+\subsubsection{Huffman WAV}
 
 \subsection{LZ77}
 
